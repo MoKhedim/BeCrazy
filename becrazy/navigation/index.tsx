@@ -8,7 +8,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Pressable, Image, View, StyleSheet } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Text } from '../components/Themed';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -62,6 +64,10 @@ function BottomTabNavigator() {
       initialRouteName="TabOne"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarStyle: { height: 60 },
+        tabBarIconStyle: { marginTop: 10 },
+        tabBarLabelStyle: { marginBottom: 10 },
+        tabBarLabelPosition: 'below-icon',
       }}>
       <BottomTab.Screen
         name="TabOne"
@@ -88,11 +94,51 @@ function BottomTabNavigator() {
       <BottomTab.Screen
         name="FeedPage"
         component={FeedPage}
-        options={{
+        options={({ navigation }: RootTabScreenProps<'FeedPage'>) => ({
           title: 'Feed',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
+          headerTitle: 'BeCrazy  |  Feed',
+          tabBarIcon: ({ color }) => <MaterialIcons name="dynamic-feed" size={28} color={color} />,
+          headerTitleStyle: { fontSize: 30, fontWeight: 'bold' },
+          headerLeft: () => (
+            <Image source={
+              // profile picture placeholder
+              require('../assets/images/icon.png')} style={{
+                width: 50,
+                height: 50,
+                borderRadius: 50,
+                marginStart: 60,
+                marginEnd: 10
+              }} />
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable
+                onPress={() => alert('need to login to post!')}
+                style={({ pressed }) => ({
+                  opacity: pressed ? 0.5 : 1,
+                })}>
+                <MaterialIcons
+                  name="post-add"
+                  size={28}
+                  color={Colors[colorScheme].text}
+                  style={{ marginEnd: 20, paddingTop: 5 }}
+                />
+              </Pressable>
+              <View style={{ width: 100, marginEnd: 10 }}>
+                <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
+                  <Text lightColor="rgba(0,0,0,0.8)"
+                    darkColor="rgba(255,255,255,0.8)" style={styles.text}>Sign up</Text>
+                </Pressable>
+              </View>
+              <View style={{ width: 80, marginEnd: 60 }}>
+                <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
+                  <Text lightColor="rgba(0,0,0,0.8)"
+                    darkColor="rgba(255,255,255,0.8)" style={styles.text}>Login</Text>
+                </Pressable>
+              </View>
+            </View>
+          )
+        })}
       />
       <BottomTab.Screen
         name="TabTwo"
@@ -115,3 +161,20 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    borderColor: 'white',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    padding: 10,
+  },
+  text: {
+    fontSize: 14,
+    fontFamily: 'Century Gothic',
+    fontWeight: 'bold',
+  }
+});
