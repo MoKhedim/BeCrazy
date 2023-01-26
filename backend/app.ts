@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 var axios = require('axios');
 
 const configuration = new Configuration({
-    apiKey: "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"
+    apiKey: "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"
   });
   const openai = new OpenAIApi(configuration);
 
@@ -113,7 +113,44 @@ app.get("/aiChallenge", (req:Request, res:Response) =>{
     );
 });
 
-
+app.post('/postMedia', (req:Request, res:Response) => {
+    const today = new Date();
+    const body = JSON.stringify(req.body);
+    console.log(body);
+    var data = JSON.stringify({
+        "collection": "allMedia",
+        "database": "BeCrazy",
+        "dataSource": "ProjetBeCrazy",
+        "document": {
+            "username": req.body.username,
+            "source": req.body.source,
+            "description": req.body.description,
+            "nbLike": 0,
+            "nbComment": 0,
+            "created": today
+        }
+    });
+    var config = {
+        method: 'post',
+        url: 'https://data.mongodb-api.com/app/data-diwam/endpoint/data/v1/action/insertOne',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Request-Headers': '*',
+            'api-key': 'dneyLnyUcz1yBENLpVoHBMDo2rLn0S30yoOv3fVby1r5kFWK889gRSY03dybnrtV',
+            'Accept': 'application/ejson'
+        },
+        data: data
+    };
+    axios(config)
+    .then(function (response:any) {
+        console.log(JSON.stringify(response.data));
+        res.send(response.data);
+    })
+    .catch(function (error:any) {
+        console.log(error);
+    });
+}
+);
 //listen 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
