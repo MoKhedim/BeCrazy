@@ -16,9 +16,9 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
+import HomeScreen from '../screens/HomeScreen';
 import FeedPage from '../screens/FeedPage';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import DiscoverScreen from '../screens/DiscoverScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -61,34 +61,60 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Home"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
         tabBarStyle: { height: 60 },
         tabBarIconStyle: { marginTop: 10 },
         tabBarLabelStyle: { marginBottom: 10 },
         tabBarLabelPosition: 'below-icon',
-      }}>
-      <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
+        headerTitleStyle: { fontSize: 30, fontWeight: 'bold' },
+        headerLeft: () => (
+          <Image source={
+            // app icon placeholder
+            require('../assets/images/icon.png')} style={{
+              width: 50,
+              height: 50,
+              borderRadius: 50,
+              marginStart: 60,
+            }} />
+        ),
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
             <Pressable
-              onPress={() => navigation.navigate('Modal')}
+              onPress={() => alert('need to login to post!')}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
+              <MaterialIcons
+                name="post-add"
+                size={28}
                 color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
+                style={{ marginEnd: 20, paddingTop: 5 }}
               />
             </Pressable>
-          ),
+            <View style={{ width: 100, marginEnd: 10 }}>
+              <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
+                <Text lightColor="rgba(0,0,0,0.8)"
+                  darkColor="rgba(255,255,255,0.8)" style={styles.text}>Sign up</Text>
+              </Pressable>
+            </View>
+            <View style={{ width: 80, marginEnd: 60 }}>
+              <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
+                <Text lightColor="rgba(0,0,0,0.8)"
+                  darkColor="rgba(255,255,255,0.8)" style={styles.text}>Login</Text>
+              </Pressable>
+            </View>
+          </View>
+        ),
+      }}>
+      <BottomTab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={({ navigation }: RootTabScreenProps<'Home'>) => ({
+          title: 'Home',
+          headerTitle: 'BeCrazy  |  Home',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         })}
       />
       <BottomTab.Screen
@@ -98,54 +124,15 @@ function BottomTabNavigator() {
           title: 'Feed',
           headerTitle: 'BeCrazy  |  Feed',
           tabBarIcon: ({ color }) => <MaterialIcons name="dynamic-feed" size={28} color={color} />,
-          headerTitleStyle: { fontSize: 30, fontWeight: 'bold' },
-          headerLeft: () => (
-            <Image source={
-              // profile picture placeholder
-              require('../assets/images/icon.png')} style={{
-                width: 50,
-                height: 50,
-                borderRadius: 50,
-                marginStart: 60,
-                marginEnd: 10
-              }} />
-          ),
-          headerRight: () => (
-            <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                onPress={() => alert('need to login to post!')}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.5 : 1,
-                })}>
-                <MaterialIcons
-                  name="post-add"
-                  size={28}
-                  color={Colors[colorScheme].text}
-                  style={{ marginEnd: 20, paddingTop: 5 }}
-                />
-              </Pressable>
-              <View style={{ width: 100, marginEnd: 10 }}>
-                <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
-                  <Text lightColor="rgba(0,0,0,0.8)"
-                    darkColor="rgba(255,255,255,0.8)" style={styles.text}>Sign up</Text>
-                </Pressable>
-              </View>
-              <View style={{ width: 80, marginEnd: 60 }}>
-                <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
-                  <Text lightColor="rgba(0,0,0,0.8)"
-                    darkColor="rgba(255,255,255,0.8)" style={styles.text}>Login</Text>
-                </Pressable>
-              </View>
-            </View>
-          )
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="Discover"
+        component={DiscoverScreen}
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Discover',
+          headerTitle: 'BeCrazy  |  Discover',
+          tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
         }}
       />
     </BottomTab.Navigator>
