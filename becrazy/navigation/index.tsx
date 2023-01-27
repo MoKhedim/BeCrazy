@@ -94,13 +94,13 @@ function BottomTabNavigator() {
               />
             </Pressable>
             <View style={{ width: 100, marginEnd: 10 }}>
-              <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
+              <Pressable style={[styles.button, { borderColor: Colors[colorScheme].text }]} onPress={() => alert('work in progress!')}>
                 <Text lightColor="rgba(0,0,0,0.8)"
                   darkColor="rgba(255,255,255,0.8)" style={styles.text}>Sign up</Text>
               </Pressable>
             </View>
             <View style={{ width: 80, marginEnd: 60 }}>
-              <Pressable style={styles.button} onPress={() => alert('work in progress!')}>
+              <Pressable style={[styles.button, { borderColor: Colors[colorScheme].text }]} onPress={() => alert('work in progress!')}>
                 <Text lightColor="rgba(0,0,0,0.8)"
                   darkColor="rgba(255,255,255,0.8)" style={styles.text}>Login</Text>
               </Pressable>
@@ -114,7 +114,7 @@ function BottomTabNavigator() {
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
           title: 'Home',
           headerTitle: 'BeCrazy  |  Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialIcons name="home" size={28} color={color} />,
         })}
       />
       <BottomTab.Screen
@@ -132,7 +132,7 @@ function BottomTabNavigator() {
         options={{
           title: 'Discover',
           headerTitle: 'BeCrazy  |  Discover',
-          tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
+          tabBarIcon: ({ color }) => <MaterialIcons name="supervised-user-circle" size={28} color={color} />,
         }}
       />
     </BottomTab.Navigator>
@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 4,
-    borderColor: 'white',
     borderStyle: 'solid',
     borderWidth: 1,
     padding: 10,
