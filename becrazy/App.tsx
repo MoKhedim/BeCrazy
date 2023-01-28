@@ -12,8 +12,10 @@ import { useAsyncStorage } from "./hooks/useAsyncStorage";
 export const MyContext = createContext({} as any);
 
 export default function App() {
+  // import the fucntion to use the async storage
   const { getItem, addItem, removeItem } = useAsyncStorage();
   const [token, setToken] = useState<string | null>(null);
+  // create a context value to pass the token to the child component
   const getterSetter = { token, setToken}
 
   const isLoadingComplete = useCachedResources();
@@ -30,6 +32,8 @@ export default function App() {
   useEffect(() => {
     if (token) addItem('token', token)
   }, [token]);
+
+
 
   if (!isLoadingComplete) {
     return null;
