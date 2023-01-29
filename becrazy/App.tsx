@@ -9,6 +9,7 @@ import Navigation from './navigation';
 // Ma partie 
 import Login from './screens/Login';
 import { useAsyncStorage } from "./hooks/useAsyncStorage";
+import Register from './screens/Register';
 export const MyContext = createContext({} as any);
 
 export default function App() {
@@ -41,8 +42,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <MyContext.Provider value={getterSetter}>
-          {token && <Navigation colorScheme={colorScheme} />}
-          {!token && <Login />}
+          <Register />
           <StatusBar />
         </MyContext.Provider>
       </SafeAreaProvider>
