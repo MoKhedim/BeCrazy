@@ -1,14 +1,13 @@
 import React, { useState, useContext } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import { Text } from '../components/Themed'
-import { Button } from '../components/Button'
-import { TextInput } from '../components/TextInput'
-import Logo from '../components/Logo'
-import { emailValidator } from '../helpers/emailValidator'
-import { passwordValidator } from '../helpers/passwordValidator'
-import { passwordConfirmValidator } from '../helpers/passwordConfirmValidator'
-import { useNavigation } from '@react-navigation/native'
-import { MyContext } from '../App'
+import { Text } from '../../components/Themed'
+import { Button } from '../../components/Button'
+import { TextInput } from '../../components/TextInput'
+import Logo from '../../components/Logo'
+import { emailValidator } from '../../helpers/emailValidator'
+import { passwordValidator } from '../../helpers/passwordValidator'
+import { passwordConfirmValidator } from '../../helpers/passwordConfirmValidator'
+import { MyContext } from '../../App'
 
 
 export default function Register() {

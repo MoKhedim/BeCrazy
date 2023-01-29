@@ -6,10 +6,9 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
-// Ma partie 
-import Login from './screens/Login';
+
 import { useAsyncStorage } from "./hooks/useAsyncStorage";
-import Register from './screens/Register';
+import ResetPassword from './screens/auth/ResetPassword';
 export const MyContext = createContext({} as any);
 
 export default function App() {
@@ -42,7 +41,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <MyContext.Provider value={getterSetter}>
-          <Register />
+          <ResetPassword />
           <StatusBar />
         </MyContext.Provider>
       </SafeAreaProvider>

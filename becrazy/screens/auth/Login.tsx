@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { TouchableOpacity, StyleSheet } from 'react-native'
-import { Text, View } from '../components/Themed'
+import { Text, View } from '../../components/Themed'
 
-import { Button } from '../components/Button'
-import { TextInput } from '../components/TextInput'
-import Logo from '../components/Logo'
-import { emailValidator } from '../helpers/emailValidator'
-import { passwordValidator } from '../helpers/passwordValidator'
+import { Button } from '../../components/Button'
+import { TextInput } from '../../components/TextInput'
+import Logo from '../../components/Logo'
+import { emailValidator } from '../../helpers/emailValidator'
+import { passwordValidator } from '../../helpers/passwordValidator'
 
 export default function LoginScreen() {
     const [email, setEmail] = useState({ value: '', error: '' })
