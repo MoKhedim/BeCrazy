@@ -1,22 +1,37 @@
 import express, { Request, response, Response } from 'express';
-const { Configuration, OpenAIApi } = require("openai");
+const { MongoClient, ServerApiVersion, Collection, Db, ObjectId } = require('mongodb');
 
-
+//require setup
 var bodyParser = require('body-parser');
-var app = express();
-var port = 3000;
 var bcrypt = require('bcrypt');
-const saltRounds = 10;
-app.use(bodyParser.json());
-
 var axios = require('axios');
 
+//express setup
+var app = express();
+const saltRounds = 10;
+var port = 3000;
+
+//app.use
+app.use(bodyParser.json());
+
+//MONGO DB SETUP
+const uri = "mongodb+srv://Bastien:Bastien975@projetbecrazy.h0ghj.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err: any, client: any) => {
+    if (err) {
+        console.log(err);
+        return;
+    }
+});
+
+
+//openai setup
+const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
     apiKey: "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"
-  });
-  const openai = new OpenAIApi(configuration);
+});
+const openai = new OpenAIApi(configuration);
 
-  async function getCompletion() {
+async function getCompletion() {
     const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: "Donne moi un défi drôle à prendre en photo ou video que quelqun pourrait prendre avec son téléphone en 1 phrase.",
@@ -25,12 +40,12 @@ const configuration = new Configuration({
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
-      });
-        return response.data.choices[0].text;
-    }
+    });
+    return response.data.choices[0].text;
+}
 
-//route with ts type
-app.post('/signup', (req:Request, res:Response) => {
+//routes with ts type
+app.post('/signup', (req: Request, res: Response) => {
     const today = new Date();
     const body = JSON.stringify(req.body);
     console.log(body);
@@ -49,41 +64,6 @@ app.post('/signup', (req:Request, res:Response) => {
         method: 'post',
         url: 'https://data.mongodb-api.com/app/data-diwam/endpoint/data/v1/action/insertOne',
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Request-Headers': '*',
-          'api-key': 'dneyLnyUcz1yBENLpVoHBMDo2rLn0S30yoOv3fVby1r5kFWK889gRSY03dybnrtV',
-          'Accept': 'application/ejson'
-        },
-        data: data
-    };
-    axios(config)
-    .then(function (response:any) {
-        console.log(JSON.stringify(response.data));
-        res.send(response.data);
-    })
-    .catch(function (error:any) {
-        console.log(error);
-        res.send(error);
-    });
-}
-);
-
-app.get('/login', (req:Request, res:Response) => {
-    const body = JSON.stringify(req.body);
-    console.log(body);
-    var data = JSON.stringify({
-        "collection": "users",
-        "database": "BeCrazy",
-        "dataSource": "ProjetBeCrazy",
-        "filter": {
-            "email": req.body.email,
-            "password": req.body.password
-        }
-    });
-    var config = {
-        method: 'post',
-        url: 'https://data.mongodb-api.com/app/data-diwam/endpoint/data/v1/action/find',
-        headers: {
             'Content-Type': 'application/json',
             'Access-Control-Request-Headers': '*',
             'api-key': 'dneyLnyUcz1yBENLpVoHBMDo2rLn0S30yoOv3fVby1r5kFWK889gRSY03dybnrtV',
@@ -91,29 +71,49 @@ app.get('/login', (req:Request, res:Response) => {
         },
         data: data
     };
-
     axios(config)
-    .then(function (response:any) {
-        console.log(JSON.stringify(response.data));
-        res.send(response.data);
-    })
-    .catch(function (error:any) {
-        console.log(error);
-    });
-    }
+        .then(function (response: any) {
+            console.log(JSON.stringify(response.data));
+            res.send(response.data);
+        })
+        .catch(function (error: any) {
+            console.log(error);
+            res.send(error);
+        });
+}
 );
-app.get("/aiChallenge", (req:Request, res:Response) =>{
-    getCompletion().then((response:any) => {
+
+// app.post("/login", async (req: Request, res: Response) => {
+//     try {
+//         await client.connect();
+//         const collection = client.db("BeCrazy").collection("users") as Collection<Users>;
+//         const user = await collection.findOne({ email: req.body.email });
+//         if (!user) {
+//             return res.status(401).json({ message: "Invalid email or password" });
+//         }
+//         if (!compareSync(req.body.password, user.password)) {
+//             return res.status(401).json({ message: "Invalid email or password" });
+//         }
+//         return res.json({ message: "Logged in successfully", user });
+//     } catch (err) {
+//         res.status(500).json({ message: "Error while logging in", error: err });
+//     } finally {
+//         client.close();
+//     }
+// });
+
+app.get("/aiChallenge", (req: Request, res: Response) => {
+    getCompletion().then((response: any) => {
         console.log(response);
         res.send(response);
     }
-    ).catch((error:any) => {
+    ).catch((error: any) => {
         console.log(error);
     }
     );
 });
 
-app.post('/postMedia', (req:Request, res:Response) => {
+app.post('/postMedia', (req: Request, res: Response) => {
     const today = new Date();
     const body = JSON.stringify(req.body);
     console.log(body);
@@ -142,15 +142,39 @@ app.post('/postMedia', (req:Request, res:Response) => {
         data: data
     };
     axios(config)
-    .then(function (response:any) {
-        console.log(JSON.stringify(response.data));
-        res.send(response.data);
-    })
-    .catch(function (error:any) {
-        console.log(error);
-    });
+        .then(function (response: any) {
+            console.log(JSON.stringify(response.data));
+            res.send(response.data);
+        })
+        .catch(function (error: any) {
+            console.log(error);
+        });
 }
 );
+
+app.post('/likeMedia', async (req, res) => {
+    const { id } = req.body;
+    const update = { $inc: { nbLike: 1 } };
+    try {
+        const db: typeof Db = client.db('BeCrazy');
+        const collection = db.collection('allMedia');
+        const result = await collection.findOne({ _id: new ObjectId(id) });
+        if (result) {
+            const result = await collection.updateOne({ _id: new ObjectId(id) }, update);
+            res.send(result);
+        } else {
+            res.send({ status: 'Not Found' });
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+
+
+});
+
+
+
+
 //listen 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
