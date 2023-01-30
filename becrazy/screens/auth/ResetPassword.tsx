@@ -10,6 +10,7 @@ import { RootStackScreenProps } from '../../types'
 export default function ResetPasswordScreen({ navigation }: RootStackScreenProps<'ResetPasswordScreen'>) {
     const [email, setEmail] = useState({ value: '', error: '' })
 
+    // if the email is valid, send the reset password request
     const onResetPressed = () => {
         const emailError = emailValidator(email.value)
         if (emailError) {
@@ -34,6 +35,14 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
             <Button onPress={onResetPressed}>
                 Reset Password
             </Button>
+            <View style={styles.row}>
+                <Text>Remembered your password? </Text>
+                <TouchableOpacity
+                    onPress={() => navigation.replace('LoginScreen')}
+                >
+                    <Text style={styles.link}>Login</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -52,5 +61,13 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 12,
+    },
+    row: {
+        flexDirection: 'row',
+        marginTop: 4,
+    },
+    link: {
+        fontWeight: 'bold',
+        color: '#2e78b7',
     },
 })

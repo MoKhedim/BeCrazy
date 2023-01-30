@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { TouchableOpacity, StyleSheet } from 'react-native'
 import { Text, View } from '../../components/Themed'
 
@@ -8,20 +8,30 @@ import Logo from '../../components/Logo'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { RootStackScreenProps } from '../../types'
+import { MyContext } from '../../App'
 
 export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginScreen'>) {
+    // create state variables for email and password
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
+    const { token, setToken } = useContext(MyContext);
 
+    // create a function to handle the login button press
+    // it will validate the email and password and then log the user in if there are no errors
+    // if there are errors, it will set the error state variables to display the error messages
     const onLoginPressed = () => {
         const emailError = emailValidator(email.value)
         const passwordError = passwordValidator(password.value)
-        console.log(email, password)
         if (emailError || passwordError) {
             setEmail({ ...email, error: emailError })
             setPassword({ ...password, error: passwordError })
             return
         }
+        const data = {
+            email: email.value,
+            password: password.value
+        }
+        console.log(data)
     }
 
     return (
@@ -44,6 +54,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
                 onChangeText={(text: string) => setPassword({ value: text, error: '' })}
                 secureTextEntry
             />
+            {/**Show the error of either email or password */}
             <Text style={styles.error}>{email.error || password.error}</Text>
             <View style={styles.forgotPassword}>
                 <TouchableOpacity

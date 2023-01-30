@@ -18,6 +18,9 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     const { token, setToken } = useContext(MyContext);
 
 
+    // create a function to handle the register button press
+    // it will validate the email and password and then register the user if there are no errors
+    // then navigate to the home page
     const onRegisterPressed = () => {
         const emailError = emailValidator(email.value)
         const passwordError = passwordValidator(password.value)
@@ -30,10 +33,10 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
         }
         const data = {
             email: email.value,
-            password: password.value,
-            passwordConfirm: passwordConfirm.value
+            password: password.value
         }
         console.log(data)
+        navigation.navigate('Root')
     }
 
     return (
