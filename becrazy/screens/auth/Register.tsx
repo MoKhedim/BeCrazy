@@ -12,6 +12,7 @@ import { RootStackScreenProps } from '../../types'
 
 
 export default function RegisterScreen({ navigation }: RootStackScreenProps<'RegisterScreen'>) {
+    const [username, setUsername] = useState({ value: '', error: '' })
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
     const [passwordConfirm, setPasswordConfirm] = useState({ value: '', error: '' })
@@ -21,7 +22,7 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     // create a function to handle the register button press
     // it will validate the email and password and then register the user if there are no errors
     // then navigate to the home page
-    const onRegisterPressed = () => {
+    const onRegisterPressed = async () => {
         const emailError = emailValidator(email.value)
         const passwordError = passwordValidator(password.value)
         const passwordConfirmError = passwordConfirmValidator(password.value, passwordConfirm.value)
@@ -32,17 +33,37 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
             return
         }
         const data = {
+            username: username.value,
             email: email.value,
             password: password.value
         }
-        console.log(data)
-        navigation.navigate('Root')
+        const res = await fetch('http://localhost:3000/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        const json = await res.json()
+        if (json.token) {
+            setToken(json.token)
+            navigation.replace('Root')
+        } else {
+            alert('Something went wrong')
+        }
     }
 
     return (
         <View style={styles.container}>
             <Logo />
             <Text style={styles.title}>Register</Text>
+            <TextInput
+                returnKeyType="next"
+                placeholder='Username'
+                value={username.value}
+                onChangeText={(text: string) => setUsername({ value: text, error: '' })}
+                autoCapitalize="none"
+            />
             <TextInput
                 returnKeyType="next"
                 placeholder='Email'

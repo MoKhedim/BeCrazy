@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
     // create a function to handle the login button press
     // it will validate the email and password and then log the user in if there are no errors
     // if there are errors, it will set the error state variables to display the error messages
-    const onLoginPressed = () => {
+    const onLoginPressed = async () => {
         const emailError = emailValidator(email.value)
         const passwordError = passwordValidator(password.value)
         if (emailError || passwordError) {
@@ -31,7 +31,20 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
             email: email.value,
             password: password.value
         }
-        console.log(data)
+        const res = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        const json = await res.json()
+        if (json.token) {
+            setToken(json.token)
+            navigation.navigate('Root')
+        } else {
+            alert(json.message)
+        }
     }
 
     return (
@@ -58,7 +71,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
             <Text style={styles.error}>{email.error || password.error}</Text>
             <View style={styles.forgotPassword}>
                 <TouchableOpacity
-                onPress={() => navigation.navigate('ResetPasswordScreen')}
+                    onPress={() => navigation.navigate('ResetPasswordScreen')}
                 >
                     <Text style={styles.forgot}>Forgot your password?</Text>
                 </TouchableOpacity>
@@ -69,7 +82,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
             <View style={styles.row}>
                 <Text>Don't have an account? </Text>
                 <TouchableOpacity
-                onPress={() => navigation.replace('RegisterScreen')}
+                    onPress={() => navigation.replace('RegisterScreen')}
                 >
                     <Text style={styles.link}>Sign up</Text>
                 </TouchableOpacity>

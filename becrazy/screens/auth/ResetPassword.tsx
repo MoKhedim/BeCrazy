@@ -11,12 +11,15 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
     const [email, setEmail] = useState({ value: '', error: '' })
 
     // if the email is valid, send the reset password request
-    const onResetPressed = () => {
+    const onResetPressed = async () => {
         const emailError = emailValidator(email.value)
         if (emailError) {
             setEmail({ ...email, error: emailError })
             return
         }
+        /**
+         * TODO: send the reset password request
+         */
     }
 
     return (
