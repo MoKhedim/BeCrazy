@@ -9,6 +9,7 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { RootStackScreenProps } from '../../types'
 import { MyContext } from '../../App'
+import styles from '../../components/auth/StyleSheetForm'
 
 export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginScreen'>) {
     // create state variables for email and password
@@ -90,44 +91,3 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    error: {
-        color: 'red',
-        fontSize: 13,
-        fontWeight: '600',
-        textAlign: 'center',
-        marginBottom: 12,
-    },
-    container: {
-        flex: 1,
-        padding: 20,
-        width: '100%',
-        maxWidth: 340,
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    forgotPassword: {
-        width: '100%',
-        alignItems: 'flex-end',
-        marginBottom: 24,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-    row: {
-        flexDirection: 'row',
-        marginTop: 15,
-    },
-    forgot: {
-        fontSize: 13,
-        color: 'purple',
-    },
-    link: {
-        fontWeight: 'bold',
-        color: 'blue',
-    },
-})

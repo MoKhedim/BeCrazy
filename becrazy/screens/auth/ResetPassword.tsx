@@ -6,6 +6,7 @@ import { TextInput } from '../../components/auth/TextInput'
 import Logo from '../../components/Logo'
 import { emailValidator } from '../../helpers/emailValidator'
 import { RootStackScreenProps } from '../../types'
+import styles from '../../components/auth/StyleSheetForm'
 
 export default function ResetPasswordScreen({ navigation }: RootStackScreenProps<'ResetPasswordScreen'>) {
     const [email, setEmail] = useState({ value: '', error: '' })
@@ -49,28 +50,3 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        width: '100%',
-        maxWidth: 340,
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-    row: {
-        flexDirection: 'row',
-        marginTop: 15,
-    },
-    link: {
-        fontWeight: 'bold',
-        color: 'blue',
-    },
-})
