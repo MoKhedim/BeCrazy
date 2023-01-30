@@ -62,6 +62,7 @@ function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Home"
+      // style commun du header et du navbar
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
         tabBarStyle: { height: 60 },
@@ -94,9 +95,10 @@ function BottomTabNavigator() {
               />
             </Pressable>
             <View style={{ width: 100, marginEnd: 10 }}>
-              <Pressable style={[styles.button, { borderColor: Colors[colorScheme].text }]} onPress={() => alert('work in progress!')}>
+              <Pressable style={[styles.button, { borderColor: Colors[colorScheme].text,
+                backgroundColor: Colors[colorScheme].text }]} onPress={() => alert('work in progress!')}>
                 <Text lightColor="rgba(0,0,0,0.8)"
-                  darkColor="rgba(255,255,255,0.8)" style={styles.text}>Sign up</Text>
+                  darkColor="rgba(255,255,255,0.8)" style={[styles.text, { color: Colors[colorScheme].background}]}>Sign up</Text>
               </Pressable>
             </View>
             <View style={{ width: 80, marginEnd: 60 }}>
@@ -110,6 +112,7 @@ function BottomTabNavigator() {
       }}>
       <BottomTab.Screen
         name="Home"
+        // style unique à chaque tab
         component={HomeScreen}
         options={({ navigation }: RootTabScreenProps<'Home'>) => ({
           title: 'Home',
