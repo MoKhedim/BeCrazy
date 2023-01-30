@@ -104,6 +104,13 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
 }
 
 const styles = StyleSheet.create({
+    error: {
+        color: 'red',
+        fontSize: 13,
+        fontWeight: '600',
+        textAlign: 'center',
+        marginBottom: 12,
+    },
     container: {
         flex: 1,
         padding: 20,
@@ -113,23 +120,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 12,
+    forgotPassword: {
+        width: '100%',
+        alignItems: 'flex-end',
+        marginBottom: 24,
     },
-    error: {
-        color: 'red',
-        fontSize: 14,
-        marginBottom: 4,
-        marginTop: 4,
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 16,
     },
     row: {
         flexDirection: 'row',
-        marginTop: 4,
+        marginTop: 15,
+    },
+    forgot: {
+        fontSize: 13,
+        color: 'purple',
     },
     link: {
         fontWeight: 'bold',
-        color: '#f01d71',
+        color: 'blue',
     },
 })

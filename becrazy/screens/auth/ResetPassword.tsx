@@ -61,16 +61,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 12,
+        marginBottom: 16,
     },
     row: {
         flexDirection: 'row',
-        marginTop: 4,
+        marginTop: 15,
     },
     link: {
         fontWeight: 'bold',
-        color: '#2e78b7',
+        color: 'blue',
     },
 })

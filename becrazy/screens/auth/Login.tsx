@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
-import { TouchableOpacity, StyleSheet } from 'react-native'
-import { Text, View } from '../../components/Themed'
+import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import { Text } from '../../components/Themed'
 
 import { Button } from '../../components/auth/Button'
 import { TextInput } from '../../components/auth/TextInput'
