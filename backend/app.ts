@@ -25,6 +25,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const db: typeof Db = client.db('BeCrazy');
 const collectionAllMedia = db.collection('allMedia');
 const collectionMediaLikes = db.collection('mediaLikes');
+const collectionMediaComments = db.collection('mediaComments');
 
 
 //openai setup
@@ -155,6 +156,13 @@ app.post('/postMedia', (req: Request, res: Response) => {
 }
 );
 
+//route pour likes/unlike les médias
+//http://localhost:3000/likeMedia
+//exemple body:
+// {
+//     "id":"63d2d579f214642039d8ef17",
+//     "username": "password"
+// }
 app.post('/likeMedia', async (req, res) => {
     const { id, username } = req.body;
     const likes = { $inc: { nbLike: 1 } };
@@ -179,6 +187,49 @@ app.post('/likeMedia', async (req, res) => {
     }
 });
 
+
+//route pour commenter les médias
+//http://localhost:3000/commentsMedia
+//exemple body:
+// {
+//     "id":"63d2d579f214642039d8ef17",
+//     "username": "password",
+//     "comment": "ta video est nul"
+// }
+app.post('/commentsMedia', async (req, res) => {
+    const { id, username, comment } = req.body;
+    const addComment = { $inc: { nbComment: 1 } };
+    try {
+        const result1 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, addComment);
+        const result2 = await collectionMediaComments.insertOne({ _id: new ObjectId(id), username, comment });
+        const results = [result1, result2]
+        res.send(results);
+        }
+    catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+//route pour supprimer un commentaire
+//http://localhost:3000/deleteComments
+//exemple body:
+// {
+//     "id":"63d2d579f214642039d8ef17",
+//     "username": "password",
+// }
+app.post('/deleteComments', async (req, res) => {
+    const { id, username} = req.body;
+    const deleteComment = { $inc: { nbComment: -1 } };
+    try {
+        const result1 = await collectionMediaComments.deleteOne({ _id: new ObjectId(id), username });
+        const result2 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, deleteComment);
+        const results = [result1, result2]
+        res.send(results);
+        }
+    catch (err) {
+        res.status(500).send(err);
+    }
+});
 
 //listen 
 app.listen(port, () => {
