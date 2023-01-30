@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     separator: {
         marginVertical: 10,
         height: 1,
-        width: '100%',
+        width: '60%',
     },
     box: {
         alignItems: 'center',
