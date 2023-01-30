@@ -22,6 +22,9 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
         return;
     }
 });
+const db: typeof Db = client.db('BeCrazy');
+const collectionAllMedia = db.collection('allMedia');
+const collectionMediaLikes = db.collection('mediaLikes');
 
 
 //openai setup
@@ -153,26 +156,28 @@ app.post('/postMedia', (req: Request, res: Response) => {
 );
 
 app.post('/likeMedia', async (req, res) => {
-    const { id } = req.body;
-    const update = { $inc: { nbLike: 1 } };
+    const { id, username } = req.body;
+    const likes = { $inc: { nbLike: 1 } };
+    const dislikes = { $inc: { nbLike: -1 } };
     try {
-        const db: typeof Db = client.db('BeCrazy');
-        const collection = db.collection('allMedia');
-        const result = await collection.findOne({ _id: new ObjectId(id) });
-        if (result) {
-            const result = await collection.updateOne({ _id: new ObjectId(id) }, update);
-            res.send(result);
+        const alreadyLike = await collectionMediaLikes.findOne({ _id: new ObjectId(id) }, { username: username });
+        if (alreadyLike) {
+            //si l'utilisateur a déjà liké la photo, on supprime le like dans les 2 tables
+            const result1 = await collectionMediaLikes.deleteOne({ _id: new ObjectId(id), username });
+            const result2 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, dislikes);
+            const results = [result1, result2]
+            res.send(results);
         } else {
-            res.send({ status: 'Not Found' });
+            //sinon on ajoute le like dans les 2 tables
+            const result1 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, likes);
+            const result2 = await collectionMediaLikes.insertOne({ _id: new ObjectId(id), username });
+            const results = [result1, result2]
+            res.send(results);
         }
     } catch (err) {
         res.status(500).send(err);
     }
-
-
 });
-
-
 
 
 //listen 
