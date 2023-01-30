@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { TouchableOpacity, StyleSheet } from 'react-native'
 import { Text, View } from '../../components/Themed'
 
-import { Button } from '../../components/Button'
-import { TextInput } from '../../components/TextInput'
+import { Button } from '../../components/auth/Button'
+import { TextInput } from '../../components/auth/TextInput'
 import Logo from '../../components/Logo'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
+import { RootStackScreenProps } from '../../types'
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginScreen'>) {
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
 
@@ -46,7 +47,7 @@ export default function LoginScreen() {
             <Text style={styles.error}>{email.error || password.error}</Text>
             <View style={styles.forgotPassword}>
                 <TouchableOpacity
-                //onPress={() => navigation.navigate('ResetPasswordScreen')}
+                onPress={() => navigation.navigate('ResetPasswordScreen')}
                 >
                     <Text style={styles.forgot}>Forgot your password?</Text>
                 </TouchableOpacity>
@@ -57,7 +58,7 @@ export default function LoginScreen() {
             <View style={styles.row}>
                 <Text>Don't have an account? </Text>
                 <TouchableOpacity
-                //onPress={() => navigation.replace('RegisterScreen')}
+                onPress={() => navigation.replace('RegisterScreen')}
                 >
                     <Text style={styles.link}>Sign up</Text>
                 </TouchableOpacity>

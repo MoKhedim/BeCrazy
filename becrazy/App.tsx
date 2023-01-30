@@ -8,7 +8,6 @@ import Navigation from './navigation';
 
 
 import { useAsyncStorage } from "./hooks/useAsyncStorage";
-import ResetPassword from './screens/auth/ResetPassword';
 export const MyContext = createContext({} as any);
 
 export default function App() {
@@ -41,7 +40,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <MyContext.Provider value={getterSetter}>
-          <ResetPassword />
+          <Navigation colorScheme={colorScheme} />
           <StatusBar />
         </MyContext.Provider>
       </SafeAreaProvider>

@@ -1,16 +1,17 @@
 import React, { useState, useContext } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from '../../components/Themed'
-import { Button } from '../../components/Button'
-import { TextInput } from '../../components/TextInput'
+import { Button } from '../../components/auth/Button'
+import { TextInput } from '../../components/auth/TextInput'
 import Logo from '../../components/Logo'
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { passwordConfirmValidator } from '../../helpers/passwordConfirmValidator'
 import { MyContext } from '../../App'
+import { RootStackScreenProps } from '../../types'
 
 
-export default function Register() {
+export default function RegisterScreen({ navigation }: RootStackScreenProps<'RegisterScreen'>) {
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
     const [passwordConfirm, setPasswordConfirm] = useState({ value: '', error: '' })
@@ -69,7 +70,7 @@ export default function Register() {
             <View style={styles.row}>
                 <Text>Already have an account? </Text>
                 <TouchableOpacity
-                //onPress={() => navigation.replace('LoginScreen')}
+                onPress={() => navigation.replace('LoginScreen')}
                 >
                     <Text style={styles.link}>Login</Text>
                 </TouchableOpacity>

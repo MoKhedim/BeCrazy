@@ -2,6 +2,7 @@ import { StyleSheet, TextInput as TextInputImport } from 'react-native';
 
 export const TextInput = ({...props }) => {
     return (
+        // props est égal aux props so like style or color or classnames
         <TextInputImport style={style.TextInput} {...props} />
       );
 };

@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from '../../components/Themed'
-import { Button } from '../../components/Button'
-import { TextInput } from '../../components/TextInput'
+import { Button } from '../../components/auth/Button'
+import { TextInput } from '../../components/auth/TextInput'
 import Logo from '../../components/Logo'
 import { emailValidator } from '../../helpers/emailValidator'
+import { RootStackScreenProps } from '../../types'
 
-export default function ResetPassword() {
+export default function ResetPasswordScreen({ navigation }: RootStackScreenProps<'ResetPasswordScreen'>) {
     const [email, setEmail] = useState({ value: '', error: '' })
 
     const onResetPressed = () => {

@@ -2,6 +2,8 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 export const Button = ({ ...props }) => {
     return (
+        // props est égal aux props so like style or color or classnames
+        // props.children est égal au texte entre les balises
         <TouchableOpacity style={style.button} {...props}>
             <Text style={style.buttonTitle}>{props.children}</Text>
         </TouchableOpacity>
