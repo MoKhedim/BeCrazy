@@ -14,7 +14,8 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/profile/ProfileScreen';
+import SettingScreen from '../screens/profile/SettingScreen';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
@@ -42,7 +43,24 @@ function RootNavigator() {
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
 
-      <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ title: "Profile" }} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={({ navigation }) => ({
+        title: "Profile",
+        headerRight: () => (
+          <Pressable
+            onPress={() => navigation.navigate('SettingScreen')}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.5 : 1,
+            })}>
+            <FontAwesome
+              name="gear"
+              size={25}
+              style={{ marginRight: 15 }}
+            />
+          </Pressable>
+        ),
+      })} />
+
+      <Stack.Screen name="SettingScreen" component={SettingScreen} options={{ title: "Setting" }} />
 
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />

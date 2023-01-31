@@ -1,23 +1,9 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Image, ImageBackground } from "react-native";
-import { Text } from "../components/Themed";
-import { RootStackScreenProps } from "../types";
-
-interface Post {
-    title: string;
-    description: string;
-    image: string;
-    likes: number;
-    comments: number;
-    date: string;
-}
-
-interface UserInfo {
-    username: string;
-    followers: number;
-    following: number;
-    posts: Array<Post>;
-}
+import { View, StyleSheet, Image, ImageBackground, TouchableOpacity } from "react-native";
+import { Text } from "../../components/Themed";
+import { RootStackScreenProps } from "../../types";
+import Post from "../../interfaces/Post";
+import UserInfo from "../../interfaces/UserInfo";
 
 
 export default function ProfileScreen({ navigation }: RootStackScreenProps<'ProfileScreen'>) {
@@ -85,9 +71,13 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                 <View style={styles.columns}>
                     {userInfo.posts.map((post, index) => (
                         <View key={index} style={styles.column}>
-                            <ImageBackground style={styles.image} source={{ uri: post.image }}>
-                                <Text style={styles.likes}>♥ {post.likes}</Text>
-                            </ImageBackground>
+                            <TouchableOpacity onPress={() => console.log('navigation.navigate("PostScreen")')}>
+                                <ImageBackground
+                                    style={styles.image}
+                                    source={{ uri: post.image }}>
+                                    <Text style={styles.likes}>♥ {post.likes}</Text>
+                                </ImageBackground>
+                            </TouchableOpacity>
                         </View>
                     ))}
                 </View>
@@ -125,6 +115,8 @@ const styles = StyleSheet.create({
     stat: {
         marginRight: 20,
     },
+
+
 
     columns: {
         flexDirection: "row",
