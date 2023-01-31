@@ -86,7 +86,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
                 <TouchableOpacity
                     onPress={() => navigation.replace('RegisterScreen')}
                 >
-                    <Text style={styles.link}>Sign up</Text>
+                    <Text style={styles.link}>Register</Text>
                 </TouchableOpacity>
             </View>
         </View>

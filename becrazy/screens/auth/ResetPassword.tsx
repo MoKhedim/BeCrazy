@@ -39,14 +39,6 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
             <Button onPress={onResetPressed}>
                 Reset Password
             </Button>
-            <View style={styles.row}>
-                <Text>Remembered your password? </Text>
-                <TouchableOpacity
-                    onPress={() => navigation.replace('LoginScreen')}
-                >
-                    <Text style={styles.link}>Login</Text>
-                </TouchableOpacity>
-            </View>
         </View>
     )
 }

@@ -34,10 +34,11 @@ export default StyleSheet.create({
     },
     forgot: {
         fontSize: 13,
-        color: 'purple',
+        color: '#2e64e5',
+        textDecorationLine: 'underline',
     },
     link: {
         fontWeight: 'bold',
-        color: 'blue',
+        color: '#2e64e5',
     },
 });

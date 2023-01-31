@@ -12,13 +12,13 @@ export const Button = ({ ...props }) => {
 
 const style = StyleSheet.create({
     button: {
-        backgroundColor: '#E31676',
+        backgroundColor: '#2e64e5',
         borderRadius: 10,
         height: 48,
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        shadowColor: '#E31676',
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.25,
         shadowRadius: 8,
