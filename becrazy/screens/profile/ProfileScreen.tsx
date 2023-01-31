@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, Image, ImageBackground, TouchableOpacity } from "react-native";
 import { Text } from "../../components/Themed";
 import { RootStackScreenProps } from "../../types";
 import { FontAwesome } from '@expo/vector-icons';
 import Post from "../../interfaces/Post";
 import UserInfo from "../../interfaces/UserInfo";
+import { useImagePicker } from "../../hooks/useImagePicker";
 
 
 export default function ProfileScreen({ navigation }: RootStackScreenProps<'ProfileScreen'>) {
     //const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
+    //const { token } =  useContext(MyContext);
+    const { pickImage } = useImagePicker();
 
     // create a fake user info
     const userInfo: UserInfo = {
@@ -54,7 +57,13 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
     /*
     useEffect(() => {
         const getUserInfo = async () => {
-            const res = await fetch("localhost:3000/user");
+            const res = await fetch("localhost:3000/user/profile", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
             const data = await res.json();
             setUserInfo(data);
         }
@@ -69,7 +78,7 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
             <View style={styles.container}>
                 <View style={styles.header}>
                     <ImageBackground imageStyle={{ borderRadius: 50, }} style={styles.avatar} source={{ uri: "https://i.pravatar.cc/300" }} >
-                        <TouchableOpacity onPress={() => console.log('navigation.navigate("Upload profile pic")')}>
+                        <TouchableOpacity onPress={() => pickImage()}>
                             <FontAwesome
                                 name="camera"
                                 size={76}
