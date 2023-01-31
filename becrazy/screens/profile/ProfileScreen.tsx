@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, StyleSheet, Image, ImageBackground, TouchableOpacity } from "react-native";
 import { Text } from "../../components/Themed";
 import { RootStackScreenProps } from "../../types";
+import { FontAwesome } from '@expo/vector-icons';
 import Post from "../../interfaces/Post";
 import UserInfo from "../../interfaces/UserInfo";
 
@@ -38,6 +39,14 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                 likes: 300,
                 comments: 30,
                 date: "2021-01-03",
+            },
+            {
+                title: "Post 4",
+                description: "This is the fourth post",
+                image: "https://i.pravatar.cc/300",
+                likes: 400,
+                comments: 40,
+                date: "2021-01-04",
             }
         ]
     }
@@ -59,7 +68,16 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
         userInfo && (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Image style={styles.avatar} source={{ uri: "https://i.pravatar.cc/300" }} />
+                    <ImageBackground imageStyle={{ borderRadius: 50, }} style={styles.avatar} source={{ uri: "https://i.pravatar.cc/300" }} >
+                        <TouchableOpacity onPress={() => console.log('navigation.navigate("Upload profile pic")')}>
+                            <FontAwesome
+                                name="camera"
+                                size={76}
+                                color="white"
+                                style={styles.camera}
+                            />
+                        </TouchableOpacity>
+                    </ImageBackground>
                     <View style={styles.headerInfo}>
                         <Text style={styles.username}>{userInfo.username}</Text>
                         <View style={styles.stats}>
@@ -86,6 +104,7 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
     );
 }
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -99,7 +118,6 @@ const styles = StyleSheet.create({
     avatar: {
         width: 100,
         height: 100,
-        borderRadius: 50,
     },
     headerInfo: {
         marginLeft: 20,
@@ -139,6 +157,18 @@ const styles = StyleSheet.create({
         textShadowColor: "rgba(0, 0, 0, 0.75)",
         textShadowOffset: { width: -1, height: 1 },
         textShadowRadius: 10,
+    },
+
+
+
+    camera: {
+        position: "absolute",
+        right: 0,
+        top: 3.5,
+        backgroundColor: "#000",
+        borderRadius: 50,
+        padding: 10,
+        opacity: 0.3,
     },
 });
 
