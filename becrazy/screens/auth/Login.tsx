@@ -16,7 +16,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
     // create state variables for email and password
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
-    const { token, setToken } = useContext(MyContext);
+    const { setToken } = useContext(MyContext);
 
     // create a function to handle the login button press
     // it will validate the email and password and then log the user in if there are no errors

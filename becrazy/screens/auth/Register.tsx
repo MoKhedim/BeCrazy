@@ -14,11 +14,12 @@ import RegisterUser from '../../interfaces/auth/RegisterUser'
 
 
 export default function RegisterScreen({ navigation }: RootStackScreenProps<'RegisterScreen'>) {
+    // set the initial state of the form
     const [username, setUsername] = useState({ value: '', error: '' })
     const [email, setEmail] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
     const [passwordConfirm, setPasswordConfirm] = useState({ value: '', error: '' })
-    const { token, setToken } = useContext(MyContext);
+    const { setToken } = useContext(MyContext);
 
 
     // create a function to handle the register button press

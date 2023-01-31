@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 
+// This is the style sheet for the form components of the auth screens
 export default StyleSheet.create({
     error: {
         color: 'red',
