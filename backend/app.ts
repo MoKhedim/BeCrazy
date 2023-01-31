@@ -52,44 +52,42 @@ async function getCompletion() {
     return response.data.choices[0].text;
 }
 
-//routes with ts type
-app.post('/signup', (req: Request, res: Response) => {
+//route pour sign up
+//http://localhost:3000/signup
+//exemple body :
+// {
+//     "username":"password2",
+//     "email": "password2@password.com",
+//     "password": "password2"
+// }
+app.post('/signup', async (req: Request, res: Response) => {
     const today = new Date();
-    const body = JSON.stringify(req.body);
-    console.log(body);
-    var data = JSON.stringify({
-        "collection": "users",
-        "database": "BeCrazy",
-        "dataSource": "ProjetBeCrazy",
-        "document": {
-            "username": req.body.username,
-            "email": req.body.email,
-            "password": bcrypt.hashSync(req.body.password, saltRounds),
-            "created": today
+    const { username, email } = req.body;
+    const password = bcrypt.hashSync(req.body.password, saltRounds);
+    try {
+        const verifEmail = await collectionUsers.findOne({ email: req.body.email });
+        if (verifEmail) {
+            res.send("email already exist");
+        } else {
+            const verifUsername = await collectionUsers.findOne({ username: req.body.username });
+            if (verifUsername) {
+                res.send("username already exist");
+            } else {
+                const result = await collectionUsers.insertOne({ username, email, password, created: today, token: "", nbFollows: 0, nbFollowers: 0 });
+                if (result) {
+                    res.send("user created");
+                } else {
+                    res.send("user not created");
+                }
+            }
         }
-    });
-    var config = {
-        method: 'post',
-        url: 'https://data.mongodb-api.com/app/data-diwam/endpoint/data/v1/action/insertOne',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Request-Headers': '*',
-            'api-key': 'dneyLnyUcz1yBENLpVoHBMDo2rLn0S30yoOv3fVby1r5kFWK889gRSY03dybnrtV',
-            'Accept': 'application/ejson'
-        },
-        data: data
-    };
-    axios(config)
-        .then(function (response: any) {
-            console.log(JSON.stringify(response.data));
-            res.send(response.data);
-        })
-        .catch(function (error: any) {
-            console.log(error);
-            res.send(error);
-        });
-}
-);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+
+
 
 //route pour se connecter
 //http://localhost:3000/login
