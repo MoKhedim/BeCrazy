@@ -10,6 +10,7 @@ import { passwordValidator } from '../../helpers/passwordValidator'
 import { RootStackScreenProps } from '../../types'
 import { MyContext } from '../../App'
 import styles from '../../components/auth/StyleSheetForm'
+import LoginUser from '../../interfaces/auth/LoginUser'
 
 export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginScreen'>) {
     // create state variables for email and password
@@ -28,7 +29,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
             setPassword({ ...password, error: passwordError })
             return
         }
-        const data = {
+        const data: LoginUser = {
             email: email.value,
             password: password.value
         }

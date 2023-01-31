@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import { Text } from '../../components/Themed'
 import { Button } from '../../components/auth/Button'
 import { TextInput } from '../../components/auth/TextInput'
@@ -10,6 +10,7 @@ import { passwordConfirmValidator } from '../../helpers/passwordConfirmValidator
 import { MyContext } from '../../App'
 import { RootStackScreenProps } from '../../types'
 import styles from '../../components/auth/StyleSheetForm'
+import RegisterUser from '../../interfaces/auth/RegisterUser'
 
 
 export default function RegisterScreen({ navigation }: RootStackScreenProps<'RegisterScreen'>) {
@@ -33,10 +34,10 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
             setPasswordConfirm({ ...passwordConfirm, error: passwordConfirmError })
             return
         }
-        const data = {
+        const data: RegisterUser = {
             username: username.value,
             email: email.value,
-            password: password.value
+            password: password.value,
         }
         const res = await fetch('http://localhost:3000/signup', {
             method: 'POST',
