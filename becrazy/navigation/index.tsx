@@ -17,10 +17,10 @@ import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import HomeScreen from '../screens/HomeScreen';
-import FeedPage from '../screens/FeedPage';
 import DiscoverScreen from '../screens/DiscoverScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import FeedScreen from '../screens/FeedScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -69,7 +69,7 @@ function BottomTabNavigator() {
         tabBarIconStyle: { marginTop: 10 },
         tabBarLabelStyle: { marginBottom: 10 },
         tabBarLabelPosition: 'below-icon',
-        headerTitleStyle: { fontSize: 30, fontWeight: 'bold' },
+        headerTitleStyle: { fontSize: 24, fontWeight: 'bold' },
         headerLeft: () => (
           <Image source={
             // app icon placeholder
@@ -77,34 +77,19 @@ function BottomTabNavigator() {
               width: 50,
               height: 50,
               borderRadius: 50,
-              marginStart: 60,
+              marginStart: 10,
             }} />
         ),
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
-            <Pressable
-              onPress={() => alert('need to login to post!')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <MaterialIcons
-                name="post-add"
-                size={28}
-                color={Colors[colorScheme].text}
-                style={{ marginEnd: 20, paddingTop: 5 }}
-              />
-            </Pressable>
-            <View style={{ width: 100, marginEnd: 10 }}>
-              <Pressable style={[styles.button, { borderColor: Colors[colorScheme].text,
-                backgroundColor: Colors[colorScheme].text }]} onPress={() => alert('work in progress!')}>
-                <Text lightColor="rgba(0,0,0,0.8)"
-                  darkColor="rgba(255,255,255,0.8)" style={[styles.text, { color: Colors[colorScheme].background}]}>Sign up</Text>
+            <View >
+              <Pressable style={{ marginEnd: 20 }} onPress={() => alert('work in progress!')}>
+                <MaterialIcons name='login' size={28} color={Colors[colorScheme].text} />
               </Pressable>
             </View>
-            <View style={{ width: 80, marginEnd: 60 }}>
-              <Pressable style={[styles.button, { borderColor: Colors[colorScheme].text }]} onPress={() => alert('work in progress!')}>
-                <Text lightColor="rgba(0,0,0,0.8)"
-                  darkColor="rgba(255,255,255,0.8)" style={styles.text}>Login</Text>
+            <View >
+              <Pressable style={{ marginEnd: 20 }} onPress={() => alert('work in progress!')}>
+                <MaterialIcons name='group-add' size={28} color={Colors[colorScheme].text} />
               </Pressable>
             </View>
           </View>
@@ -121,9 +106,9 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="FeedPage"
-        component={FeedPage}
-        options={({ navigation }: RootTabScreenProps<'FeedPage'>) => ({
+        name="Feed"
+        component={FeedScreen}
+        options={({ navigation }: RootTabScreenProps<'Feed'>) => ({
           title: 'Feed',
           headerTitle: 'BeCrazy  |  Feed',
           tabBarIcon: ({ color }) => <MaterialIcons name="dynamic-feed" size={28} color={color} />,

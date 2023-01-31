@@ -32,7 +32,7 @@ export function Media(props: allMedia) {
     }
 
     return (
-        <View style={styles.container}>
+        <>
             {
                 // error with react-native-video
                 //<Video source={require('../assets/videos/test.mp4')} onError={(error) => console.log(error)}/>
@@ -47,7 +47,7 @@ export function Media(props: allMedia) {
                         marginTop: 25,
                         right: 12,
                     }} />
-                <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1 }}>
+                <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1, marginEnd: 5 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.username}</Text>
                         <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.created}</Text>
@@ -68,7 +68,7 @@ export function Media(props: allMedia) {
                 </View>
             </View>
             <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        </View>
+        </>
     )
 }
 
@@ -94,8 +94,9 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderWidth: 1,
         padding: 10,
-        width: 350,
-        height: 550,
+        width: "100%",
+        maxWidth: 350,
+        aspectRatio: 3 / 5,
         marginTop: 5,
     },
     name: {
