@@ -1,11 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
-import { Image, Button, ScrollView } from 'react-native';
-import Video from 'react-native-video';
-import Colors from '../constants/Colors';
-import { FontAwesome } from '@expo/vector-icons';
+import { ScrollView } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
 import { Media, allMedia } from '../components/Media';
 import { useState } from 'react';
@@ -13,14 +9,16 @@ import { useState } from 'react';
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'FeedPage'>) {
     const colorScheme = useColorScheme();
     const desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum tristique est, eget maximus felis sagittis at. Phasellus eu finibus odio, vitae tincidunt nisl."
+    // array de posts par les users
     const [posts, setPosts] = useState<Array<allMedia>>([
         { id: '1', username: 'Deadass', source: '', description: desc, nbLike: 0, created: '01/31/2023' },
-        { id: '2', username: 'nihaoma', source: '', description: desc, nbLike: 0, created: '01/30/2023' }
+        { id: '2', username: 'nihaoma', source: '', description: desc, nbLike: 0, created: '01/23/2023' }
     ])
 
     return (
         <ScrollView>
             {
+                // afficher tous les médias postés
                 posts?.map((post) =>
                     <Media id={post.id} username={post.username} key={post.id}
                     source={post.source} description={post.description}
