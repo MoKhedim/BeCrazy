@@ -5,33 +5,27 @@ import { RootTabScreenProps } from '../types';
 import { Image, Button, ScrollView } from 'react-native';
 import Video from 'react-native-video';
 import Colors from '../constants/Colors';
+import { FontAwesome } from '@expo/vector-icons';
 import useColorScheme from '../hooks/useColorScheme';
+import { Media, allMedia } from '../components/Media';
+import { useState } from 'react';
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'FeedPage'>) {
     const colorScheme = useColorScheme();
+    const desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum tristique est, eget maximus felis sagittis at. Phasellus eu finibus odio, vitae tincidunt nisl."
+    const [posts, setPosts] = useState<Array<allMedia>>([
+        { id: '1', username: 'Deadass', source: '', description: desc, nbLike: 0, created: '01/31/2023' },
+        { id: '2', username: 'nihaoma', source: '', description: desc, nbLike: 0, created: '01/30/2023' }
+    ])
 
     return (
         <ScrollView>
-            <View style={styles.container}>
-                {
-                    // error with react-native-video
-                    //<Video source={require('../assets/videos/test.mp4')} onError={(error) => console.log(error)}/>
-                }
-                <View style={{ flexDirection: 'row' }}>
-                    <Image source={
-                        // user icon placeholder
-                        require('../assets/images/icon.png')} style={{
-                            width: 50,
-                            height: 50,
-                            borderRadius: 50,
-                            marginTop: 25
-                        }} />
-                    <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 41, marginHorizontal: 10 }]}>User1</Text>
-                    <Text style={[styles.username, { color: Colors[colorScheme].text, marginTop: 42, marginEnd: 160, }]}>@username</Text>
-                </View>
-                <View style={[styles.box, { backgroundColor: Colors[colorScheme].text }]} />
-                <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-            </View>
+            {
+                posts?.map((post) =>
+                    <Media id={post.id} username={post.username} key={post.id}
+                    source={post.source} description={post.description}
+                    nbLike={post.nbLike} created={post.created} />)
+            }
         </ScrollView>
     );
 }
@@ -60,15 +54,19 @@ const styles = StyleSheet.create({
         padding: 10,
         width: 350,
         height: 550,
-        marginTop: 10,
+        marginTop: 5,
     },
     name: {
         fontSize: 14,
         fontFamily: 'Century Gothic',
         fontWeight: 'bold',
     },
-    username: {
-        fontSize: 12,
-        fontFamily: 'Century Gothic',
+    desc: {
+        fontSize: 14,
+        textAlign: 'justify'
+    },
+    icon: {
+        marginEnd: 10,
+        maxHeight: 24,
     }
 });
