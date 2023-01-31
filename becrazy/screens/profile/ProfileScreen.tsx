@@ -3,7 +3,6 @@ import { View, StyleSheet, Image, ImageBackground, TouchableOpacity } from "reac
 import { Text } from "../../components/Themed";
 import { RootStackScreenProps } from "../../types";
 import { FontAwesome } from '@expo/vector-icons';
-import Post from "../../interfaces/Post";
 import UserInfo from "../../interfaces/UserInfo";
 import { useImagePicker } from "../../hooks/useImagePicker";
 
@@ -54,6 +53,8 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
         ]
     }
 
+    // get the user info from the server
+    // at the start of the page
     /*
     useEffect(() => {
         const getUserInfo = async () => {
