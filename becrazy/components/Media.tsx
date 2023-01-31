@@ -19,8 +19,8 @@ export interface allMedia {
 export function Media(props: allMedia) {
     const colorScheme = useColorScheme();
     type IconName = 'heart-o' | 'heart';
-    const [iconName, setIconName]= useState<IconName>('heart-o')
-    const [likes, setLikes]= useState(props.nbLike)
+    const [iconName, setIconName] = useState<IconName>('heart-o')
+    const [likes, setLikes] = useState(props.nbLike)
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
@@ -48,7 +48,10 @@ export function Media(props: allMedia) {
                         right: 12,
                     }} />
                 <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1 }}>
-                    <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.username}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.username}</Text>
+                        <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.created}</Text>
+                    </View>
                     <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
                         {props.description}
                     </Text>
