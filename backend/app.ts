@@ -5,6 +5,9 @@ const { MongoClient, ServerApiVersion, Collection, Db, ObjectId } = require('mon
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
 var axios = require('axios');
+const jwt = require("jsonwebtoken");
+
+const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";
 
 //express setup
 var app = express();
@@ -26,6 +29,7 @@ const db: typeof Db = client.db('BeCrazy');
 const collectionAllMedia = db.collection('allMedia');
 const collectionMediaLikes = db.collection('mediaLikes');
 const collectionMediaComments = db.collection('mediaComments');
+const collectionUsers = db.collection('users');
 
 
 //openai setup
@@ -87,24 +91,36 @@ app.post('/signup', (req: Request, res: Response) => {
 }
 );
 
-// app.post("/login", async (req: Request, res: Response) => {
-//     try {
-//         await client.connect();
-//         const collection = client.db("BeCrazy").collection("users") as Collection<Users>;
-//         const user = await collection.findOne({ email: req.body.email });
-//         if (!user) {
-//             return res.status(401).json({ message: "Invalid email or password" });
-//         }
-//         if (!compareSync(req.body.password, user.password)) {
-//             return res.status(401).json({ message: "Invalid email or password" });
-//         }
-//         return res.json({ message: "Logged in successfully", user });
-//     } catch (err) {
-//         res.status(500).json({ message: "Error while logging in", error: err });
-//     } finally {
-//         client.close();
-//     }
-// });
+//route pour se connecter
+//http://localhost:3000/login
+//exemple body :
+// {
+//     "email": "password@password.com",
+//     "password": "password"
+// }
+app.post("/login", async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    try {
+        const user = await collectionUsers.findOne({ email: email });
+        if (user) {
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                const payload = { id: user._id };
+                const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+                const updatetoken = await collectionUsers.findOneAndUpdate({ email: email }, { $set: { token: token } });
+                if (updatetoken) {
+                    res.send({ message: "Successfully logged in", token: token });
+                }
+            } else {
+                res.send("wrong password");
+            }
+        } else {
+            res.send("wrong email");
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
 
 app.get("/aiChallenge", (req: Request, res: Response) => {
     getCompletion().then((response: any) => {
@@ -204,7 +220,7 @@ app.post('/commentsMedia', async (req, res) => {
         const result2 = await collectionMediaComments.insertOne({ _id: new ObjectId(id), username, comment });
         const results = [result1, result2]
         res.send(results);
-        }
+    }
     catch (err) {
         res.status(500).send(err);
     }
@@ -218,14 +234,14 @@ app.post('/commentsMedia', async (req, res) => {
 //     "username": "password",
 // }
 app.post('/deleteComments', async (req, res) => {
-    const { id, username} = req.body;
+    const { id, username } = req.body;
     const deleteComment = { $inc: { nbComment: -1 } };
     try {
         const result1 = await collectionMediaComments.deleteOne({ _id: new ObjectId(id), username });
         const result2 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, deleteComment);
         const results = [result1, result2]
         res.send(results);
-        }
+    }
     catch (err) {
         res.status(500).send(err);
     }
