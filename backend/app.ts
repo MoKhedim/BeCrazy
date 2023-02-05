@@ -271,6 +271,21 @@ app.post("/verifCode/:email", async (req: Request, res: Response) => {
     }
 });
 
+//route pour obtenir le top 10 des médias ayant eu le plus de like dans la journée en cours.
+app.get('/top10media', async (req: Request, res: Response) => {
+    const today = new Date();
+    const date = today.toISOString().substr(0, 10);
+    try {
+        const result = await collectionAllMedia.find({ created: { $regex: `^${date}` } }).sort({ nbLike: -1 }).limit(10).toArray();
+        res.send(result);
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+
+
 
 
 
