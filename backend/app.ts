@@ -1,4 +1,5 @@
 import express, { Request, response, Response } from 'express';
+import { codeGenerator, html, transporter } from './forgetpassword/index';
 const { MongoClient, ServerApiVersion, Collection, Db, ObjectId } = require('mongodb');
 
 //require setup
@@ -87,8 +88,6 @@ app.post('/signup', async (req: Request, res: Response) => {
 });
 
 
-
-
 //route pour se connecter
 //http://localhost:3000/login
 //exemple body :
@@ -131,44 +130,7 @@ app.get("/aiChallenge", (req: Request, res: Response) => {
     );
 });
 
-app.post('/postMedia', (req: Request, res: Response) => {
-    const today = new Date();
-    const body = JSON.stringify(req.body);
-    console.log(body);
-    var data = JSON.stringify({
-        "collection": "allMedia",
-        "database": "BeCrazy",
-        "dataSource": "ProjetBeCrazy",
-        "document": {
-            "username": req.body.username,
-            "source": req.body.source,
-            "description": req.body.description,
-            "nbLike": 0,
-            "nbComment": 0,
-            "created": today
-        }
-    });
-    var config = {
-        method: 'post',
-        url: 'https://data.mongodb-api.com/app/data-diwam/endpoint/data/v1/action/insertOne',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Request-Headers': '*',
-            'api-key': 'dneyLnyUcz1yBENLpVoHBMDo2rLn0S30yoOv3fVby1r5kFWK889gRSY03dybnrtV',
-            'Accept': 'application/ejson'
-        },
-        data: data
-    };
-    axios(config)
-        .then(function (response: any) {
-            console.log(JSON.stringify(response.data));
-            res.send(response.data);
-        })
-        .catch(function (error: any) {
-            console.log(error);
-        });
-}
-);
+
 
 //route pour likes/unlike les médias
 //http://localhost:3000/likeMedia
@@ -177,7 +139,7 @@ app.post('/postMedia', (req: Request, res: Response) => {
 //     "id":"63d2d579f214642039d8ef17",
 //     "username": "password"
 // }
-app.post('/likeMedia', async (req, res) => {
+app.post('/likeMedia', async (req: Request, res: Response) => {
     const { id, username } = req.body;
     const likes = { $inc: { nbLike: 1 } };
     const dislikes = { $inc: { nbLike: -1 } };
@@ -210,7 +172,7 @@ app.post('/likeMedia', async (req, res) => {
 //     "username": "password",
 //     "comment": "ta video est nul"
 // }
-app.post('/commentsMedia', async (req, res) => {
+app.post('/commentsMedia', async (req: Request, res: Response) => {
     const { id, username, comment } = req.body;
     const addComment = { $inc: { nbComment: 1 } };
     try {
@@ -231,7 +193,7 @@ app.post('/commentsMedia', async (req, res) => {
 //     "id":"63d2d579f214642039d8ef17",
 //     "username": "password",
 // }
-app.post('/deleteComments', async (req, res) => {
+app.post('/deleteComments', async (req: Request, res: Response) => {
     const { id, username } = req.body;
     const deleteComment = { $inc: { nbComment: -1 } };
     try {
@@ -244,6 +206,73 @@ app.post('/deleteComments', async (req, res) => {
         res.status(500).send(err);
     }
 });
+
+
+//route pour mdp oublié
+//http://localhost:3000/forgotpassword
+//exemple body:
+// {
+//     "email": "password@password.com"
+// }
+//route pour vérifier si le email existe vraiment dans la BD.
+app.post("/forgotpassword", async (req: Request, res: Response) => {
+    const email = req.body.email;
+
+    var mailOptions = {
+        from: 'becrazy815@gmail.com',
+        to: `${email}`,
+        subject: 'Verification code',
+        text: `CODE : ${codeGenerator}`,
+        html: `${html}`
+    }
+    try {
+        const verifEmailExist = await collectionUsers.findOne({ email: email });
+        if (verifEmailExist) {
+            transporter.sendMail(mailOptions, function (error: Error, info: any) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+            res.status(200).json({ message: "Email envoyé avec succes!" })
+        } else {
+            res.status(400).json({ message: "Email non existant." })
+        }
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+});
+//route pour vérifié si le code correspond au code envoyé VIA email.
+//http://localhost:3000/verifCode/bastiencambray975@gmail.com
+// {
+//     "code": "28508",
+//     "newpassword": "password"
+// }
+app.post("/verifCode/:email", async (req: Request, res: Response) => {
+    const code = req.body.code;
+    const newpassword = bcrypt.hashSync(req.body.newpassword, saltRounds);
+    const email = req.params.email;
+    if (code == codeGenerator) {
+        try {
+            const result = await collectionUsers.findOneAndUpdate({ email: email }, { $set: { password: newpassword } });
+            if (result.value) {
+                res.status(200).json({ message: "Mot de passe modifié avec succes!", result });
+            } else {
+                res.status(400).json({ message: "Erreur lors de la modification du mot de passe.", result });
+            }
+        }
+        catch (err) {
+            res.status(500).send(err);
+        }
+    } else {
+        res.status(400).json({ message: "Code incorrect." })
+    }
+});
+
+
+
 
 //listen 
 app.listen(port, () => {
