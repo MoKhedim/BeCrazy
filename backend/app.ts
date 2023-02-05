@@ -146,16 +146,22 @@ app.post('/likeMedia', async (req: Request, res: Response) => {
         const alreadyLike = await collectionMediaLikes.findOne({ _id: new ObjectId(id) }, { username: username });
         if (alreadyLike) {
             //si l'utilisateur a déjà liké la photo, on supprime le like dans les 2 tables
-            const result1 = await collectionMediaLikes.deleteOne({ _id: new ObjectId(id), username });
-            const result2 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, dislikes);
-            const results = [result1, result2]
-            res.send(results);
+            const result1 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, dislikes);
+            if (result1.value) {
+                const result2 = await collectionMediaLikes.deleteOne({ _id: new ObjectId(id), username });
+                res.status(200).json({ message: "Succès!", result1, result2 });
+            } else {
+                res.status(400).json({ message: "Erreur!", result1 });
+            }
         } else {
             //sinon on ajoute le like dans les 2 tables
             const result1 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, likes);
-            const result2 = await collectionMediaLikes.insertOne({ _id: new ObjectId(id), username });
-            const results = [result1, result2]
-            res.send(results);
+            if (result1.value) {
+                const result2 = await collectionMediaLikes.insertOne({ _id: new ObjectId(id), username });
+                res.status(200).json({ message: "Succès!", result1, result2 });
+            } else {
+                res.status(400).json({ message: "Erreur!", result1 });
+            }
         }
     } catch (err) {
         res.status(500).send(err);
@@ -176,9 +182,12 @@ app.post('/commentsMedia', async (req: Request, res: Response) => {
     const addComment = { $inc: { nbComment: 1 } };
     try {
         const result1 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, addComment);
-        const result2 = await collectionMediaComments.insertOne({ _id: new ObjectId(id), username, comment });
-        const results = [result1, result2]
-        res.send(results);
+        if (result1.value) {
+            const result2 = await collectionMediaComments.insertOne({ _id: new ObjectId(id), username, comment });
+            res.status(200).json({ message: "Succès!", result1, result2 });
+        } else {
+            res.status(400).json({ message: "Erreur!", result1 });
+        }
     }
     catch (err) {
         res.status(500).send(err);
@@ -196,10 +205,14 @@ app.post('/deleteComments', async (req: Request, res: Response) => {
     const { id, username } = req.body;
     const deleteComment = { $inc: { nbComment: -1 } };
     try {
-        const result1 = await collectionMediaComments.deleteOne({ _id: new ObjectId(id), username });
-        const result2 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, deleteComment);
-        const results = [result1, result2]
-        res.send(results);
+        const result1 = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(id) }, deleteComment);
+        if (result1.value) {
+            const result2 = await collectionMediaComments.deleteOne({ _id: new ObjectId(id), username });
+            res.status(200).json({ message: "Succès!", result1, result2 });
+        } else {
+            res.status(400).json({ message: "Erreur", result1 });
+        }
+
     }
     catch (err) {
         res.status(500).send(err);
@@ -243,6 +256,9 @@ app.post("/forgotpassword", async (req: Request, res: Response) => {
         res.status(500).send(err);
     }
 });
+
+
+
 //route pour vérifié si le code correspond au code envoyé VIA email.
 //http://localhost:3000/verifCode/bastiencambray975@gmail.com
 // {
