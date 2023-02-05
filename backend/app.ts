@@ -5,7 +5,6 @@ const { MongoClient, ServerApiVersion, Collection, Db, ObjectId } = require('mon
 //require setup
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
-var axios = require('axios');
 const jwt = require("jsonwebtoken");
 
 const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";
@@ -272,6 +271,7 @@ app.post("/verifCode/:email", async (req: Request, res: Response) => {
 });
 
 //route pour obtenir le top 10 des médias ayant eu le plus de like dans la journée en cours.
+// http://localhost:3000/top10media
 app.get('/top10media', async (req: Request, res: Response) => {
     const today = new Date();
     const date = today.toISOString().substr(0, 10);
@@ -284,8 +284,31 @@ app.get('/top10media', async (req: Request, res: Response) => {
     }
 });
 
+//route pour rechercher un user par une partie de son username
+//http://localhost:3000/searchUser/bas
+app.get('/searchUser/:username', async (req: Request, res: Response) => {
+    const username = req.params.username;
+    try {
+        const result = await collectionUsers.find({ username: { $regex: `^${username}` } }).toArray();
+        res.send(result);
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+});
 
-
+//route pour rechercher un user par une partie de son username
+//http://localhost:3000/userProfil/bastien
+app.get('/userProfil/:username', async (req: Request, res: Response) => {
+    const username = req.params.username;
+    try {
+        const result = await collectionUsers.find({ username: username  }).toArray();
+        res.send(result);
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
+});
 
 
 
