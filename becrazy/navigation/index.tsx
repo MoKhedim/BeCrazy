@@ -14,6 +14,9 @@ import { Text } from '../components/Themed';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
+import LoginScreen from '../screens/auth/Login';
+import RegisterScreen from '../screens/auth/Register';
+import ResetPasswordScreen from '../screens/auth/ResetPassword';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
@@ -46,6 +49,11 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      
+      <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'Login' }} />
+      <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: 'Register' }} />
+      <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ title: 'Reset Password' }} />
+
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
 
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={({ navigation }) => ({
