@@ -1,16 +1,20 @@
 import { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, Image, ImageBackground, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
+import { useColorScheme } from "react-native";
 import { Text } from "../../components/Themed";
 import { RootStackScreenProps } from "../../types";
 import { FontAwesome } from '@expo/vector-icons';
 import UserInfo from "../../interfaces/UserInfo";
 import { useImagePicker } from "../../hooks/useImagePicker";
+import { ChangeBioModal } from "../../components/profile/ChangeBioModal";
 
 
 export default function ProfileScreen({ navigation }: RootStackScreenProps<'ProfileScreen'>) {
     //const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
     //const { token } =  useContext(MyContext);
     const { pickImage } = useImagePicker();
+    const [bioInput, setBioInput] = useState<string>("");
+    const [modalVisible, setModalVisible] = useState(false);
 
     // create a fake user info
     const userInfo: UserInfo = {
@@ -73,10 +77,20 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
     }, []);
     */
 
+    const modifiyBio = async () => {
+        // send request to modify bio
+    }
 
     return (
         userInfo && (
             <View style={styles.container}>
+                <ChangeBioModal 
+                    visible={modalVisible} 
+                    value={bioInput} 
+                    onPress={() => modifiyBio()} 
+                    onClose={() => setModalVisible(false)} 
+                    onChangeText={(text: string) => setBioInput(text)}
+                    />
                 <View style={styles.header}>
                     <ImageBackground imageStyle={{ borderRadius: 50, }} style={styles.avatar} source={{ uri: "https://i.pravatar.cc/300" }} >
                         <TouchableOpacity onPress={() => pickImage()}>
@@ -90,12 +104,16 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                     </ImageBackground>
                     <View style={styles.headerInfo}>
                         <Text style={styles.username}>{userInfo.username}</Text>
+                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                            <Text style={styles.bio}>This is my bio</Text>
+                        </TouchableOpacity>
                         <View style={styles.stats}>
                             <Text style={styles.stat}>{userInfo.followers} Followers</Text>
                             <Text style={styles.stat}>{userInfo.following} Following</Text>
                         </View>
                     </View>
                 </View>
+                <View style={[styles.separator, { "backgroundColor": useColorScheme() === "light" ? "black" : "white" }]} />
                 <View style={styles.columns}>
                     {userInfo.posts.map((post, index) => (
                         <View key={index} style={styles.column}>
@@ -118,7 +136,6 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
     },
     header: {
         flexDirection: "row",
@@ -135,6 +152,9 @@ const styles = StyleSheet.create({
     username: {
         fontSize: 20,
         fontWeight: "bold",
+    },
+    bio: {
+        marginTop: 5,
     },
     stats: {
         flexDirection: "row",
@@ -179,6 +199,12 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         padding: 10,
         opacity: 0.3,
+    },
+    separator: {
+        marginHorizontal: "auto",
+        height: 5,
+        width: "90%",
+        marginBottom: 15,
     },
 });
 
