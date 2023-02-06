@@ -1,6 +1,6 @@
 import express, { Request, response, Response } from 'express';
 import MulterRequest from './models/MulterRequest';
-const { MongoClient, ServerApiVersion, GridFSBucket, Db } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId , GridFSBucket, Db } = require('mongodb');
 
 //require setup
 var bodyParser = require('body-parser');
@@ -13,7 +13,7 @@ const upload = multer({ dest: "uploads/" });
 //express setup
 var app = express();
 const saltRounds = 10;
-var port = 3000;
+var port = 4000;
 
 //app.use
 app.use(bodyParser.json());
@@ -100,10 +100,25 @@ app.post('/postMedia', upload.single("video"), (req:Request, res:Response) => {
       return;
     }
     dbClient = client;
-    const collection = client.db("BeCrazy").collection("users");
+    const username:any = req.body.username;
+    const description:any = req.body.description;
+    const collection = client.db("BeCrazy").collection("allMedia");
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
     const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
+
+
+    collection.insertOne({
+        username: username,
+        description: description,
+        videoId: uploadStream.id,
+    }, (err:any, result:any) => {
+        if(err) {
+            console.log(err);
+            return;
+        }
+    }
+    );
 
     videoStream.pipe(uploadStream)
     .on('error', (error:any) => {
@@ -115,7 +130,8 @@ app.post('/postMedia', upload.single("video"), (req:Request, res:Response) => {
         res.status(200).json({ message: 'Video uploaded successfully' });
         dbClient.close(); // close the connection once the operation is finished
         res.send(file.id);
-    });        
+    });
+
   });
 });
 
@@ -128,11 +144,56 @@ app.get('/getMedia/:id', (req:Request, res:Response) => {
         }
         dbClient = client;
         const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
-        const downloadStream = bucket.openDownloadStream(req.params.id);
+        const downloadStream = bucket.openDownloadStream(ObjectId(req.params.id));
         downloadStream.pipe(res); 
-        dbClient.close(); // close the connection once the operation is finished
+        //send the video to the upload folder
+        downloadStream.on('error', (error:any) => {
+            console.log(error);
+            res.status(500).json({ message: 'Error downloading video' });
+        }
+        );
+        downloadStream.on('finish', () => {
+            res.status(200).json({ message: 'Video downloaded successfully' });
+            dbClient.close(); // close the connection once the operation is finished
+        }
+        );
     });
 });
+
+app.delete('/deleteMedia/:id', (req:Request, res:Response) => {
+    MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
+        if(err) {
+            console.log(err);
+            res.status(500).json({ message: 'Error connecting to MongoDB' });
+            return;
+        }
+        dbClient = client;
+        const collection = client.db("BeCrazy").collection("allMedia");
+        const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
+
+        collection.deleteOne({ _id: ObjectId(req.params.id) }, (err:any, result:any) => {
+            if(err) {
+                console.log(err);
+                res.status(500).json({ message: 'Error deleting video from database' });
+                return;
+            }
+            res.status(200).json({ message: 'Video deleted from database' });
+        }
+        
+        );
+        bucket.delete(ObjectId(req.params.id), (err:any) => {
+            if(err) {
+                console.log(err);
+                res.status(500).json({ message: 'Error deleting video' });
+                return;
+            }
+            res.status(200).json({ message: 'Video deleted successfully' });
+            dbClient.close(); // close the connection once the operation is finished
+        });
+    });
+});
+
+
 
 
 //listen 
