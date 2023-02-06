@@ -174,10 +174,8 @@ app.delete('/deleteMedia/:id', (req:Request, res:Response) => {
         collection.deleteOne({ _id: ObjectId(req.params.id) }, (err:any, result:any) => {
             if(err) {
                 console.log(err);
-                res.status(500).json({ message: 'Error deleting video from database' });
                 return;
             }
-            res.status(200).json({ message: 'Video deleted from database' });
         }
         
         );
