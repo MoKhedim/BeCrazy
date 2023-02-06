@@ -5,7 +5,7 @@
  */
 import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable, Image, View, StyleSheet } from 'react-native';
@@ -41,6 +41,8 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const colorScheme = useColorScheme();
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
@@ -57,7 +59,7 @@ function RootNavigator() {
             <FontAwesome
               name="gear"
               size={25}
-              style={{ marginRight: 15 }}
+              style={{ marginRight: 15, color: Colors[colorScheme].text }}
             />
           </Pressable>
         ),
@@ -80,6 +82,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
+  const navigation = useNavigation();
 
   return (
     <BottomTab.Navigator
@@ -104,14 +107,14 @@ function BottomTabNavigator() {
         ),
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
-            <View >
-              <Pressable style={{ marginEnd: 20 }} onPress={() => alert('work in progress!')}>
-                <MaterialIcons name='login' size={28} color={Colors[colorScheme].text} />
+            <View>
+              <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('ProfileScreen')}>
+                <FontAwesome name='user' size={28} color={Colors[colorScheme].text} />
               </Pressable>
             </View>
-            <View >
+            <View>
               <Pressable style={{ marginEnd: 20 }} onPress={() => alert('work in progress!')}>
-                <MaterialIcons name='group-add' size={28} color={Colors[colorScheme].text} />
+                <MaterialIcons name='login' size={28} color={Colors[colorScheme].text} />
               </Pressable>
             </View>
           </View>
