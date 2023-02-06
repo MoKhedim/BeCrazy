@@ -38,9 +38,7 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                 {
                     // afficher tous les médias postés
                     posts?.map((post) =>
-                        <Media id={post.id} username={post.username} key={post.id}
-                            source={post.source} description={post.description}
-                            nbLike={post.nbLike} created={post.created} />)
+                        <Media allMedia={post} key={post.id} />)
                 }
             </View>
         </ScrollView>

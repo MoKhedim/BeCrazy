@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { Text, View } from './Themed';
-import Video from 'react-native-video';
+import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
 import Colors from '../constants/Colors';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'react-native';
@@ -16,11 +16,11 @@ export interface allMedia {
     created: string;
 }
 
-export function Media(props: allMedia) {
+export function Media(props: any) {
     const colorScheme = useColorScheme();
     type IconName = 'heart-o' | 'heart';
     const [iconName, setIconName] = useState<IconName>('heart-o')
-    const [likes, setLikes] = useState(props.nbLike)
+    const [likes, setLikes] = useState(props.allMedia.nbLike)
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
@@ -33,11 +33,7 @@ export function Media(props: allMedia) {
 
     return (
         <>
-            {
-                // error with react-native-video
-                //<Video source={require('../assets/videos/test.mp4')} onError={(error) => console.log(error)}/>
-            }
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, maxWidth: 350 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, maxWidth: 350, minWidth: 350, marginBottom: 10 }}>
                 <Image source={
                     // user icon placeholder
                     require('../assets/images/icon.png')} style={{
@@ -49,16 +45,22 @@ export function Media(props: allMedia) {
                     }} />
                 <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1, marginEnd: 5 }}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.username}</Text>
-                        <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.created}</Text>
+                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.allMedia.username}</Text>
+                        <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.allMedia.created}</Text>
                     </View>
                     <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
-                        {props.description}
+                        {props.allMedia.description}
                     </Text>
-                    <View style={[styles.box, { backgroundColor: Colors[colorScheme].text }]} />
+                    <Video style={[styles.video, {backgroundColor: Colors[colorScheme].text }]}
+                        source={require('../assets/videos/test_46yNiSmz.mp4')}
+                        useNativeControls={true}
+                        isLooping={true}
+                        onError={(error) => console.error(error)}
+                        resizeMode={ResizeMode.CONTAIN}
+                         />
                     <View style={{
                         flexDirection: 'row', marginTop: 10, alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
+                        justifyContent: 'flex-end', marginBottom: 20,
                     }}>
                         <MaterialIcons size={24} name='chat-bubble' color={Colors[colorScheme].text} style={styles.icon} />
                         <Text style={{ marginEnd: 10 }}>11</Text>
@@ -83,20 +85,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     separator: {
-        marginVertical: 10,
+        marginTop: 10,
         height: 1,
         width: '60%',
     },
-    box: {
+    video: {
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 6,
-        borderStyle: 'solid',
-        borderWidth: 1,
-        padding: 10,
+        borderRadius: 8,
         width: "100%",
         maxWidth: 350,
-        aspectRatio: 3 / 5,
+        aspectRatio: 0.48,
         marginTop: 5,
     },
     name: {
