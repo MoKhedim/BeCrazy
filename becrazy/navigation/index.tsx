@@ -8,16 +8,19 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Pressable, Image, View, StyleSheet } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Text } from '../components/Themed';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import HomeScreen from '../screens/HomeScreen';
+import DiscoverScreen from '../screens/DiscoverScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import FeedScreen from '../screens/FeedScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -58,38 +61,66 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Home"
+      // style commun du header et du navbar
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
+        tabBarStyle: { height: 60 },
+        tabBarIconStyle: { marginTop: 10 },
+        tabBarLabelStyle: { marginBottom: 10 },
+        tabBarLabelPosition: 'below-icon',
+        headerTitleStyle: { fontSize: 24, fontWeight: 'bold' },
+        headerLeft: () => (
+          <Image source={
+            // app icon placeholder
+            require('../assets/images/icon.png')} style={{
+              width: 50,
+              height: 50,
+              borderRadius: 50,
+              marginStart: 10,
+            }} />
+        ),
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <View >
+              <Pressable style={{ marginEnd: 20 }} onPress={() => alert('work in progress!')}>
+                <MaterialIcons name='login' size={28} color={Colors[colorScheme].text} />
+              </Pressable>
+            </View>
+            <View >
+              <Pressable style={{ marginEnd: 20 }} onPress={() => alert('work in progress!')}>
+                <MaterialIcons name='group-add' size={28} color={Colors[colorScheme].text} />
+              </Pressable>
+            </View>
+          </View>
+        ),
       }}>
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
+        name="Home"
+        // style unique à chaque tab
+        component={HomeScreen}
+        options={({ navigation }: RootTabScreenProps<'Home'>) => ({
+          title: 'Home',
+          headerTitle: 'BeCrazy  |  Home',
+          tabBarIcon: ({ color }) => <MaterialIcons name="home" size={28} color={color} />,
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="Feed"
+        component={FeedScreen}
+        options={({ navigation }: RootTabScreenProps<'Feed'>) => ({
+          title: 'Feed',
+          headerTitle: 'BeCrazy  |  Feed',
+          tabBarIcon: ({ color }) => <MaterialIcons name="dynamic-feed" size={28} color={color} />,
+        })}
+      />
+      <BottomTab.Screen
+        name="Discover"
+        component={DiscoverScreen}
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Discover',
+          headerTitle: 'BeCrazy  |  Discover',
+          tabBarIcon: ({ color }) => <MaterialIcons name="supervised-user-circle" size={28} color={color} />,
         }}
       />
     </BottomTab.Navigator>
@@ -105,3 +136,19 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    padding: 10,
+  },
+  text: {
+    fontSize: 14,
+    fontFamily: 'Century Gothic',
+    fontWeight: 'bold',
+  }
+});
