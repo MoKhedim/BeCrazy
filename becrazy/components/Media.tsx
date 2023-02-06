@@ -6,15 +6,9 @@ import Colors from '../constants/Colors';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
+import { allMedia } from '../interfaces/media/allMedia';
 
-export interface allMedia {
-    id: string;
-    username: string;
-    source: string;
-    description: string;
-    nbLike: number;
-    created: string;
-}
+
 
 export function Media(props: any) {
     const colorScheme = useColorScheme();

@@ -121,7 +121,7 @@ function BottomTabNavigator() {
               </Pressable>
             </View>
             <View>
-              <Pressable style={{ marginEnd: 20 }} onPress={() => alert('work in progress!')}>
+              <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('LoginScreen')}>
                 <MaterialIcons name='login' size={28} color={Colors[colorScheme].text} />
               </Pressable>
             </View>
