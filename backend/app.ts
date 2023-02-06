@@ -1,23 +1,27 @@
 import express, { Request, response, Response } from 'express';
+import MulterRequest from './models/MulterRequest';
+const { MongoClient, ServerApiVersion, ObjectId , GridFSBucket, Db } = require('mongodb');
 import { codeGenerator, html, transporter } from './forgetpassword/index';
-const { MongoClient, ServerApiVersion, Collection, Db, ObjectId } = require('mongodb');
 
 //require setup
 var bodyParser = require('body-parser');
+var fs = require('fs');
 var bcrypt = require('bcrypt');
-const jwt = require("jsonwebtoken");
-
-const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";
-
+var axios = require('axios');
+var multer = require('multer');
+const upload = multer({ dest: "uploads/" });
 //express setup
 var app = express();
+const jwt = require("jsonwebtoken");
+const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";//express setup
 const saltRounds = 10;
-var port = 3000;
+var port = 4000;
 
 //app.use
 app.use(bodyParser.json());
 
-//MONGO DB SETUP
+var axios = require('axios');
+
 const uri = "mongodb+srv://Bastien:Bastien975@projetbecrazy.h0ghj.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err: any, client: any) => {
     if (err) {
@@ -30,7 +34,6 @@ const collectionAllMedia = db.collection('allMedia');
 const collectionMediaLikes = db.collection('mediaLikes');
 const collectionMediaComments = db.collection('mediaComments');
 const collectionUsers = db.collection('users');
-
 
 //openai setup
 const { Configuration, OpenAIApi } = require("openai");
@@ -53,7 +56,7 @@ async function getCompletion() {
 }
 
 //route pour sign up
-//http://localhost:3000/signup
+//http://localhost:4000/signup
 //exemple body :
 // {
 //     "username":"password2",
@@ -128,6 +131,109 @@ app.get("/aiChallenge", (req: Request, res: Response) => {
     }
     );
 });
+
+let dbClient:typeof MongoClient;
+app.post('/postMedia', upload.single("video"), (req:Request, res:Response) => {
+  MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
+    if(err) {
+      console.log(err);
+      res.status(500).json({ message: 'Error connecting to MongoDB' });
+      return;
+    }
+    dbClient = client;
+    const username:any = req.body.username;
+    const description:any = req.body.description;
+    const collection = client.db("BeCrazy").collection("allMedia");
+    const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
+    const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
+    const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
+
+
+    collection.insertOne({
+        username: username,
+        description: description,
+        videoId: uploadStream.id,
+    }, (err:any, result:any) => {
+        if(err) {
+            console.log(err);
+            return;
+        }
+    }
+    );
+
+    videoStream.pipe(uploadStream)
+    .on('error', (error:any) => {
+        console.log(error);
+        res.status(500).json({ message: 'Error uploading video' });
+    })
+    .on('finish', (file:any) => {
+        fs.unlinkSync((req as unknown as MulterRequest).file.path);
+        res.status(200).json({ message: 'Video uploaded successfully' });
+        dbClient.close(); // close the connection once the operation is finished
+        res.send(file.id);
+    });
+
+  });
+});
+
+app.get('/getMedia/:id', (req:Request, res:Response) => {
+    MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
+        if(err) {
+            console.log(err);
+            res.status(500).json({ message: 'Error connecting to MongoDB' });
+            return;
+        }
+        dbClient = client;
+        const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
+        const downloadStream = bucket.openDownloadStream(ObjectId(req.params.id));
+        downloadStream.pipe(res); 
+        //send the video to the upload folder
+        downloadStream.on('error', (error:any) => {
+            console.log(error);
+            res.status(500).json({ message: 'Error downloading video' });
+        }
+        );
+        downloadStream.on('finish', () => {
+            res.status(200).json({ message: 'Video downloaded successfully' });
+            dbClient.close(); // close the connection once the operation is finished
+        }
+        );
+    });
+});
+
+app.delete('/deleteMedia/:id', (req:Request, res:Response) => {
+    MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
+        if(err) {
+            console.log(err);
+            res.status(500).json({ message: 'Error connecting to MongoDB' });
+            return;
+        }
+        dbClient = client;
+        const collection = client.db("BeCrazy").collection("allMedia");
+        const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
+
+        collection.deleteOne({ _id: ObjectId(req.params.id) }, (err:any, result:any) => {
+            if(err) {
+                console.log(err);
+                return;
+            }
+        }
+        
+        );
+        bucket.delete(ObjectId(req.params.id), (err:any) => {
+            if(err) {
+                console.log(err);
+                res.status(500).json({ message: 'Error deleting video' });
+                return;
+            }
+            res.status(200).json({ message: 'Video deleted successfully' });
+            dbClient.close(); // close the connection once the operation is finished
+        });
+    });
+});
+
+
+
 
 
 
