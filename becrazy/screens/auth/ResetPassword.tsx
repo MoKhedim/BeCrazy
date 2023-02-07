@@ -44,6 +44,8 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
     }
 
     // if the new password is valid and the code too, send the reset password request
+    // and close the modal
+    // only shows after the user has requested a reset password
     const modifyPassword = async () => {
         const passwordError = passwordValidator(newPassword.value)
         if (passwordError) {

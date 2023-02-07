@@ -1,16 +1,27 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../components/EditScreenInfo';
+import { useState } from 'react';
+import { Entypo } from '@expo/vector-icons';
+import { StyleSheet, TextInput } from 'react-native';
 import { Text, View } from '../components/Themed';
+import { RootTabScreenProps } from '../types';
 
-export default function DiscoverScreen() {
+
+export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Discover'>) {
+  const [searchString, setSearchString] = useState('')
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Discover</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/DiscoverScreen.tsx" />
+      <View style={styles.searchSection}>
+        <Entypo style={styles.searchIcon} name="magnifying-glass" size={20} />
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          onChangeText={(searchString: string) => setSearchString(searchString)}
+          value={searchString}
+        />
+      </View>
+      <Text>Search results</Text>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -19,13 +30,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  searchSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    width: '90%',
+    height: 40,
+    borderRadius: 20,
+    borderColor: '#000',
+    borderWidth: 1,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  searchIcon: {
+    padding: 10,
   },
-});
+  input: {
+    flex: 1,
+    backgroundColor: '#fff',
+    color: '#424242',
+    borderRadius: 20,
+    height: 37,
+    borderColor: '#E9E9EF',
+    overflow: 'hidden',
+    paddingHorizontal: 16,
+  },
+})
