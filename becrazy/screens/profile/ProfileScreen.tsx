@@ -7,62 +7,22 @@ import { FontAwesome } from '@expo/vector-icons';
 import UserInfo from "../../interfaces/UserInfo";
 import { useImagePicker } from "../../hooks/useImagePicker";
 import { ChangeBioModal } from "../../components/profile/ChangeBioModal";
+import { MyContext } from "../../App";
+import { server } from "../../constants/Server"
 
 
 export default function ProfileScreen({ navigation }: RootStackScreenProps<'ProfileScreen'>) {
-    //const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
-    //const { token } =  useContext(MyContext);
+    const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
+    const { token } = useContext(MyContext);
     const { pickImage } = useImagePicker();
     const [bioInput, setBioInput] = useState<string>("");
     const [modalVisible, setModalVisible] = useState(false);
 
-    // create a fake user info
-    const userInfo: UserInfo = {
-        username: "John Doe",
-        followers: 100,
-        following: 200,
-        posts: [
-            {
-                title: "Post 1",
-                description: "This is the first post",
-                image: "https://i.pravatar.cc/300",
-                likes: 100,
-                comments: 10,
-                date: "2021-01-01",
-            },
-            {
-                title: "Post 2",
-                description: "This is the second post",
-                image: "https://i.pravatar.cc/300",
-                likes: 200,
-                comments: 20,
-                date: "2021-01-02",
-            },
-            {
-                title: "Post 3",
-                description: "This is the third post",
-                image: "https://i.pravatar.cc/300",
-                likes: 300,
-                comments: 30,
-                date: "2021-01-03",
-            },
-            {
-                title: "Post 4",
-                description: "This is the fourth post",
-                image: "https://i.pravatar.cc/300",
-                likes: 400,
-                comments: 40,
-                date: "2021-01-04",
-            }
-        ]
-    }
-
     // get the user info from the server
     // at the start of the page
-    /*
     useEffect(() => {
         const getUserInfo = async () => {
-            const res = await fetch("localhost:3000/user/profile", {
+            const res = await fetch(`${server}/user/profile`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -75,7 +35,6 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
 
         getUserInfo();
     }, []);
-    */
 
     const modifiyBio = async () => {
         // send request to modify bio
@@ -84,13 +43,13 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
     return (
         userInfo && (
             <View style={styles.container}>
-                <ChangeBioModal 
-                    visible={modalVisible} 
-                    value={bioInput} 
-                    onPress={() => modifiyBio()} 
-                    onClose={() => setModalVisible(false)} 
+                <ChangeBioModal
+                    visible={modalVisible}
+                    value={bioInput}
+                    onPress={() => modifiyBio()}
+                    onClose={() => setModalVisible(false)}
                     onChangeText={(text: string) => setBioInput(text)}
-                    />
+                />
                 <View style={styles.header}>
                     <ImageBackground imageStyle={{ borderRadius: 50, }} style={styles.avatar} source={{ uri: "https://i.pravatar.cc/300" }} >
                         <TouchableOpacity onPress={() => pickImage()}>
