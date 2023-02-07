@@ -1,12 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Entypo } from '@expo/vector-icons';
 import { StyleSheet, TextInput } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
+import { server } from '../constants/Server';
 
 
 export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Discover'>) {
   const [searchString, setSearchString] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+
+  // when the search string changes, fetch the results
+  useEffect(() => {
+    const search = async () => {
+      if (searchString.length > 0) {
+        const res = await fetch(`${server}/searchUser/${searchString}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            search: searchString
+          })
+        });
+        const data = await res.json();
+        setSearchResults(data)
+      }
+    }
+
+    search()
+  }, [searchString])
+
 
   return (
     <View style={styles.container}>
@@ -19,7 +43,12 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
           value={searchString}
         />
       </View>
-      <Text>Search results</Text>
+      {searchResults.map((result: any) => {
+        return (
+          <Text>{result.username}</Text>
+        )
+      })
+      }
     </View>
   )
 }
