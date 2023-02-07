@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react'
 import { TouchableOpacity, StyleSheet, View } from 'react-native'
 import { Text } from '../../components/Themed'
-
 import { Button } from '../../components/auth/Button'
 import { TextInput } from '../../components/auth/TextInput'
 import Logo from '../../components/Logo'
@@ -11,6 +10,7 @@ import { RootStackScreenProps } from '../../types'
 import { MyContext } from '../../App'
 import styles from '../../components/auth/StyleSheetForm'
 import LoginUser from '../../interfaces/auth/LoginUser'
+import { server } from '../../constants/Server'
 
 export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginScreen'>) {
     // create state variables for email and password
@@ -29,23 +29,22 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
             setPassword({ ...password, error: passwordError })
             return
         }
-        const data: LoginUser = {
-            email: email.value,
-            password: password.value
-        }
-        const res = await fetch('http://localhost:3000/login', {
+        const res = await fetch(`${server}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify({
+                email: email.value,
+                password: password.value
+            } as LoginUser)
         })
-        const json = await res.json()
-        if (json.token) {
-            setToken(json.token)
-            navigation.navigate('Root')
+        const data = await res.json()
+        if (data.token) {
+            setToken(data.token)
+            navigation.replace('Root')
         } else {
-            alert(json.message)
+            alert(data.message)
         }
     }
 

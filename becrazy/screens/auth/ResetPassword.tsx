@@ -7,6 +7,7 @@ import Logo from '../../components/Logo'
 import { emailValidator } from '../../helpers/emailValidator'
 import { RootStackScreenProps } from '../../types'
 import styles from '../../components/auth/StyleSheetForm'
+import { server } from '../../constants/Server'
 
 export default function ResetPasswordScreen({ navigation }: RootStackScreenProps<'ResetPasswordScreen'>) {
     const [email, setEmail] = useState({ value: '', error: '' })
@@ -18,9 +19,21 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
             setEmail({ ...email, error: emailError })
             return
         }
-        /**
-         * TODO: send the reset password request
-         */
+        const res = await fetch(`${server}/forgotpassword`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email.value
+            })
+        });
+        const data = await res.json();
+        if (data.message === "Email envoyé avec succes!") {
+            navigation.replace('LoginScreen')
+        } else {
+            alert(data.message)
+        }
     }
 
     return (
