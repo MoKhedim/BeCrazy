@@ -19,6 +19,8 @@ var port = 4000;
 
 //app.use
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 var axios = require('axios');
 
@@ -133,7 +135,7 @@ app.get("/aiChallenge", (req: Request, res: Response) => {
 });
 
 let dbClient:typeof MongoClient;
-app.post('/postMedia', upload.single("video"), (req:Request, res:Response) => {
+app.post('/postMedia', upload.single("video"), async (req:Request, res:Response) => {
   MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
     if(err) {
       console.log(err);
@@ -141,16 +143,15 @@ app.post('/postMedia', upload.single("video"), (req:Request, res:Response) => {
       return;
     }
     dbClient = client;
-    const username:any = req.body.username;
-    const description:any = req.body.description;
+
     const collection = client.db("BeCrazy").collection("allMedia");
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
     const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
-
+    const { username, description } = req.body;
 
     collection.insertOne({
-        username: username,
+        username: "MoKhedim",
         description: description,
         videoId: uploadStream.id,
     }, (err:any, result:any) => {
@@ -212,13 +213,12 @@ app.delete('/deleteMedia/:id', (req:Request, res:Response) => {
         const collection = client.db("BeCrazy").collection("allMedia");
         const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
 
-        collection.deleteOne({ _id: ObjectId(req.params.id) }, (err:any, result:any) => {
+        collection.deleteOne({ videoId: ObjectId(req.params.id) }, (err:any, result:any) => {
             if(err) {
                 console.log(err);
                 return;
             }
         }
-        
         );
         bucket.delete(ObjectId(req.params.id), (err:any) => {
             if(err) {
@@ -233,8 +233,44 @@ app.delete('/deleteMedia/:id', (req:Request, res:Response) => {
 });
 
 
+app.get('/getAllMedia', (req:Request, res:Response) => {
+    MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
+        if(err) {
+            console.log(err);
+            res.status(500).json({ message: 'Error connecting to MongoDB' });
+            return;
+        }
+        dbClient = client;
+        const collection = client.db("BeCrazy").collection("allMedia");
+        collection.find().toArray((err:any, result:any) => {
+            if(err) {
+                console.log(err);
+                return;
+            }
+            res.send(result);
+        });
+    });
+});
 
 
+app.get('/getMediaUser/:username', (req:Request, res:Response) => {
+    MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
+        if(err) {
+            console.log(err);
+            res.status(500).json({ message: 'Error connecting to MongoDB' });
+            return;
+        }
+        dbClient = client;
+        const collection = client.db("BeCrazy").collection("allMedia");
+        collection.find({ username: req.params.username }).toArray((err:any, result:any) => {
+            if(err) {
+                console.log(err);
+                return;
+            }
+            res.send(result);
+        });
+    });
+});
 
 
 //route pour likes/unlike les médias
