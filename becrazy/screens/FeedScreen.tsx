@@ -5,19 +5,34 @@ import { ScrollView } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
 import { Media } from '../components/Media';
 import { allMedia } from '../interfaces/media/allMedia';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from '../components/Themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
+import { server } from '../constants/Server';
 
 export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
     const colorScheme = useColorScheme();
     const desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum tristique est, eget maximus felis sagittis at. Phasellus eu finibus odio, vitae tincidunt nisl."
-    // array de posts par les users
-    const [posts, setPosts] = useState<Array<allMedia>>([
-        { id: '1', username: 'Deadass', source: '', description: desc, nbLike: 0, created: '01/31/2023' },
-        { id: '2', username: 'nihaoma', source: '', description: desc, nbLike: 0, created: '01/23/2023' }
-    ])
+    // array de AllMedias par les users
+    const [allMedias, setAllMedias] = useState<Array<allMedia>>([])
+
+    useEffect(() => {
+        async function getAllMedias() {
+            const urlAllMedias = `${server}/getAllMedia`;
+            const resultAllMedias = await fetch(urlAllMedias, {
+                method: "GET",
+            });
+            if (resultAllMedias.ok) {
+                const data = await resultAllMedias.json();
+                setAllMedias(data);
+            } else {
+                console.log("une erreur s'est produite");
+            }
+        }
+
+        getAllMedias().then(() => console.log('done getAllMedias'));
+    }, []);
 
     return (
         <ScrollView>
@@ -38,7 +53,7 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                 </View>
                 {
                     // afficher tous les médias postés
-                    posts?.map((post) =>
+                    allMedias?.map((post) =>
                         <Media allMedia={post} key={post.id} />)
                 }
             </View>
