@@ -5,7 +5,7 @@ import MulterRequest from './models/MulterRequest';
 import Users from './models/Users';
 
 
-//require setup
+//require setup\\
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var bcrypt = require('bcrypt');
