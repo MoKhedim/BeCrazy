@@ -22,6 +22,9 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
             const urlAllMedias = `${server}/getAllMedia`;
             const resultAllMedias = await fetch(urlAllMedias, {
                 method: "GET",
+                headers: {
+                    "Access-Control-Allow-Origin": "*"
+                }
             });
             if (resultAllMedias.ok) {
                 const data = await resultAllMedias.json();
