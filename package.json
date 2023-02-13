@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/MoKhedim/BeCrazy/issues"
   },
-  "homepage": "https://github.com/MoKhedim/BeCrazy#readme"
+  "homepage": "https://github.com/MoKhedim/BeCrazy#readme",
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  }
 }
