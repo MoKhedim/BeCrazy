@@ -105,7 +105,7 @@ app.post('/signup', async (req: Request, res: Response) => {
 
 
 //route pour se connecter
-//http://localhost:3000/login
+//http://localhost:4000/login
 //exemple body :
 // {
 //     "email": "password@password.com",
@@ -405,7 +405,7 @@ app.post('/deleteComments/:token', async (req: Request, res: Response) => {
 
 
 //route pour mdp oublié
-//http://localhost:3000/forgotpassword
+//http://localhost:4000/forgotpassword
 //exemple body:
 // {
 //     "email": "password@password.com"
@@ -444,7 +444,7 @@ app.post("/forgotpassword", async (req: Request, res: Response) => {
 
 
 //route pour vérifié si le code correspond au code envoyé VIA email.
-//http://localhost:3000/verifCode/bastiencambray975@gmail.com
+//http://localhost:4000/verifCode/bastiencambray975@gmail.com
 // {
 //     "code": "28508",
 //     "newpassword": "password"
@@ -471,7 +471,7 @@ app.post("/verifCode/:email", async (req: Request, res: Response) => {
 });
 
 //route pour obtenir le top 10 des médias ayant eu le plus de like dans la journée en cours.
-// http://localhost:3000/top10media
+// http://localhost:4000/top10media
 app.get('/top10media', async (req: Request, res: Response) => {
     const today: Date = new Date();
     const date: String = today.toISOString().substr(0, 10);
@@ -485,7 +485,7 @@ app.get('/top10media', async (req: Request, res: Response) => {
 });
 
 //route pour rechercher un user par une partie de son username
-//http://localhost:3000/searchUser/bas
+//http://localhost:4000/searchUser/bas
 app.get('/searchUser/:username', async (req: Request, res: Response) => {
     const username: string = req.params.username;
     try {
@@ -497,13 +497,19 @@ app.get('/searchUser/:username', async (req: Request, res: Response) => {
     }
 });
 
-//route pour rechercher un user par une partie de son username
-//http://localhost:3000/userProfil/bastien
+//route pour rechercher les infos du profil d'un utilisateur par son username complet
+//http://localhost:4000/userProfil/bastien
 app.get('/userProfil/:username', async (req: Request, res: Response) => {
     const username: string = req.params.username;
     try {
         const result: any = await collectionUsers.find({ username: username }).toArray();
-        res.send(result);
+        if (result.length > 0) {
+            const result2: any = await collectionAllMedia.find({ username: username }).toArray();
+            res.status(200).json({ message: "Succès!", result, result2 });
+        }
+        else {
+            res.status(400).json({ message: "Cet utilisateur n'existe pas", result });
+        }
     }
     catch (err) {
         res.status(500).send(err);
@@ -595,6 +601,8 @@ app.post('/updateUser/:token', async (req: Request, res: Response) => {
             break;
     }
 });
+
+
 
 //listen 
 app.listen(port, () => {
