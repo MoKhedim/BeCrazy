@@ -1,22 +1,14 @@
 {
-  "name": "becrazy",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon backend/app.ts",
+    "start": "nodemon app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MoKhedim/BeCrazy.git"
-  },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/MoKhedim/BeCrazy/issues"
-  },
-  "homepage": "https://github.com/MoKhedim/BeCrazy#readme",
+  "license": "MIT",
   "dependencies": {
     "@types/mongodb": "^4.0.7",
     "@types/node-fetch": "^2.6.2",
