@@ -46,7 +46,7 @@ export function Media(props: any) {
                         {props.allMedia.description}
                     </Text>
                     <Video style={[styles.video, {backgroundColor: Colors[colorScheme].text }]}
-                        source={require('../assets/videos/test_46yNiSmz.mp4')}
+                        source={{uri: props.allMedia.source}}
                         useNativeControls={true}
                         isLooping={true}
                         onError={(error) => console.error(error)}
