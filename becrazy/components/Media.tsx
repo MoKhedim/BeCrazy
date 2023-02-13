@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 8,
-        width: "100%",
+        width: 350,
         maxWidth: 350,
-        aspectRatio: 0.48,
+        height: 622,
         marginTop: 5,
     },
     name: {
