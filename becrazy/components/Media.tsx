@@ -7,6 +7,7 @@ import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
 import { allMedia } from '../interfaces/media/allMedia';
+import { isMobile } from 'react-device-detect';
 
 
 
@@ -37,7 +38,10 @@ export function Media(props: any) {
                         marginTop: 25,
                         right: 12,
                     }} />
-                <View style={{ flexDirection: 'column', flexWrap: 'wrap', flex: 1, marginEnd: 5 }}>
+                <View style={isMobile ?
+                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "80%", flex: 1, marginEnd: 5 } : 
+                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
+                }>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.allMedia.username}</Text>
                         <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.allMedia.created}</Text>
@@ -45,13 +49,13 @@ export function Media(props: any) {
                     <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
                         {props.allMedia.description}
                     </Text>
-                    <Video style={[styles.video, {backgroundColor: Colors[colorScheme].text }]}
-                        source={{uri: props.allMedia.source}}
+                    <Video style={[styles.video, { backgroundColor: Colors[colorScheme].text }]}
+                        source={require('../assets/videos/test3.mp4')}
                         useNativeControls={true}
                         isLooping={true}
                         onError={(error) => console.error(error)}
-                        resizeMode={ResizeMode.CONTAIN}
-                         />
+                        resizeMode={isMobile ? ResizeMode.COVER : ResizeMode.CONTAIN}
+                    />
                     <View style={{
                         flexDirection: 'row', marginTop: 10, alignItems: 'flex-end',
                         justifyContent: 'flex-end', marginBottom: 20,
@@ -84,10 +88,8 @@ const styles = StyleSheet.create({
         width: '60%',
     },
     video: {
-        alignItems: 'center',
-        justifyContent: 'center',
         borderRadius: 8,
-        width: 350,
+        width: "100%",
         maxWidth: 350,
         height: 622,
         marginTop: 5,

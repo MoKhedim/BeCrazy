@@ -15,7 +15,16 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
     const colorScheme = useColorScheme();
     const desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum tristique est, eget maximus felis sagittis at. Phasellus eu finibus odio, vitae tincidunt nisl."
     // array de AllMedias par les users
-    const [allMedias, setAllMedias] = useState<Array<allMedia>>([])
+    const [allMedias, setAllMedias] = useState<Array<allMedia>>([
+        {
+            id: '1',
+            username: 'Deadass',
+            source: '',
+            description: desc,
+            nbLike: 11,
+            created: '01/31/2023',
+        }
+    ])
 
     useEffect(() => {
         async function getAllMedias() {
@@ -34,7 +43,7 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
             }
         }
 
-        getAllMedias().then(() => console.log('done getAllMedias'));
+        //getAllMedias().then(() => console.log('done getAllMedias'));
     }, []);
 
     return (
