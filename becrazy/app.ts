@@ -17,8 +17,7 @@ var app = express();
 const jwt = require("jsonwebtoken");
 const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";//express setup
 const saltRounds = 10;
-var port = 4000;
-
+const port = process.env.PORT || 4000;
 //app.use
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
