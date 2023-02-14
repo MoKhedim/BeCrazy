@@ -14,6 +14,7 @@ var multer = require('multer');
 const upload = multer({ dest: "uploads/" });
 //express setup
 var app = express();
+const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";//express setup
 const saltRounds = 10;
@@ -22,6 +23,7 @@ const port = process.env.PORT || 4000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 
 var axios = require('axios');
 
@@ -255,22 +257,26 @@ app.delete('/deleteMedia/:id', (req: Request, res: Response) => {
 
 
 app.get('/getAllMedia', (req:Request, res:Response) => {
-    MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
-        if(err) {
-            console.log(err);
-            res.status(500).json({ message: 'Error connecting to MongoDB' });
-            return;
-        }
-        dbClient = client;
-        const collection = client.db("BeCrazy").collection("allMedia");
-        collection.find().toArray((err:any, result:any) => {
+    try {
+        MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
             if(err) {
                 console.log(err);
+                res.status(500).json({ message: 'Error connecting to MongoDB' });
                 return;
             }
-            res.send(result);
+            dbClient = client;
+            const collection = client.db("BeCrazy").collection("allMedia");
+            collection.find().toArray((err:any, result:any) => {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+                res.send(result);
+            });
         });
-    });
+    } catch (err) {
+        res.send(err);
+    }
 });
 
 
