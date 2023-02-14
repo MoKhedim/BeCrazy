@@ -110,6 +110,21 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
   */
 
 
+
+  useEffect(() => {
+    if (searchString.length > 0) {
+      if (searchResults.length === 0) {
+        setSearchResults([{
+          username: "Notfound",
+          followers: 0,
+          following: 0,
+          posts: []
+        }])
+      }
+    }
+  }, [searchResults])
+
+
   const searchUser = async (event: any) => {
     if (event.key !== 'Enter') return
     if (searchString.length > 0) {
@@ -119,6 +134,8 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
       setSearchResults([])
     }
   }
+
+
 
 
   return (
