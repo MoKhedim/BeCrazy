@@ -31,7 +31,7 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
             }
         }
 
-        getAllMedias().then(() => console.log('done getAllMedias'));
+        //getAllMedias().then(() => console.log('done getAllMedias'));
     }, []);
 
     return (

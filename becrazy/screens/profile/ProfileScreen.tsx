@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, ImageBackground, TouchableOpacity } from "react-native";
-import { useColorScheme } from "react-native";
+import { View, StyleSheet, ImageBackground, TouchableOpacity, useColorScheme } from "react-native";
 import { Text } from "../../components/Themed";
 import { RootStackScreenProps } from "../../types";
 import { FontAwesome } from '@expo/vector-icons';
