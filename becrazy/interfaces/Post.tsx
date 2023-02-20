@@ -1,8 +1,8 @@
 export default interface Post {
-    title: string;
-    description: string;
-    image: string;
-    likes: number;
-    comments: number;
-    date: string;
+    _id: string;
+    username: string;
+    description: string | null;
+    videoId: number;
+    nbComment: number;
+    nbLike: string;
 }

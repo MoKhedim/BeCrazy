@@ -10,7 +10,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable, Image, View, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Text } from '../components/Themed';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -26,6 +25,7 @@ import DiscoverScreen from '../screens/DiscoverScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import FeedScreen from '../screens/FeedScreen';
+import { MyContext } from '../App';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -49,7 +49,7 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      
+
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'Login' }} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: 'Register' }} />
       <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ title: 'Reset Password' }} />
@@ -91,6 +91,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
+  const { token, setToken } = React.useContext(MyContext)
 
   return (
     <BottomTab.Navigator
@@ -115,16 +116,26 @@ function BottomTabNavigator() {
         ),
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
-            <View>
-              <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('ProfileScreen')}>
-                <FontAwesome name='user' size={28} color={Colors[colorScheme].text} />
-              </Pressable>
-            </View>
-            <View>
-              <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('LoginScreen')}>
-                <MaterialIcons name='login' size={28} color={Colors[colorScheme].text} />
-              </Pressable>
-            </View>
+            {token && (
+              <View>
+                <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('ProfileScreen')}>
+                  <FontAwesome name='user' size={28} color={Colors[colorScheme].text} />
+                </Pressable>
+              </View>
+            )}
+            {token ? (
+              <View>
+                <Pressable style={{ marginEnd: 20 }} onPress={() => setToken(null)}>
+                  <MaterialIcons name='logout' size={28} color={Colors[colorScheme].text} />
+                </Pressable>
+              </View>
+            ) : (
+              <View>
+                <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('LoginScreen')}>
+                  <MaterialIcons name='login' size={28} color={Colors[colorScheme].text} />
+                </Pressable>
+              </View>
+            )}
           </View>
         ),
       }}>
