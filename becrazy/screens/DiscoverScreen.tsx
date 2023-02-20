@@ -4,46 +4,12 @@ import { StyleSheet, TextInput, Image } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 import { server } from '../constants/Server';
-import UserInfo from '../interfaces/UserInfo';
+import UserInfo from '../interfaces/profile/UserInfo';
 
 
 export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Discover'>) {
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState(Array<UserInfo>)
-
-  // searchResults dummy data
-  const results: Array<UserInfo> = [
-    {
-      username: "Jacky Chan",
-      followers: 100,
-      following: 200,
-      posts: [
-        {
-          title: "Post 1",
-          description: "This is the first post",
-          image: "https://i.pravatar.cc/300",
-          likes: 100,
-          comments: 10,
-          date: "2021-01-01",
-        }
-      ]
-    },
-    {
-      username: "Leonardo DiCaprio",
-      followers: 100,
-      following: 200,
-      posts: [
-        {
-          title: "Post 1",
-          description: "This is the first post",
-          image: "https://i.pravatar.cc/300",
-          likes: 100,
-          comments: 10,
-          date: "2021-01-01",
-        }
-      ]
-    }
-  ]
 
   // when the search string changes, fetch the results
   useEffect(() => {
@@ -63,11 +29,7 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
       }
     }
 
-    if (searchString.length > 0) {
-      setSearchResults(results.filter((result: UserInfo) => result.username.includes(searchString)))
-    } else {
-      setSearchResults([])
-    }
+
   }, [searchString])
 
 
@@ -95,7 +57,6 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
                   />
                   <Text style={{ marginLeft: 10 }}>{result.username}</Text>
                 </View>
-                <Text>{result.posts.length} posts</Text>
               </View>
             )
           })}

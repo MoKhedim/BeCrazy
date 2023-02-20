@@ -4,93 +4,84 @@ import { useColorScheme } from "react-native";
 import { Text } from "../../components/Themed";
 import { RootStackScreenProps } from "../../types";
 import { FontAwesome } from '@expo/vector-icons';
-import UserInfo from "../../interfaces/UserInfo";
+import UserInfo from "../../interfaces/profile/UserInfo";
 import { useImagePicker } from "../../hooks/useImagePicker";
 import { ChangeBioModal } from "../../components/profile/ChangeBioModal";
 import { MyContext } from "../../App";
 import { server } from "../../constants/Server";
+import Post from "../../interfaces/Post";
 
 
 export default function ProfileScreen({ navigation }: RootStackScreenProps<'ProfileScreen'>) {
-    //const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
-    const { token } =  useContext(MyContext);
+    const colorScheme = useColorScheme();
+    const { token } = useContext(MyContext);
     const { pickImage } = useImagePicker();
+
+    // state for the user info and posts
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    const [userPosts, setUserPosts] = useState<Array<Post> | null>(null);
+
+    // state for the bio modal
     const [bioInput, setBioInput] = useState<string>("");
     const [modalVisible, setModalVisible] = useState(false);
 
-    // create a fake user info
-    const userInfo: UserInfo = {
-        username: "John Doe",
-        followers: 100,
-        following: 200,
-        posts: [
-            {
-                title: "Post 1",
-                description: "This is the first post",
-                image: "https://i.pravatar.cc/300",
-                likes: 100,
-                comments: 10,
-                date: "2021-01-01",
-            },
-            {
-                title: "Post 2",
-                description: "This is the second post",
-                image: "https://i.pravatar.cc/300",
-                likes: 200,
-                comments: 20,
-                date: "2021-01-02",
-            },
-            {
-                title: "Post 3",
-                description: "This is the third post",
-                image: "https://i.pravatar.cc/300",
-                likes: 300,
-                comments: 30,
-                date: "2021-01-03",
-            },
-            {
-                title: "Post 4",
-                description: "This is the fourth post",
-                image: "https://i.pravatar.cc/300",
-                likes: 400,
-                comments: 40,
-                date: "2021-01-04",
-            }
-        ]
-    }
 
-    // get the user info from the server
-    // at the start of the page
-    /*
+
     useEffect(() => {
+        // at the start of the page
         const getUserInfo = async () => {
-            const res = await fetch(`${server}/userProfil/${username}`, {
+            // get the user info from the server
+            const res = await fetch(`${server}/getuser/${token}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 }
             });
+            if (res.status !== 200) return
             const data = await res.json();
-            setUserInfo(data);
+            setUserInfo(data.info);
         }
 
         getUserInfo();
     }, []);
+
+
+    /*
+    useEffect(() => {
+        // get the user posts from the server
+        if (!userInfo) return
+        const getUserPosts = async () => {
+            const res2 = await fetch(`${server}/userProfil/${userInfo.username}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            if (res2.status !== 200) return
+            const data2 = await res2.json();
+            setUserPosts(data2.result2);
+        }
+
+        getUserPosts();
+    }, [userInfo]);
+
     */
 
+    // function to modify the bio
     const modifyBio = async () => {
-        // send request to modify bio
+
     }
 
+
     return (
-        userInfo && (
+        userInfo ? (
             <View style={styles.container}>
-                <ChangeBioModal 
-                    visible={modalVisible} 
-                    value={bioInput} 
-                    onPress={() => modifyBio()} 
-                    onClose={() => setModalVisible(false)} 
+                <ChangeBioModal
+                    visible={modalVisible}
+                    value={bioInput}
+                    onPress={() => modifyBio()}
+                    onClose={() => setModalVisible(false)}
                     onChangeText={(text: string) => setBioInput(text)}
                 />
                 <View style={styles.header}>
@@ -110,25 +101,31 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                             <Text style={styles.bio}>This is my bio</Text>
                         </TouchableOpacity>
                         <View style={styles.stats}>
-                            <Text style={styles.stat}>{userInfo.followers} Followers</Text>
-                            <Text style={styles.stat}>{userInfo.following} Following</Text>
+                            <Text style={styles.stat}>{userInfo.nbFollowers} Followers</Text>
+                            <Text style={styles.stat}>{userInfo.nbFollows} Following</Text>
                         </View>
                     </View>
                 </View>
-                <View style={[styles.separator, { "backgroundColor": useColorScheme() === "light" ? "black" : "white" }]} />
-                <View style={styles.columns}>
-                    {userInfo.posts.map((post, index) => (
-                        <View key={index} style={styles.column}>
-                            <TouchableOpacity onPress={() => console.log('navigation.navigate("PostScreen")')}>
-                                <ImageBackground
-                                    style={styles.image}
-                                    source={{ uri: post.image }}>
-                                    <Text style={styles.likes}>♥ {post.likes}</Text>
-                                </ImageBackground>
-                            </TouchableOpacity>
-                        </View>
-                    ))}
-                </View>
+                <View style={[styles.separator, { "backgroundColor": colorScheme === "light" ? "black" : "white" }]} />
+                {/**
+                    <View style={styles.columns}>
+                        {userPosts.map((post, index) => (
+                            <View key={index} style={styles.column}>
+                                <TouchableOpacity onPress={() => console.log('navigation.navigate("PostScreen")')}>
+                                    <ImageBackground
+                                        style={styles.image}
+                                        source={{ uri: post.image }}>
+                                        <Text style={styles.likes}>♥ {post.likes}</Text>
+                                    </ImageBackground>
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                */}
+            </View>
+        ) : (
+            <View style={styles.container}>
+                <Text>Loading...</Text>
             </View>
         )
     );
