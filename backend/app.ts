@@ -587,13 +587,13 @@ app.post('/updateUser/:token', async (req: Request, res: Response) => {
     }
 });
 //route pour obtenir le username grâce au token
-app.get("/getuser/:token", async (req, res) => {
+app.get("/getuser/:token", async (req: Request, res: Response) => {
     const token: string = req.params.token;
     try {
         const getuserinfo: any = await collectionUsers.findOne({ token: token });
-        res.status(200).json({ message: "User trouvé!", getuserinfo });
+        res.status(200).json({ message: "User trouvé!", getuserinfo: getuserinfo });
     } catch (error) {
-        res.status(400).json({ message: "User non trouvé!", error });
+        res.status(400).json({ message: "User non trouvé!", error: error });
     }
 });
 
