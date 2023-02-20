@@ -36,8 +36,8 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
             })
         });
         const data = await res.json();
-        if (data.message === "Email envoyé avec succes!") {
-            //show modal
+        if (res.status === 200) {
+            setModalVisible(true)
         } else {
             alert(data.message)
         }
@@ -52,7 +52,7 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
             setNewPassword({ ...newPassword, error: passwordError })
             return
         }
-        const res = await fetch(`${server}/resetpassword`, {
+        const res = await fetch(`${server}/verifCode/${email.value}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -63,7 +63,7 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
             })
         });
         const data = await res.json();
-        if (data.message === "Mot de passe modifié avec succes!") {
+        if (res.status === 200) {
             setModalVisible(false)
             navigation.replace('LoginScreen')
         } else {
@@ -74,9 +74,6 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Text>show</Text>
-            </TouchableOpacity>
             <ChangePasswordModal
                 visible={modalVisible}
                 onPress={() => modifyPassword()}
@@ -85,6 +82,7 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
                 onChangePassword={(text: string) => setNewPassword({ value: text, error: '' })}
                 code={code}
                 onChangeCode={(text: string) => setCode(text)}
+                onClose={() => setModalVisible(false)}
             />
             <Logo />
             <Text style={styles.title}>Reset Password</Text>
@@ -97,6 +95,14 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
                 textContentType="emailAddress"
                 keyboardType="email-address"
             />
+            <Text style={styles.error}>{email.error}</Text>
+            <View style={styles.forgotPassword}>
+                <TouchableOpacity
+                    onPress={() => setModalVisible(true)}
+                >
+                    <Text style={styles.forgot}>Show modal</Text>
+                </TouchableOpacity>
+            </View>
             <Button onPress={onResetPressed}>
                 Reset Password
             </Button>

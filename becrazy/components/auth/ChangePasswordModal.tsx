@@ -12,6 +12,14 @@ export const ChangePasswordModal = ({ ...props }) => {
         >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
+
+                    <TouchableOpacity
+                        style={styles.topRightButton}
+                        onPress={props.onClose}
+                    >
+                        <Text style={styles.textStyleClose}>X</Text>
+                    </TouchableOpacity>
+
                     <Text style={styles.modalText}>Change Password</Text>
                     <TextInput
                         style={styles.input}
@@ -114,6 +122,16 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     error: {
+        color: 'red',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    topRightButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+    },
+    textStyleClose: {
         color: 'red',
         fontWeight: 'bold',
         textAlign: 'center',
