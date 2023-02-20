@@ -257,6 +257,7 @@ app.delete('/deleteMedia/:id', (req: Request, res: Response) => {
 
 
 app.get('/getAllMedia', (req:Request, res:Response) => {
+    console.log("get all penis");
     try {
         MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
             if(err) {
