@@ -10,7 +10,6 @@ yarn-error.log*
 coverage/
 
 .env
-dist
 # Output of 'npm pack'
 *.tgz
 

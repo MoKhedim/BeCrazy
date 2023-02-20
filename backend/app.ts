@@ -170,36 +170,36 @@ app.get("/aiChallenge", (req: Request, res: Response) => {
 let dbClient: typeof MongoClient;
 app.post('/postMedia', upload.single("video"), async (req: Request, res: Response) => {
     dbClient = client;
+    const username: string = req.body.username;
+    const description: string = req.body.description;
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
     const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
-    const { username, description } = req.body;
-
-    collectionAllMedia.insertOne({
-        username: username,
-        description: description,
-        videoId: uploadStream.id,
-        created: new Date,
-        nbLikes: 0,
-        nbComments: 0
-    }, (err: any, result: any) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-    }
-    );
-    videoStream.pipe(uploadStream)
-        .on('error', (error: any) => {
-            console.log(error);
-            res.status(500).json({ message: 'Error uploading video' });
-        })
-        .on('finish', (file: any) => {
-            fs.unlinkSync((req as unknown as MulterRequest).file.path);
-            res.status(200).json({ message: 'Video uploaded successfully' });
-            dbClient.close(); // close the connection once the operation is finished
-            res.send(file.id);
+    try {
+        console.log("Inserting data into database:", {username, description, videoId: uploadStream.id});
+        await collectionAllMedia.insertOne({
+            username: username,
+            description: description,
+            videoId: uploadStream.id,
+            created: new Date,
+            nbLikes: 0,
+            nbComments: 0
         });
+        videoStream.pipe(uploadStream)
+            .on('error', (error: any) => {
+                console.log(error);
+                res.status(500).json({ message: 'Error uploading video' });
+            })
+            .on('finish', (file: any) => {
+                fs.unlinkSync((req as unknown as MulterRequest).file.path);
+                res.status(200).json({ message: 'Video uploaded successfully' });
+                dbClient.close(); // close the connection once the operation is finished
+                res.send(file.id);
+            });
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Error uploading video' });
+    }
 });
 
 app.get('/getMedia/:id', (req: Request, res: Response) => {
@@ -260,7 +260,7 @@ app.delete('/deleteMedia/:id', (req: Request, res: Response) => {
 
 app.get('/getAllMedia', async (req: Request, res: Response) => {
     try {
-        const result: any = await collectionUsers.find().toArray();
+        const result: any = await collectionAllMedia.find().toArray();
         res.status(200).send(result);
     }
     catch (err) {
