@@ -1,8 +1,9 @@
 export interface allMedia {
     id: string;
     username: string;
-    source: string;
     description: string;
-    nbLike: number;
+    videoId: string;
     created: string;
+    nbComments: number;
+    nbLikes: number;
 }

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from './Themed';
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
 import Colors from '../constants/Colors';
@@ -8,14 +8,17 @@ import { Image } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
 import { allMedia } from '../interfaces/media/allMedia';
 import { isMobile } from 'react-device-detect';
+import { server } from '../constants/Server';
 
 
 
-export function Media(props: any) {
+export function Media(props: allMedia) {
     const colorScheme = useColorScheme();
     type IconName = 'heart-o' | 'heart';
     const [iconName, setIconName] = useState<IconName>('heart-o')
-    const [likes, setLikes] = useState(props.allMedia.nbLike)
+    const [likes, setLikes] = useState(props.nbLikes)
+    const [videoId, setVideoId] = useState(props.videoId)
+    const [videoBin, setVideoBin] = useState('');
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
@@ -25,6 +28,28 @@ export function Media(props: any) {
             setLikes(likes - 1);
         }
     }
+
+    useEffect(() => {
+        async function getVideo() {
+            const urlVideo = `${server}/getMedia/${videoId}`;
+            console.log(videoId)
+            const resultVideo = await fetch(urlVideo, {
+                method: "GET",
+                headers: {
+                    "Access-Control-Allow-Origin": "*"
+                }
+            });
+            if (resultVideo.ok) {
+                const data = await resultVideo.json();
+                setVideoBin(data.data);
+                console.log(videoBin)
+            } else {
+                console.log("une erreur s'est produite");
+            }
+        }
+
+        getVideo().then(() => console.log('done getVideo'));
+    }, [])
 
     return (
         <>
@@ -43,11 +68,11 @@ export function Media(props: any) {
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
                 }>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.allMedia.username}</Text>
-                        <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.allMedia.created}</Text>
+                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.username}</Text>
+                        <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.created}</Text>
                     </View>
                     <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
-                        {props.allMedia.description}
+                        {props.description}
                     </Text>
                     <Video style={[styles.video, { backgroundColor: Colors[colorScheme].text }]}
                         source={require('../assets/videos/test3.mp4')}
@@ -61,7 +86,7 @@ export function Media(props: any) {
                         justifyContent: 'flex-end', marginBottom: 20,
                     }}>
                         <MaterialIcons size={24} name='chat-bubble' color={Colors[colorScheme].text} style={styles.icon} />
-                        <Text style={{ marginEnd: 10 }}>11</Text>
+                        <Text style={{ marginEnd: 10 }}>{props.nbComments}</Text>
                         <FontAwesome size={24} name={iconName} color={Colors[colorScheme].text} style={styles.icon} onPress={handlePressLike} />
                         <Text style={{ marginEnd: 10 }}>{likes}</Text>
                     </View>

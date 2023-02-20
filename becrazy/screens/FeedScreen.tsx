@@ -15,19 +15,11 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
     const colorScheme = useColorScheme();
     const desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum tristique est, eget maximus felis sagittis at. Phasellus eu finibus odio, vitae tincidunt nisl."
     // array de AllMedias par les users
-    const [allMedias, setAllMedias] = useState<Array<allMedia>>([
-        {
-            id: '1',
-            username: 'Deadass',
-            source: '',
-            description: desc,
-            nbLike: 11,
-            created: '01/31/2023',
-        }
-    ])
+    const [allMedias, setAllMedias] = useState<Array<allMedia>>([])
 
     useEffect(() => {
         async function getAllMedias() {
+            console.log('going in')
             const urlAllMedias = `${server}/getAllMedia`;
             const resultAllMedias = await fetch(urlAllMedias, {
                 method: "GET",
@@ -36,14 +28,15 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                 }
             });
             if (resultAllMedias.ok) {
+                console.log('ok')
                 const data = await resultAllMedias.json();
                 setAllMedias(data);
+                console.log(allMedias)
             } else {
                 console.log("une erreur s'est produite");
             }
         }
-
-        //getAllMedias().then(() => console.log('done getAllMedias'));
+        getAllMedias().then(() => console.log('done getAllMedias'));
     }, []);
 
     return (
@@ -66,7 +59,15 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                 {
                     // afficher tous les médias postés
                     allMedias?.map((post) =>
-                        <Media allMedia={post} key={post.id} />)
+                        <Media 
+                        key={post.id}
+                        id={post.id}
+                        username={post.username}
+                        description={post.description}
+                        videoId={post.videoId}
+                        nbComments={post.nbComments}
+                        nbLikes={post.nbLikes}
+                        created={post.created} />)
                 }
             </View>
         </ScrollView>
