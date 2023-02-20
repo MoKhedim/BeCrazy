@@ -39,12 +39,12 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
                 password: password.value
             } as LoginUser)
         })
-        const data = await res.json()
-        if (data.token) {
+        if (res.status === 200) {
+            const data = await res.json()
             setToken(data.token)
             navigation.replace('Root')
         } else {
-            alert(data.message)
+            alert(res.status)
         }
     }
 
