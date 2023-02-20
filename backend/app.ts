@@ -591,7 +591,7 @@ app.get("/getuser/:token", async (req: Request, res: Response) => {
     const token: string = req.params.token;
     try {
         const getuserinfo: any = await collectionUsers.findOne({ token: token });
-        res.status(200).json({ message: "User trouvé!", getuserinfo: getuserinfo });
+        res.status(200).json({ message: "User trouvé!", info: getuserinfo });
     } catch (error) {
         res.status(400).json({ message: "User non trouvé!", error: error });
     }
