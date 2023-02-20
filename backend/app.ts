@@ -256,49 +256,26 @@ app.delete('/deleteMedia/:id', (req: Request, res: Response) => {
 });
 
 
-app.get('/getAllMedia', (req:Request, res:Response) => {
-    console.log("get all penis");
+app.get('/getAllMedia', async (req:Request, res:Response) => {
     try {
-        MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
-            if(err) {
-                console.log(err);
-                res.status(500).json({ message: 'Error connecting to MongoDB' });
-                return;
-            }
-            dbClient = client;
-            const collection = client.db("BeCrazy").collection("allMedia");
-            collection.find().toArray((err:any, result:any) => {
-                if(err) {
-                    console.log(err);
-                    return;
-                }
-                res.send(result);
-            });
-        });
-    } catch (err) {
-        res.send(err);
+        const result: any = await collectionUsers.find().toArray();
+        res.status(200).send(result);
+    }
+    catch (err) {
+        res.status(500).send(err);
     }
 });
 
 
-app.get('/getMediaUser/:username', (req:Request, res:Response) => {
-    MongoClient.connect(uri, (err:Error, client:typeof MongoClient) => {
-        if(err) {
-            console.log(err);
-            res.status(500).json({ message: 'Error connecting to MongoDB' });
-            return;
-        }
-        dbClient = client;
-        const collection = client.db("BeCrazy").collection("allMedia");
-        collection.find({ username: req.params.username }).toArray((err:any, result:any) => {
-            if(err) {
-                console.log(err);
-                return;
-            }
-            res.send(result);
-        });
-    });
-});
+// app.get('/getMediaUser/:username', async (req:Request, res:Response) => {
+//     try {
+//         const result: any = await collectionUsers.find({ username: req.params.username }).toArray();
+//         res.status(200).send(result);
+//     }
+//     catch (err) {
+//         res.status(500).send(err);
+//     }
+// });
 
 
 //route pour likes/unlike les médias
