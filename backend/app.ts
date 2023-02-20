@@ -475,7 +475,7 @@ app.get('/searchUser/:username', async (req: Request, res: Response) => {
     const username: string = req.params.username;
     try {
         const result: any = await collectionUsers.find({ username: { $regex: `^${username}` } }).toArray();
-        res.send(result);
+        res.status(200).send(result);
     }
     catch (err) {
         res.status(500).send(err);
