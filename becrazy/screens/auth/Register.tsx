@@ -47,13 +47,7 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
                 password: password.value
             } as RegisterUser)
         })
-        const data = await res.json()
-        if (data.token) {
-            setToken(data.token)
-            navigation.replace('Root')
-        } else {
-            alert(data.message)
-        }
+        console.log(res)
     }
 
     return (

@@ -137,7 +137,6 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
 
 
 
-
   return (
     <View style={styles.container}>
       <View style={styles.alignCenter}>
