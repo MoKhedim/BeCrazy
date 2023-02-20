@@ -85,17 +85,17 @@ app.post('/signup', async (req: Request, res: Response) => {
     try {
         const verifEmail: any = await collectionUsers.findOne({ email: user.email });
         if (verifEmail) {
-            res.send("email already exist");
+            res.status(100).send("email already exist");
         } else {
             const verifUsername: any = await collectionUsers.findOne({ username: user.username });
             if (verifUsername) {
-                res.send("username already exist");
+                res.status(100).send("username already exist");
             } else {
                 const result: any = await collectionUsers.insertOne({ username: user.username, email: user.email, password: user.password, bio:user.bio, profilepicture: profilepicDefault,  created: user.created, token: user.token, nbFollows: user.nbFollows, nbFollowers: user.nbFollowers });
                 if (result) {
-                    res.send("user created");
+                    res.status(200).send("user created");
                 } else {
-                    res.send("user not created");
+                    res.status(500).send("user not created");
                 }
             }
         }
@@ -133,13 +133,13 @@ app.post("/login", async (req: Request, res: Response) => {
                 const token: string = jwt.sign(payload, secret, { expiresIn: "1h" });
                 const updatetoken: any = await collectionUsers.findOneAndUpdate({ email: user.email }, { $set: { token: token } });
                 if (updatetoken) {
-                    res.send({ message: "Successfully logged in", token: token });
+                    res.status(200).send({ message: "Successfully logged in", token: token });
                 }
             } else {
-                res.send("wrong password");
+                res.status(400).send("wrong password");
             }
         } else {
-            res.send("wrong email");
+            res.status(400).send("wrong email");
         }
     } catch (err) {
         res.status(500).send(err);
