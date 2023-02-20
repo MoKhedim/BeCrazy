@@ -1,5 +1,5 @@
 export interface allMedia {
-    id: string;
+    _id: string;
     username: string;
     description: string;
     videoId: string;

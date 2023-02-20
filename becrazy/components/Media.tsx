@@ -17,7 +17,6 @@ export function Media(props: allMedia) {
     type IconName = 'heart-o' | 'heart';
     const [iconName, setIconName] = useState<IconName>('heart-o')
     const [likes, setLikes] = useState(props.nbLikes)
-    const [videoId, setVideoId] = useState(props.videoId)
     const [videoBin, setVideoBin] = useState('');
 
     function handlePressLike() {
@@ -31,8 +30,7 @@ export function Media(props: allMedia) {
 
     useEffect(() => {
         async function getVideo() {
-            const urlVideo = `${server}/getMedia/${videoId}`;
-            console.log(videoId)
+            const urlVideo = `${server}/getMedia/${props.videoId}`;
             const resultVideo = await fetch(urlVideo, {
                 method: "GET",
                 headers: {
@@ -42,7 +40,6 @@ export function Media(props: allMedia) {
             if (resultVideo.ok) {
                 const data = await resultVideo.json();
                 setVideoBin(data.data);
-                console.log(videoBin)
             } else {
                 console.log("une erreur s'est produite");
             }
@@ -69,7 +66,8 @@ export function Media(props: allMedia) {
                 }>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.username}</Text>
-                        <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>{props.created}</Text>
+                        <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>
+                            {props.created.split('T')[0].replaceAll('-', '/')}</Text>
                     </View>
                     <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
                         {props.description}

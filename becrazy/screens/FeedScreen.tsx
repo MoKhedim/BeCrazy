@@ -19,7 +19,6 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
 
     useEffect(() => {
         async function getAllMedias() {
-            console.log('going in')
             const urlAllMedias = `${server}/getAllMedia`;
             const resultAllMedias = await fetch(urlAllMedias, {
                 method: "GET",
@@ -28,10 +27,9 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                 }
             });
             if (resultAllMedias.ok) {
-                console.log('ok')
                 const data = await resultAllMedias.json();
                 setAllMedias(data);
-                console.log(allMedias)
+                console.log(data)
             } else {
                 console.log("une erreur s'est produite");
             }
@@ -58,16 +56,17 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                 </View>
                 {
                     // afficher tous les médias postés
-                    allMedias?.map((post) =>
-                        <Media 
-                        key={post.id}
-                        id={post.id}
-                        username={post.username}
-                        description={post.description}
-                        videoId={post.videoId}
-                        nbComments={post.nbComments}
-                        nbLikes={post.nbLikes}
-                        created={post.created} />)
+                    allMedias?.map((post) => {
+                        return <Media
+                            key={post._id}
+                            _id={post._id}
+                            username={post.username}
+                            description={post.description}
+                            videoId={post.videoId}
+                            nbComments={post.nbComments}
+                            nbLikes={post.nbLikes}
+                            created={post.created} />
+                    })
                 }
             </View>
         </ScrollView>
