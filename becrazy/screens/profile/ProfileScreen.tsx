@@ -10,6 +10,7 @@ import { ChangeBioModal } from "../../components/profile/ChangeBioModal";
 import { MyContext } from "../../App";
 import { server } from "../../constants/Server";
 import Post from "../../interfaces/Post";
+import { PostsGrid } from "../../components/profile/PostsGrid";
 
 
 export default function ProfileScreen({ navigation }: RootStackScreenProps<'ProfileScreen'>) {
@@ -26,28 +27,26 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
     const [modalVisible, setModalVisible] = useState(false);
 
 
-
+    // at the start of the page
+    const getUserInfo = async () => {
+        // get the user info from the server
+        const res = await fetch(`${server}/getuser/${token}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (res.status !== 200) return
+        const data = await res.json();
+        setUserInfo(data.info);
+    }
     useEffect(() => {
-        // at the start of the page
-        const getUserInfo = async () => {
-            // get the user info from the server
-            const res = await fetch(`${server}/getuser/${token}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            if (res.status !== 200) return
-            const data = await res.json();
-            setUserInfo(data.info);
-        }
-
         getUserInfo();
     }, []);
 
 
-    /*
+
     useEffect(() => {
         // get the user posts from the server
         if (!userInfo) return
@@ -66,16 +65,26 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
         getUserPosts();
     }, [userInfo]);
 
-    */
 
     // function to modify the bio
     const modifyBio = async () => {
-
+        const res = await fetch(`${server}/updateUser/${token}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                bio: bioInput,
+            })
+        });
+        if (res.status !== 200) return
+        setModalVisible(false);
+        getUserInfo();
     }
 
 
     return (
-        userInfo ? (
+        userInfo && userPosts ? (
             <View style={styles.container}>
                 <ChangeBioModal
                     visible={modalVisible}
@@ -85,7 +94,7 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                     onChangeText={(text: string) => setBioInput(text)}
                 />
                 <View style={styles.header}>
-                    <ImageBackground imageStyle={{ borderRadius: 50, }} style={styles.avatar} source={{ uri: "https://i.pravatar.cc/300" }} >
+                    <ImageBackground imageStyle={{ borderRadius: 50, }} style={styles.avatar} source={{ uri: userInfo.profilePicture }} >
                         <TouchableOpacity onPress={() => pickImage()}>
                             <FontAwesome
                                 name="camera"
@@ -98,7 +107,7 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                     <View style={styles.headerInfo}>
                         <Text style={styles.username}>{userInfo.username}</Text>
                         <TouchableOpacity onPress={() => setModalVisible(true)}>
-                            <Text style={styles.bio}>This is my bio</Text>
+                            <Text style={styles.bio}>{userInfo.bio}</Text>
                         </TouchableOpacity>
                         <View style={styles.stats}>
                             <Text style={styles.stat}>{userInfo.nbFollowers} Followers</Text>
@@ -107,21 +116,7 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                     </View>
                 </View>
                 <View style={[styles.separator, { "backgroundColor": colorScheme === "light" ? "black" : "white" }]} />
-                {/**
-                    <View style={styles.columns}>
-                        {userPosts.map((post, index) => (
-                            <View key={index} style={styles.column}>
-                                <TouchableOpacity onPress={() => console.log('navigation.navigate("PostScreen")')}>
-                                    <ImageBackground
-                                        style={styles.image}
-                                        source={{ uri: post.image }}>
-                                        <Text style={styles.likes}>♥ {post.likes}</Text>
-                                    </ImageBackground>
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </View>
-                */}
+                <PostsGrid userPosts={userPosts} />
             </View>
         ) : (
             <View style={styles.container}>
@@ -161,31 +156,6 @@ const styles = StyleSheet.create({
     },
     stat: {
         marginRight: 20,
-    },
-
-
-
-    columns: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-    },
-    column: {
-        width: "33%",
-        padding: 5,
-    },
-    image: {
-        width: "100%",
-        height: 175,
-    },
-    likes: {
-        position: "absolute",
-        bottom: 10,
-        right: 10,
-        color: "#fff",
-        fontWeight: "bold",
-        textShadowColor: "rgba(0, 0, 0, 0.75)",
-        textShadowOffset: { width: -1, height: 1 },
-        textShadowRadius: 10,
     },
 
 

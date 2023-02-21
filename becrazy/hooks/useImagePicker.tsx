@@ -1,8 +1,14 @@
+import { useContext } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import { MyContext } from '../App';
+import { server } from '../constants/Server';
 
 
 // this is the hook responsible for using the async storage
 export const useImagePicker = () => {
+    const { token } = useContext(MyContext);
+
+
     // this is the function that will be called when the user wants to pick an image
     // it open the phone's gallery and let the user pick an image
     const pickImage = async () => {
@@ -14,24 +20,22 @@ export const useImagePicker = () => {
             quality: 1,
         });
 
-        console.log(result);
-
         if (!result.canceled) {
-            //uploadProfilePic(result.assets[0].uri)
+            uploadProfilePic(result.assets[0].uri)
         }
     };
 
     // this function will be called at the end of the pickImage function
     // it will send the image to the server
     const uploadProfilePic = async (image: string) => {
-        const res = await fetch("localhost:3000/user/profilePic", {
+        console.log(image)
+        const res = await fetch(`${server}/updateUser/${token}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer ${token}"
             },
             body: JSON.stringify({
-                picture: image
+                profilePicture: image
             })
         })
         const data = await res.json()
