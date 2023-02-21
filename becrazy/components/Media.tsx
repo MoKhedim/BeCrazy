@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { useEffect, useState } from 'react';
+import { Modal, Platform, Pressable, StyleSheet } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
 import { Text, View } from './Themed';
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
 import Colors from '../constants/Colors';
@@ -9,44 +9,61 @@ import useColorScheme from '../hooks/useColorScheme';
 import { allMedia } from '../interfaces/media/allMedia';
 import { isMobile } from 'react-device-detect';
 import { server } from '../constants/Server';
+import { MyContext } from '../App';
+import { StatusBar } from 'expo-status-bar';
+import EditScreenInfo from './EditScreenInfo';
 
 
 
-export function Media(props: allMedia) {
+export function Media(props: any) {
     const colorScheme = useColorScheme();
     type IconName = 'heart-o' | 'heart';
+    const [isLiked, setIsLiked] = useState(props.allMedia.isLiked)
     const [iconName, setIconName] = useState<IconName>('heart-o')
-    const [likes, setLikes] = useState(props.nbLikes)
-    const [videoBin, setVideoBin] = useState('');
+    const [likes, setLikes] = useState(props.allMedia.nbLikes)
+    const { token } = useContext(MyContext);
+    const [commentsModalVisible, setCommentsModalVisible] = useState(false)
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
-        if (iconName !== 'heart') {
-            setLikes(likes + 1);
+        likeVideo()
+    }
+
+    async function likeVideo() {
+        const urlLikes = `${server}/likeMedia/${token}`;
+        console.log(props.allMedia._id)
+
+        const resultLikes = await fetch(urlLikes, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idMedia: props.allMedia._id
+            })
+        });
+        if (resultLikes.ok) {
+            if (iconName !== 'heart') {
+                setLikes(likes + 1);
+            } else {
+                setLikes(likes - 1);
+            }
         } else {
-            setLikes(likes - 1);
+            console.log("une erreur s'est produite");
         }
     }
 
     useEffect(() => {
-        async function getVideo() {
-            const urlVideo = `${server}/getMedia/${props.videoId}`;
-            const resultVideo = await fetch(urlVideo, {
-                method: "GET",
-                headers: {
-                    "Access-Control-Allow-Origin": "*"
-                }
-            });
-            if (resultVideo.ok) {
-                const data = await resultVideo.json();
-                setVideoBin(data.data);
+        function checkLike() {
+            if (isLiked == true) {
+                setIconName('heart')
             } else {
-                console.log("une erreur s'est produite");
+                setIconName('heart-o')
             }
         }
-
-        getVideo().then(() => console.log('done getVideo'));
+        checkLike();
     }, [])
+
 
     return (
         <>
@@ -61,19 +78,19 @@ export function Media(props: allMedia) {
                         right: 12,
                     }} />
                 <View style={isMobile ?
-                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "80%", flex: 1, marginEnd: 5 } : 
+                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "80%", flex: 1, marginEnd: 5 } :
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
                 }>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.username}</Text>
+                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.allMedia.username}</Text>
                         <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>
-                            {props.created.split('T')[0].replaceAll('-', '/')}</Text>
+                            {props.allMedia.created.split('T')[0].replaceAll('-', '/')}</Text>
                     </View>
                     <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
-                        {props.description}
+                        {props.allMedia.description}
                     </Text>
                     <Video style={[styles.video, { backgroundColor: Colors[colorScheme].text }]}
-                        source={require('../assets/videos/test3.mp4')}
+                        source={{ uri: `${server}/getMedia/${props.allMedia.videoId}` }}
                         useNativeControls={true}
                         isLooping={true}
                         onError={(error) => console.error(error)}
@@ -83,14 +100,27 @@ export function Media(props: allMedia) {
                         flexDirection: 'row', marginTop: 10, alignItems: 'flex-end',
                         justifyContent: 'flex-end', marginBottom: 20,
                     }}>
-                        <MaterialIcons size={24} name='chat-bubble' color={Colors[colorScheme].text} style={styles.icon} />
-                        <Text style={{ marginEnd: 10 }}>{props.nbComments}</Text>
+                        <MaterialIcons size={24} name='chat-bubble' color={Colors[colorScheme].text} style={styles.icon} onPress={() => setCommentsModalVisible(true)} />
+                        <Text style={{ marginEnd: 10 }}>{props.allMedia.nbComments}</Text>
                         <FontAwesome size={24} name={iconName} color={Colors[colorScheme].text} style={styles.icon} onPress={handlePressLike} />
                         <Text style={{ marginEnd: 10 }}>{likes}</Text>
                     </View>
                 </View>
             </View>
             <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={commentsModalVisible}
+                onRequestClose={() => {
+                    setCommentsModalVisible(!commentsModalVisible);
+                }}>
+                <View style={styles.container}>
+                    <Text style={styles.title}>Comments</Text>
+                    <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+                    
+                </View>
+            </Modal>
         </>
     )
 }
@@ -109,6 +139,25 @@ const styles = StyleSheet.create({
         marginTop: 10,
         height: 1,
         width: '60%',
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     },
     video: {
         borderRadius: 8,

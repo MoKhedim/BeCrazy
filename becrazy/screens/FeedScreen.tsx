@@ -5,21 +5,23 @@ import { ScrollView } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
 import { Media } from '../components/Media';
 import { allMedia } from '../interfaces/media/allMedia';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Text, View } from '../components/Themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 import { server } from '../constants/Server';
+import { MyContext } from '../App';
 
 export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
     const colorScheme = useColorScheme();
     const desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum tristique est, eget maximus felis sagittis at. Phasellus eu finibus odio, vitae tincidunt nisl."
     // array de AllMedias par les users
     const [allMedias, setAllMedias] = useState<Array<allMedia>>([])
+    const { token } = useContext(MyContext);
 
     useEffect(() => {
         async function getAllMedias() {
-            const urlAllMedias = `${server}/getAllMedia`;
+            const urlAllMedias = `${server}/getAllMedia/${token}`;
             const resultAllMedias = await fetch(urlAllMedias, {
                 method: "GET",
                 headers: {
@@ -59,13 +61,7 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                     allMedias?.map((post) => {
                         return <Media
                             key={post._id}
-                            _id={post._id}
-                            username={post.username}
-                            description={post.description}
-                            videoId={post.videoId}
-                            nbComments={post.nbComments}
-                            nbLikes={post.nbLikes}
-                            created={post.created} />
+                            allMedia={post} />
                     })
                 }
             </View>
