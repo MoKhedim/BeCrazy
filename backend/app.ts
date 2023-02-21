@@ -91,7 +91,7 @@ app.post('/signup', async (req: Request, res: Response) => {
             if (verifUsername) {
                 res.status(100).send("username already exist");
             } else {
-                const result: any = await collectionUsers.insertOne({ username: user.username, email: user.email, password: user.password, bio: user.bio, profilepicture: profilepicDefault, created: user.created, token: user.token, nbFollows: user.nbFollows, nbFollowers: user.nbFollowers });
+                const result: any = await collectionUsers.insertOne({ username: user.username, email: user.email, password: user.password, bio: user.bio, profilePicture: profilepicDefault, created: user.created, token: user.token, nbFollows: user.nbFollows, nbFollowers: user.nbFollowers });
                 if (result) {
                     res.status(200).send("user created");
                 } else {
@@ -176,8 +176,8 @@ app.post('/postMedia', upload.single("video"), async (req: Request, res: Respons
     const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
     try {
-        console.log("Inserting data into database:", {username, description, videoId: uploadStream.id});
-        await collectionAllMedia.insertOne({
+        console.log("Inserting data into database:", { username, description, videoId: uploadStream.id });
+        collectionAllMedia.insertOne({
             username: username,
             description: description,
             videoId: uploadStream.id,
@@ -203,28 +203,26 @@ app.post('/postMedia', upload.single("video"), async (req: Request, res: Respons
 });
 
 app.get('/getMedia/:id', (req: Request, res: Response) => {
-    MongoClient.connect(uri, (err: Error, client: typeof MongoClient) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ message: 'Error connecting to MongoDB' });
-            return;
-        }
-        dbClient = client;
-        const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
-        const downloadStream = bucket.openDownloadStream(ObjectId(req.params.id));
-        downloadStream.pipe(res);
-        //send the video to the upload folder
-        downloadStream.on('error', (error: any) => {
-            console.log(error);
-            res.status(500).json({ message: 'Error downloading video' });
-        }
-        );
-        downloadStream.on('finish', () => {
-            res.status(200).json({ message: 'Video downloaded successfully' });
-            dbClient.close(); // close the connection once the operation is finished
-        }
-        );
-    });
+    dbClient = client;
+    const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
+    const downloadStream = bucket.openDownloadStream(new ObjectId(req.params.id));
+    downloadStream.pipe(res);
+
+    //send the video to the upload folder
+    downloadStream.on('error', (error: any) => {
+        console.log(error);
+        res.status(500).json({ message: 'Error downloading video' });
+    }
+    );
+    downloadStream.on('finish', () => {
+        //send the uri of the video
+        multer({ dest: 'uploads/' });
+
+
+        res.status(200).json({ message: 'Video downloaded successfully' });
+        dbClient.close(); // close the connection once the operation is finished
+    }
+    );
 });
 
 app.delete('/deleteMedia/:id', (req: Request, res: Response) => {
