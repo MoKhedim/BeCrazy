@@ -16,6 +16,7 @@ const upload = multer({ dest: "uploads/" });
 var app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const ffmpeg = require('fluent-ffmpeg');
 const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";//express setup
 const saltRounds = 10;
 const port = process.env.PORT || 4000;
@@ -215,10 +216,9 @@ app.get('/getMedia/:id', (req: Request, res: Response) => {
     }
     );
     downloadStream.on('finish', () => {
-        //send the uri of the video
-        multer({ dest: 'uploads/' });
-
-
+        const video = ffmpeg('uploads/' + (req as unknown as MulterRequest).file.originalname);
+        video.toFormat('mp4').save('uploads/' + (req as unknown as MulterRequest).file.originalname + '.mp4');
+        const upload = multer({ dest: 'uploads/' });
         res.status(200).json({ message: 'Video downloaded successfully' });
         dbClient.close(); // close the connection once the operation is finished
     }
