@@ -1,8 +1,9 @@
 export default interface Post {
     _id: string;
     username: string;
-    description: string | null;
-    videoId: number;
-    nbComment: number;
-    nbLike: string;
+    description: string;
+    videoId: string;
+    created: Date;
+    nbLikes: number;
+    nbComments: number;
 }
