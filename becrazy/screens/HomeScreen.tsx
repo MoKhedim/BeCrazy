@@ -3,6 +3,7 @@ import { StyleSheet, FlatList, ScrollView } from 'react-native';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
+import { server } from '../constants/Server';
 
 type User = {
   name: string;
@@ -11,20 +12,27 @@ type User = {
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
   const [sortedData, setSortedData] = useState<User[]>([]);
-  const [leaderboard, setLeaderboard] = useState<User[]>([
-    { name: 'John', likes: 100 },
-    { name: 'Bob', likes: 90 },
-    { name: 'Mary', likes: 95 },
-    { name: 'Jim', likes: 80 },
-    { name: 'Bill', likes: 85 },
-    { name: 'Steve', likes: 75 },
-    { name: 'Rick', likes: 70 },
-    { name: 'Alex', likes: 65 },
-    { name: 'Mike', likes: 60 },
-    { name: 'Adam', likes: 55 },
-    { name: 'Jack', likes: 50 },
-    { name: 'Joe', likes: 45 }
-  ]);
+  const [leaderboard, setLeaderboard] = useState<User[]>([]);
+
+  useEffect(() => {
+    async function getTop10() {
+        const urlTop10Media= `${server}/top10Media`;
+        const resultTop10 = await fetch(urlTop10Media, {
+            method: "GET",
+            headers: {
+                "Access-Control-Allow-Origin": "*"
+            }
+        });
+        if (resultTop10.ok) {
+            const data = await resultTop10.json();
+            setLeaderboard(data);
+            console.log(data)
+        } else {
+            console.log("une erreur s'est produite");
+        }
+    }
+    getTop10().then(() => console.log('done getTop10 Media'));
+}, []);
 
   useEffect(() => {
     const sorted = [...leaderboard]
@@ -32,6 +40,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
       .slice(0, 10);
     setSortedData(sorted);
   }, [leaderboard]);
+  
 
 
 
