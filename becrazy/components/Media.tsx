@@ -115,11 +115,13 @@ export function Media(props: any) {
                 onRequestClose={() => {
                     setCommentsModalVisible(!commentsModalVisible);
                 }}>
-                <View style={styles.container}>
-                    <Text style={styles.title}>Comments</Text>
-                    <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-                    
+                <View style={{ backgroundColor: Colors[colorScheme].background, flex: 1, flexDirection: 'row' }}>
+                    <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
+                        <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
+                    </Pressable>
+                    <Text style={[styles.title, {alignItems: 'center', marginTop: 14 }]}>Comments</Text>
                 </View>
+                <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
             </Modal>
         </>
     )
@@ -134,6 +136,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 30,
         fontWeight: 'bold',
+        justifyContent: 'center'
     },
     separator: {
         marginTop: 10,
