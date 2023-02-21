@@ -3,6 +3,7 @@ import { Text } from '../Themed';
 import { useState, useEffect } from 'react';
 import Post from '../../interfaces/Post';
 import { server } from '../../constants/Server';
+import { Video } from 'expo-av';
 
 export const PostsGrid = ({ ...props }) => {
     const userPosts:Array<Post> = props.userPosts;
@@ -12,11 +13,22 @@ export const PostsGrid = ({ ...props }) => {
             {userPosts.map((post, index) => (
                 <View key={index} style={styles.column}>
                     <TouchableOpacity onPress={() => console.log('navigation.navigate("PostScreen")')}>
+                        <Video
+                            source={{ uri: `${server}/getMedia/${post.videoId}` }}
+                            rate={1.0}
+                            volume={1.0}
+                            isMuted={false}
+                            shouldPlay
+                            isLooping
+                            style={styles.image}
+                        />
+                        {/** 
                         <ImageBackground
                             style={styles.image}
-                            source={{ uri: `${server}/getpost/${post.videoId}` }}>
-                            <Text style={styles.likes}>♥ {/**post.likes*/}</Text>
+                            source={{ uri: `${server}/getMedia/${post.videoId}` }}>
+                            <Text style={styles.likes}>♥ {post.nbLike}</Text>
                         </ImageBackground>
+                        */}
                     </TouchableOpacity>
                 </View>
             ))}
