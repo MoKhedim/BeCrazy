@@ -5,7 +5,7 @@ export default interface UserInfo {
     password: string;
     bio: string;
     // profilepicture is a base64 string
-    profilepicture: string;
+    profilePicture: string;
     created: Date;
     token: string;
     nbFollows: number;
