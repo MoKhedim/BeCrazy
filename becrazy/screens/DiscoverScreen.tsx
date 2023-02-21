@@ -62,7 +62,6 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
           })}
         </View>
       )}
-      Random posts
     </View>
   )
 }

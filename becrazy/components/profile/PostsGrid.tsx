@@ -3,34 +3,9 @@ import { Text } from '../Themed';
 import { useState, useEffect } from 'react';
 import Post from '../../interfaces/Post';
 import { server } from '../../constants/Server';
-import Video from '../../interfaces/Video';
 
 export const PostsGrid = ({ ...props }) => {
     const userPosts:Array<Post> = props.userPosts;
-    const [posts, setPosts] = useState<Array<Video> | null>(null);
-
-
-    const fetchPosts = async (id: string) => {
-        const res = await fetch(`${server}/getpost/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        });
-        if (res.status !== 200) return
-        const data = await res.json();
-        setPosts(prev => [...prev, data]);
-    }
-
-    useEffect(() => {
-        const getPosts = async () => {
-            userPosts.map((post, index) => {
-                fetchPosts(post._id);
-            })
-        }
-        getPosts();
-    }, []);
-
 
     return (
         <View style={styles.columns}>
@@ -39,8 +14,8 @@ export const PostsGrid = ({ ...props }) => {
                     <TouchableOpacity onPress={() => console.log('navigation.navigate("PostScreen")')}>
                         <ImageBackground
                             style={styles.image}
-                            source={{ uri: post.image }}>
-                            <Text style={styles.likes}>♥ {post.likes}</Text>
+                            source={{ uri: `${server}/getpost/${post.videoId}` }}>
+                            <Text style={styles.likes}>♥ {/**post.likes*/}</Text>
                         </ImageBackground>
                     </TouchableOpacity>
                 </View>

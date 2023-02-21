@@ -34,13 +34,13 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
             }
         });
         if (res.status !== 200) return
         const data = await res.json();
         setUserInfo(data.info);
     }
+
     useEffect(() => {
         getUserInfo();
     }, []);
