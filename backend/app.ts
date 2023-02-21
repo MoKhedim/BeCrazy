@@ -75,7 +75,7 @@ app.post('/signup', async (req: Request, res: Response) => {
         username: req.body.username,
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, saltRounds),
-        bio: "",
+        bio: "this is a bio",
         profilePicture: "",
         created: today,
         token: "",
@@ -287,8 +287,8 @@ app.get('/getAllMedia', async (req: Request, res: Response) => {
 app.post('/likeMedia/:token', async (req: Request, res: Response) => {
     const token: string = req.params.token;
     const idMedia: string = req.body.idMedia;
-    const likes: any = { $inc: { nbLike: 1 } };
-    const dislikes: any = { $inc: { nbLike: -1 } };
+    const likes: any = { $inc: { nbLikes: 1 } };
+    const dislikes: any = { $inc: { nbLikes: -1 } };
     try {
         const verifytoken: any = await collectionUsers.findOne({ token: token });
         if (verifytoken) {
@@ -333,7 +333,7 @@ app.post('/commentsMedia/:token', async (req: Request, res: Response) => {
     const token: string = req.params.token;
     const comment: any = req.body.comment;
     const idMedia: string = req.body.idMedia;
-    const addComment: any = { $inc: { nbComment: 1 } };
+    const addComment: any = { $inc: { nbComments: 1 } };
     try {
         const verifytoken: any = await collectionUsers.findOne({ token: token });
         if (verifytoken) {
@@ -365,7 +365,7 @@ app.post('/deleteComments/:token', async (req: Request, res: Response) => {
     const token: string = req.params.token;
     const idMedia: string = req.body.idMedia;
     const idComment: string = req.body.idComment;
-    const deleteComment: any = { $inc: { nbComment: -1 } };
+    const deleteComment: any = { $inc: { nbComments: -1 } };
     try {
         const verifytoken: any = await collectionUsers.findOne({ token: token });
         if (verifytoken) {
@@ -459,7 +459,7 @@ app.get('/top10media', async (req: Request, res: Response) => {
     const today: Date = new Date();
     const date: String = today.toISOString().substr(0, 10);
     try {
-        const result: any = await collectionAllMedia.find({ created: { $regex: `^${date}` } }).sort({ nbLike: -1 }).limit(10).toArray();
+        const result: any = await collectionAllMedia.find({ created: { $regex: `^${date}` } }).sort({ nbLikes: -1 }).limit(10).toArray();
         res.send(result);
     }
     catch (err) {
