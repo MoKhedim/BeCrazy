@@ -255,13 +255,27 @@ app.delete('/deleteMedia/:id', (req: Request, res: Response) => {
     });
 });
 
-
-app.get('/getAllMedia', async (req: Request, res: Response) => {
+//http://localhost:4000/getAllMedia/:token
+app.get('/getAllMedia/:token', async (req: Request, res: Response) => {
+    const token: string = req.params.token;
     try {
         const result: any = await collectionAllMedia.find().toArray();
-        res.status(200).send(result);
-    }
-    catch (err) {
+        //verifie si le media a déjà été like ou pas
+        const verifytoken: any = await collectionUsers.findOne({ token: token });
+        if (verifytoken) {
+            const username: string = verifytoken.username;
+            for (let i = 0; i < result.length; i++) {
+                const result2: any = await collectionMediaLikes.find({ idMedia: result[i]._id, username: username  }).toArray();
+                if (result2.length > 0) {
+                    result[i].isLiked = true;
+                }
+                else {
+                    result[i].isLiked = false;
+                }
+            }
+            res.status(200).send(result);
+        } 
+    } catch (err) {
         res.status(500).send(err);
     }
 });
