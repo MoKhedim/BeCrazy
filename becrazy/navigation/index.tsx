@@ -19,13 +19,14 @@ import ResetPasswordScreen from '../screens/auth/ResetPassword';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import SettingScreen from '../screens/profile/SettingScreen';
 import HomeScreen from '../screens/HomeScreen';
 import DiscoverScreen from '../screens/DiscoverScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import FeedScreen from '../screens/FeedScreen';
 import { MyContext } from '../App';
+import CameraScreen from '../screens/camera/CameraScreen';
+import SavePostScreen from '../screens/camera/SavePostScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -60,7 +61,7 @@ function RootNavigator() {
         title: "Profile",
         headerRight: () => (
           <Pressable
-            onPress={() => navigation.navigate('SettingScreen')}
+            onPress={() => navigation.navigate('CameraScreen')}
             style={({ pressed }) => ({
               opacity: pressed ? 0.5 : 1,
             })}>
@@ -73,7 +74,9 @@ function RootNavigator() {
         ),
       })} />
 
-      <Stack.Screen name="SettingScreen" component={SettingScreen} options={{ title: "Setting" }} />
+      <Stack.Screen name="CameraScreen" component={CameraScreen} options={{ title: "Camera" }} />
+      <Stack.Screen name="SavePostScreen" component={SavePostScreen} options={{ title: "Save Post" }} />
+
 
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />

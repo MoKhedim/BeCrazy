@@ -18,7 +18,12 @@ export type RootStackParamList = {
   Modal: undefined;
   NotFound: undefined;
   ProfileScreen: undefined;
-  SettingScreen: undefined;
+  CameraScreen: undefined;
+  // SavePostScreen needs to have params because it need to know what image to save
+  SavePostScreen: { 
+    source: string; 
+    sourceThumb?: string; 
+  };
   LoginScreen: undefined;
   RegisterScreen: undefined;
   ResetPasswordScreen: undefined;

@@ -55,6 +55,12 @@ const styles = StyleSheet.create({
     sideBarButton: {
         alignItems: 'center',
         marginBottom: 25
+    },
+    noPermissionsText: {
+        fontSize: 18,
+        textAlign: 'center',
+        marginHorizontal: 20,
+        marginTop: 20
     }
 });
 
