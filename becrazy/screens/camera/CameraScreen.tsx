@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, Image } from 'react-native'
+import { View, TouchableOpacity, Image } from 'react-native'
+import { Text } from '../../components/Themed'
 import { Camera, CameraType, FlashMode } from 'expo-camera'
 import { Audio } from 'expo-av'
 import * as ImagePicker from 'expo-image-picker'
 import * as MediaLibrary from 'expo-media-library'
-import * as VideoThumbnails from 'expo-video-thumbnails';
 
 import { Feather } from '@expo/vector-icons'
 
-import styles from './styles'
+import styles from './styles/camera'
 import { RootStackScreenProps } from '../../types'
+import { useIsFocused } from '@react-navigation/native'
 
 
 /**
@@ -20,7 +21,7 @@ import { RootStackScreenProps } from '../../types'
  */
 export default function CameraScreen({ navigation }: RootStackScreenProps<'CameraScreen'>) {
     // check if the camera is ready and the user is focused on the screen to know when to show the camera preview
-    const [isFocused, setIsFocused] = useState(false)
+    const isFocused = useIsFocused()
     const [isCameraReady, setIsCameraReady] = useState(false)
 
 
@@ -36,18 +37,6 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     const [cameraRef, setCameraRef] = useState<Camera | null>(null)
     const [cameraType, setCameraType] = useState(CameraType.back)
     const [cameraFlash, setCameraFlash] = useState(FlashMode.off)
-
-
-    // set the focus state to true when the user is focused on the screen
-    // and set it to false when the user is not focused on the screen
-    // because the useIsFocused hook is not working properly
-    useEffect(() => {
-        setIsFocused(true)
-
-        return () => {
-            setIsFocused(false)
-        }
-    })
 
 
 
@@ -73,22 +62,6 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
 
 
 
-    const generateThumbnail = async (source: string) => {
-        try {
-            const { uri } = await VideoThumbnails.getThumbnailAsync(
-                source,
-                {
-                    time: 5000,
-                }
-            );
-            return uri;
-        } catch (e) {
-            console.warn(e);
-        }
-    };
-
-
-
     const recordVideo = async () => {
         if (cameraRef) {
             try {
@@ -97,8 +70,7 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
                 if (videoRecordPromise) {
                     const data = await videoRecordPromise;
                     const source = data.uri
-                    let sourceThumb = await generateThumbnail(source)
-                    navigation.navigate('SavePostScreen', { source, sourceThumb })
+                    navigation.navigate('SavePostScreen', { source })
                 }
             } catch (error) {
                 console.warn(error)
@@ -122,8 +94,7 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
             quality: 1
         })
         if (!result.canceled) {
-            let sourceThumb = await generateThumbnail(result.assets[0].uri)
-            navigation.navigate('SavePostScreen', { source: result.assets[0].uri, sourceThumb })
+            navigation.navigate('SavePostScreen', { source: result.assets[0].uri })
         }
     }
 

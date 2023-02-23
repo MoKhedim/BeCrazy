@@ -66,7 +66,7 @@ function RootNavigator() {
               opacity: pressed ? 0.5 : 1,
             })}>
             <FontAwesome
-              name="gear"
+              name="camera"
               size={25}
               style={{ marginRight: 15, color: Colors[colorScheme].text }}
             />
