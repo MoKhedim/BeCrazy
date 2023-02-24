@@ -158,45 +158,42 @@ app.get("/aiChallenge", (req: Request, res: Response) => {
     );
 });
 
-//http://localhost:4000/postMedia
-//exemple body :
-// form-data : 
-// key : video, value : Select File
-//raw : JSON
-// {
-//     "username": "username",
-//     "description": "description"
-// }
-
-let dbClient: typeof MongoClient;
-app.post('/postMedia', upload.single("video"), async (req: Request, res: Response) => {
-    dbClient = client;
-    const username: string = req.body.username;
+//http://localhost:4000/postMedia/:token
+// form-data key :
+// video: Select File
+// description: description
+app.post('/postMedia/:token', upload.single("video"), async (req: Request, res: Response) => {
+    const token: string = req.params.token;
     const description: string = req.body.description;
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
     const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
     try {
-        console.log("Inserting data into database:", { username, description, videoId: uploadStream.id });
-        collectionAllMedia.insertOne({
-            username: username,
-            description: description,
-            videoId: uploadStream.id,
-            created: new Date,
-            nbLikes: 0,
-            nbComments: 0
-        });
-        videoStream.pipe(uploadStream)
-            .on('error', (error: any) => {
-                console.log(error);
-                res.status(500).json({ message: 'Error uploading video' });
-            })
-            .on('finish', (file: any) => {
-                fs.unlinkSync((req as unknown as MulterRequest).file.path);
-                res.status(200).json({ message: 'Video uploaded successfully' });
-                dbClient.close(); // close the connection once the operation is finished
-                res.send(file.id);
+        const verifytoken: any = await collectionUsers.findOne({ token: token });
+        if (verifytoken) {
+            const username: string = verifytoken.username;
+            console.log("Inserting data into database:", { username, description, videoId: uploadStream.id });
+            collectionAllMedia.insertOne({
+                username: username,
+                description: description,
+                videoId: uploadStream.id,
+                created: new Date,
+                nbLikes: 0,
+                nbComments: 0
             });
+            videoStream.pipe(uploadStream)
+                .on('error', (error: any) => {
+                    console.log(error);
+                    res.status(500).json({ message: 'Error uploading video' });
+                })
+                .on('finish', (file: any) => {
+                    fs.unlinkSync((req as unknown as MulterRequest).file.path);
+                    res.status(200).json({ message: 'Video uploaded successfully' });
+                    res.send(file.id);
+                });
+        } else {
+            res.status(400).json({ message: 'Wrong token' });
+        }
     }
     catch (err) {
         res.status(500).json({ message: 'Error uploading video' });
@@ -204,7 +201,6 @@ app.post('/postMedia', upload.single("video"), async (req: Request, res: Respons
 });
 
 app.get('/getMedia/:id', (req: Request, res: Response) => {
-    dbClient = client;
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
     const downloadStream = bucket.openDownloadStream(new ObjectId(req.params.id));
     downloadStream.pipe(res);
@@ -220,39 +216,33 @@ app.get('/getMedia/:id', (req: Request, res: Response) => {
         video.toFormat('mp4').save('uploads/' + (req as unknown as MulterRequest).file.originalname + '.mp4');
         const upload = multer({ dest: 'uploads/' });
         res.status(200).json({ message: 'Video downloaded successfully' });
-        dbClient.close(); // close the connection once the operation is finished
     }
     );
 });
 
-app.delete('/deleteMedia/:id', (req: Request, res: Response) => {
-    MongoClient.connect(uri, (err: Error, client: typeof MongoClient) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ message: 'Error connecting to MongoDB' });
-            return;
-        }
-        dbClient = client;
-        const collection = client.db("BeCrazy").collection("allMedia");
-        const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
-
-        collection.deleteOne({ videoId: ObjectId(req.params.id) }, (err: any, result: any) => {
-            if (err) {
-                console.log(err);
-                return;
+//http://localhost:4000/deleteMedia/:id/:token
+app.delete('/deleteMedia/:id/:token', async (req: Request, res: Response) => {
+    const token: string = req.params.token;
+    const id = req.params.id;
+    try {
+        const verifytoken: any = await collectionUsers.findOne({ token: token });
+        if (verifytoken) {
+            const username = verifytoken.username;
+            const verifyMediaUser = await collectionAllMedia.findOne({ videoId: new ObjectId(id), username: username });
+            if (verifyMediaUser) {
+                const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
+                await collectionAllMedia.deleteOne({ videoId: new ObjectId(id) });
+                await bucket.delete(new ObjectId(id))
+                res.status(200).json({ message: 'Video deleted successfully' });
+            } else {
+                res.status(400).json({ message: 'You are not the owner of this video' });
             }
+        } else {
+            res.status(400).json({ message: 'Wrong token' });
         }
-        );
-        bucket.delete(ObjectId(req.params.id), (err: any) => {
-            if (err) {
-                console.log(err);
-                res.status(500).json({ message: 'Error deleting video' });
-                return;
-            }
-            res.status(200).json({ message: 'Video deleted successfully' });
-            dbClient.close(); // close the connection once the operation is finished
-        });
-    });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting video' });
+    }
 });
 
 //http://localhost:4000/getAllMedia/:token
@@ -265,7 +255,7 @@ app.get('/getAllMedia/:token', async (req: Request, res: Response) => {
         if (verifytoken) {
             const username: string = verifytoken.username;
             for (let i = 0; i < result.length; i++) {
-                const result2: any = await collectionMediaLikes.find({ idMedia: result[i]._id, username: username  }).toArray();
+                const result2: any = await collectionMediaLikes.find({ idMedia: result[i]._id, username: username }).toArray();
                 if (result2.length > 0) {
                     result[i].isLiked = true;
                 }
@@ -274,7 +264,7 @@ app.get('/getAllMedia/:token', async (req: Request, res: Response) => {
                 }
             }
             res.status(200).send(result);
-        } 
+        }
     } catch (err) {
         res.status(500).send(err);
     }
@@ -471,10 +461,12 @@ app.post("/verifCode/:email", async (req: Request, res: Response) => {
 // http://localhost:4000/top10media
 app.get('/top10media', async (req: Request, res: Response) => {
     const today: Date = new Date();
-    const date: String = today.toISOString().substr(0, 10);
+    const startOfDay: Date = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay: Date = new Date(today.setHours(23, 59, 59, 999));
     try {
-        const result: any = await collectionAllMedia.find({ created: { $regex: `^${date}` } }).sort({ nbLikes: -1 }).limit(10).toArray();
-        res.send(result);
+        console.log(today);
+        const result: any = await collectionAllMedia.find({ created: { $gte: startOfDay, $lte: endOfDay } }).sort({ nbLikes: -1 }).limit(10).toArray();
+        res.status(200).send(result);
     }
     catch (err) {
         res.status(500).send(err);
