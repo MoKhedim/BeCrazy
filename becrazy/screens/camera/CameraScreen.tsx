@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { View, TouchableOpacity, Image } from 'react-native'
+import { View, TouchableOpacity, Image, Platform } from 'react-native'
 import { Text } from '../../components/Themed'
 import { Camera, CameraType, FlashMode } from 'expo-camera'
 import { Audio } from 'expo-av'
@@ -11,6 +11,7 @@ import { Feather } from '@expo/vector-icons'
 import styles from './styles/camera'
 import { RootStackScreenProps } from '../../types'
 import { useIsFocused } from '@react-navigation/native'
+import FillButton from '../../components/camera/FillButton'
 
 
 /**
@@ -23,6 +24,7 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     // check if the camera is ready and the user is focused on the screen to know when to show the camera preview
     const isFocused = useIsFocused()
     const [isCameraReady, setIsCameraReady] = useState(false)
+    const [isRecording, setIsRecording] = useState(false)
 
 
     // the state for the camera permissions and the gallery permissions
@@ -63,8 +65,13 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
 
 
     const recordVideo = async () => {
-        if (cameraRef) {
+        if (cameraRef && !isRecording) {
             try {
+                /*
+                * The options for the video recording
+                * maxDuration: the maximum duration of the video = 60 seconds
+                * quality: the quality of the video = 480p
+                * */
                 const options = { maxDuration: 60, quality: Camera.Constants.VideoQuality['480'] }
                 const videoRecordPromise = cameraRef.recordAsync(options)
                 if (videoRecordPromise) {
@@ -81,6 +88,7 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     const stopVideo = async () => {
         if (cameraRef) {
             cameraRef.stopRecording()
+            setIsRecording(false)
         }
     }
 
@@ -99,66 +107,78 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     }
 
 
-    return (
-        !hasCameraPermissions || !hasAudioPermissions || !hasGalleryPermissions ? (
+    // if the user has not granted the camera and audio permissions, show a message
+    if (!hasCameraPermissions || !hasAudioPermissions || !hasGalleryPermissions) {
+        return (
             <View style={styles.container}>
                 <Text style={styles.noPermissionsText}>You need to grant camera and audio permissions to use this feature</Text>
             </View>
-        ) : (
+        )
+    }
+
+    // check if the user is on web and if so show message
+    if (Platform.OS === 'web') {
+        return (
             <View style={styles.container}>
-                {isFocused && (
-                    <Camera
-                        ref={(ref) => setCameraRef(ref)}
-                        style={styles.camera}
-                        ratio={'16:9'}
-                        type={cameraType}
-                        flashMode={cameraFlash}
-                        onCameraReady={() => setIsCameraReady(true)}
-                    />
-                )}
-                <View style={styles.sideBarContainer}>
-                    <TouchableOpacity
-                        style={styles.sideBarButton}
-                        onPress={() => setCameraType(cameraType === CameraType.back ? CameraType.front : CameraType.back)}>
-
-                        <Feather name="refresh-ccw" size={24} color={'white'} />
-                        <Text style={styles.iconText}>Flip</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.sideBarButton}
-                        onPress={() => setCameraFlash(cameraFlash === FlashMode.off ? FlashMode.torch : FlashMode.off)}>
-
-                        <Feather name="zap" size={24} color={'white'} />
-                        <Text style={styles.iconText}>Flash</Text>
-                    </TouchableOpacity>
-                </View>
-
-
-                <View style={styles.bottomBarContainer}>
-                    <View style={{ flex: 1 }}></View>
-                    <View style={styles.recordButtonContainer}>
-                        <TouchableOpacity
-                            disabled={!isCameraReady}
-                            onLongPress={() => recordVideo()}
-                            onPressOut={() => stopVideo()}
-                            style={styles.recordButton}
-                        />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                        <TouchableOpacity
-                            onPress={() => pickFromGallery()}
-                            style={styles.galleryButton}>
-                            {galleryItems[0] && (
-                                <Image
-                                    style={styles.galleryButtonImage}
-                                    source={{ uri: galleryItems[0].uri }}
-                                />
-                            )}
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <Text style={styles.noPermissionsText}>This feature is not available on web</Text>
             </View>
         )
+    }
+
+    return (
+        <View style={styles.container}>
+            {isFocused && (
+                <Camera
+                    ref={(ref) => setCameraRef(ref)}
+                    style={styles.camera}
+                    ratio={'16:9'}
+                    type={cameraType}
+                    flashMode={cameraFlash}
+                    onCameraReady={() => setIsCameraReady(true)}
+                />
+            )}
+            <View style={styles.sideBarContainer}>
+                <TouchableOpacity
+                    style={styles.sideBarButton}
+                    onPress={() => setCameraType(cameraType === CameraType.back ? CameraType.front : CameraType.back)}>
+
+                    <Feather name="refresh-ccw" size={24} color={'white'} />
+                    <Text style={styles.iconText}>Flip</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.sideBarButton}
+                    onPress={() => setCameraFlash(cameraFlash === FlashMode.off ? FlashMode.torch : FlashMode.off)}>
+
+                    <Feather name="zap" size={24} color={'white'} />
+                    <Text style={styles.iconText}>Flash</Text>
+                </TouchableOpacity>
+            </View>
+
+
+            <View style={styles.bottomBarContainer}>
+                <View style={{ flex: 1 }}></View>
+                <View style={styles.recordButtonContainer}>
+                    {isCameraReady && (
+                        <FillButton
+                            whenPressed={() => recordVideo()}
+                            whenReleased={() => stopVideo()}
+                        />
+                    )}
+                </View>
+                <View style={{ flex: 1 }}>
+                    <TouchableOpacity
+                        onPress={() => pickFromGallery()}
+                        style={styles.galleryButton}>
+                        {galleryItems[0] && (
+                            <Image
+                                style={styles.galleryButtonImage}
+                                source={{ uri: galleryItems[0].uri }}
+                            />
+                        )}
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
     )
 }

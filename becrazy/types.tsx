@@ -22,7 +22,6 @@ export type RootStackParamList = {
   // SavePostScreen needs to have params because it need to know what image to save
   SavePostScreen: { 
     source: string; 
-    sourceThumb?: string; 
   };
   LoginScreen: undefined;
   RegisterScreen: undefined;

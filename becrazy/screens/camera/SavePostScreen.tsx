@@ -1,17 +1,39 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ActivityIndicator, Image, Keyboard, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { Text } from '../../components/Themed'
 import styles from './styles/savePost'
 import { Feather } from '@expo/vector-icons'
 import { RootStackScreenProps } from '../../types'
+import { ResizeMode, Video } from 'expo-av'
+import { server } from '../../constants/Server'
+import { MyContext } from '../../App'
+
 
 export default function SavePostScreen({ navigation, route }: RootStackScreenProps<'SavePostScreen'>) {
+    const { token } = useContext(MyContext)
+    const [progress, setProgress] = useState(0.4)
     const [description, setDescription] = useState('')
     const [requestRunning, setRequestRunning] = useState(false)
 
     const handleSavePost = async () => {
         setRequestRunning(true)
-        console.log("save post")
+        // const res = await fetch(`${server}/postMedia/${token}`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         description,
+        //         media: route.params.source,
+        //     }),
+        // })
+        // const data = await res.json()
+        // if (res.status !== 200) {
+        //     alert(data.message)
+        //     setRequestRunning(false)
+        //     return
+        // }
+        // navigation.navigate('Root')
         setRequestRunning(false)
     }
 
@@ -34,9 +56,14 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
                         onChangeText={(text) => setDescription(text)}
                         placeholder="Describe your video"
                     />
-                    <Image
+                    <Video
                         style={styles.mediaPreview}
                         source={{ uri: route.params.source }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode={ResizeMode.COVER}
+                        useNativeControls
                     />
                 </View>
                 <View style={styles.spacer} />
@@ -56,6 +83,6 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
                     </TouchableOpacity>
                 </View>
             </View>
-            </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
     )
 }
