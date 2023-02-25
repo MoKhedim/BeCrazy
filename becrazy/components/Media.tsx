@@ -1,4 +1,4 @@
-import { Modal, Platform, Pressable, StyleSheet } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { Text, View } from './Themed';
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
@@ -22,7 +22,12 @@ export function Media(props: any) {
     const [iconName, setIconName] = useState<IconName>('heart-o')
     const [likes, setLikes] = useState(props.allMedia.nbLikes)
     const { token } = useContext(MyContext);
-    const [commentsModalVisible, setCommentsModalVisible] = useState(false)
+    const [commentsModalVisible, setCommentsModalVisible] = useState(false);
+    const [comments, setComments] = useState([{
+        idMedia: '1', comment: 'ta video est nul'
+    }, {
+        idMedia: '2', comment: 'deadass c nul bro'
+    }])
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
@@ -89,7 +94,7 @@ export function Media(props: any) {
                     <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
                         {props.allMedia.description}
                     </Text>
-                    <Video style={[styles.video, { backgroundColor: Colors[colorScheme].text }]}
+                    <Video style={[styles.video, { backgroundColor: Colors[colorScheme].background }]}
                         source={{ uri: `${server}/getMedia/${props.allMedia.videoId}` }}
                         useNativeControls={true}
                         isLooping={true}
@@ -114,14 +119,58 @@ export function Media(props: any) {
                 visible={commentsModalVisible}
                 onRequestClose={() => {
                     setCommentsModalVisible(!commentsModalVisible);
-                }}>
-                <View style={{ backgroundColor: Colors[colorScheme].background, flex: 1, flexDirection: 'row' }}>
-                    <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
-                        <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
-                    </Pressable>
-                    <Text style={[styles.title, {alignItems: 'center', marginTop: 14 }]}>Comments</Text>
+                }}
+                presentationStyle={'fullScreen'}>
+                <View style={{ height: '100%' }}>
+                    <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 0 }}>
+                        <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
+                            <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
+                        </Pressable>
+                        <Text style={[styles.title, { alignItems: 'center', marginTop: 14 }]}>Comments</Text>
+                    </View>
+                    <ScrollView style={{ marginTop: 100 }}>
+                        {comments?.map((comment) => {
+                            return <View key={comment.idMedia}>
+                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, width: "100%", height: 200, marginBottom: 10 }} key={comment.idMedia}>
+                                    <Image source={
+                                        // user icon placeholder
+                                        require('../assets/images/icon.png')} style={{
+                                            width: 50,
+                                            height: 50,
+                                            borderRadius: 50,
+                                            marginTop: 25,
+                                            marginEnd: 25,
+                                            marginStart: 25,
+                                        }} />
+                                    <View style={isMobile ?
+                                        { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "80%", flex: 1, marginEnd: 5 } :
+                                        { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "90%", flex: 1, marginEnd: 5 }
+                                    }>
+                                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.allMedia.username}</Text>
+                                        <Text style={[styles.comment, { color: Colors[colorScheme].text, marginTop: 5 }]}>
+                                            {comment.comment}
+                                        </Text>
+
+
+                                    </View>
+                                </View>
+                                <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+                            </View>
+                        })}</ScrollView>
+                    <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' }}>
+
+                        <TextInput style={[styles.input,
+                        {
+                            alignItems: 'center',
+                            marginTop: 14,
+                            backgroundColor: Colors[colorScheme].textInput,
+                            color: Colors[colorScheme].text
+                        }]}></TextInput>
+                        <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
+                            <MaterialIcons name='send' size={30} color={Colors[colorScheme].tint} />
+                        </Pressable>
+                    </View>
                 </View>
-                <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
             </Modal>
         </>
     )
@@ -178,8 +227,22 @@ const styles = StyleSheet.create({
         fontSize: 14,
         textAlign: 'justify'
     },
+    comment: {
+        fontSize: 16,
+        textAlign: 'justify'
+    },
     icon: {
         marginEnd: 10,
         maxHeight: 24,
+    },
+    input: {
+        borderRadius: 30,
+        width: '100%',
+        borderWidth: 1,
+        padding: 10,
+        overflow: 'hidden',
+        marginVertical: 10,
+        marginStart: 10,
+        height: 40,
     }
 });
