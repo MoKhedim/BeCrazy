@@ -1,4 +1,4 @@
-# BeCrazy
+# BeCrazy Frontend
 
 BeCrazy is a social media application where people can post videos of themselves doing challenges. This repository contains the code for a mobile application built with [Expo](https://expo.io/) and [TypeScript](https://www.typescriptlang.org/).
 
