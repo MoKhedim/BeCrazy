@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import { TouchableOpacity, StyleSheet, View, useColorScheme } from 'react-native'
 import { Text } from '../../components/Themed'
 import { Button } from '../../components/auth/Button'
 import { TextInput } from '../../components/auth/TextInput'
@@ -57,6 +57,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
                 placeholder='Email'
                 value={email.value}
                 onChangeText={(text: string) => setEmail({ value: text, error: '' })}
+                color='black'
                 autoCapitalize="none"
                 textContentType="emailAddress"
                 keyboardType="email-address"
@@ -64,6 +65,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
             <TextInput
                 returnKeyType="done"
                 placeholder='Password'
+                color='black'
                 value={password.value}
                 onChangeText={(text: string) => setPassword({ value: text, error: '' })}
                 secureTextEntry
