@@ -5,7 +5,7 @@ BeCrazy is a social media application where people can post videos of themselves
 ## Table of Contents
 
 - [Getting Started](#getting-started)
-- [Contributing](#contributing)
+- [Project Structure](#project-structure)
 - [License](#license)
 
 ## Getting Started
@@ -37,29 +37,19 @@ npm install
 npx expo start
 ```
 
-## Contributing
+## Project Structure
+The code for the BeCrazy application is organized into several folders:
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+- `assets`: This folder contains static assets, such as images and fonts, that are used in the app.
+- `components`: This folder contains reusable React components that are used throughout the app.
+- `navigation`: This folder contains the code for the app's navigation stack, which defines how users move between screens.
+- `screens`: This folder contains the code for each of the app's screens, or "views". Each screen is a React component that defines the UI for a particular part of the app.
+- `services`: This folder contains code for interacting with external services, such as APIs.
+- `utils`: This folder contains utility functions and helpers that are used throughout the app.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
-[contributors-shield]: https://img.shields.io/github/contributors/BeCrazyApp/BeCrazy.svg?style=for-the-badge
-[contributors-url]:
-
-[issues-shield]: https://img.shields.io/github/issues/BeCrazyApp/BeCrazy.svg?style=for-the-badge
-[issues-url]:
-
-[license-shield]: https://img.shields.io/github/license/BeCrazyApp/BeCrazy.svg?style=for-the-badge
-[license-url]:
-
-[product-screenshot]: images/screenshot.png
 
 
