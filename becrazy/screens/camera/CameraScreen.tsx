@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { View, TouchableOpacity, Image, Platform } from 'react-native'
 import { Text } from '../../components/Themed'
 import { Camera, CameraType, FlashMode } from 'expo-camera'
-import { Audio } from 'expo-av'
+import { Video, Audio, AVPlaybackStatus } from 'expo-av'
 import * as ImagePicker from 'expo-image-picker'
 import * as MediaLibrary from 'expo-media-library'
 
@@ -40,7 +40,9 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     const [cameraType, setCameraType] = useState(CameraType.back)
     const [cameraFlash, setCameraFlash] = useState(FlashMode.off)
     const [isMuted, setIsMuted] = useState(true)
+    // duration are in seconds
     const [maxDuration, setMaxDuration] = useState(60)
+    const [minDuration, setMinDuration] = useState(3)
 
 
 
@@ -79,22 +81,24 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
                     quality: Camera.Constants.VideoQuality['480'],
                     mute: isMuted,
                 }
-                const trimOptions = {
-                    startTime: 3000, // set the start time to 3000 milliseconds (3 seconds) to trim the first 3 seconds of the video
-                    endTime: null, // set the end time to null to trim to the end of the video
-                };
 
+                // Start the stopwatch
+                const startTime = new Date();
 
+                const videoRecordPromise = await cameraRef.recordAsync(options)
 
-                const videoRecordPromise = cameraRef.recordAsync(options)
+                // Calculate the elapsed time
+                const elapsedTime = new Date().getTime() - startTime.getTime();
+                if (elapsedTime < minDuration * 1000) {
+                    alert('Video is too short')
+                    return
+                }
+
 
                 if (videoRecordPromise) {
-                    const data = await videoRecordPromise;
-                    const originalVideoUri = data.uri
-                    const asset = await MediaLibrary.getAssetInfoAsync(originalVideoUri);
-                    const trimmedUri = asset.uri + '?starttime=' + trimOptions.startTime + '&endtime=' + trimOptions.endTime;
-                    const trimmedAsset = await MediaLibrary.createAssetAsync(trimmedUri); // create a new video asset representing the trimmed portion of the original video
-                    navigation.navigate('SavePostScreen', { source: trimmedAsset.uri })
+                    const data = videoRecordPromise;
+                    const source = data.uri
+                    //navigation.navigate('SavePostScreen', { source })
                 }
             } catch (error) {
                 console.warn(error)
