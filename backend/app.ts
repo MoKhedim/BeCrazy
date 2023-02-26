@@ -3,13 +3,14 @@ const { MongoClient, ServerApiVersion, ObjectId, GridFSBucket, Db } = require('m
 import { codeGenerator, html, transporter } from './forgetpassword/index';
 import MulterRequest from './models/MulterRequest';
 import Users from './models/Users';
+import * as dotenv from 'dotenv';
 
 
 //require setup\\
+dotenv.config() //load .env file
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var bcrypt = require('bcrypt');
-var axios = require('axios');
 var multer = require('multer');
 const upload = multer({ dest: "uploads/" });
 //express setup
@@ -25,8 +26,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
-
-var axios = require('axios');
 
 const uri = "mongodb+srv://Bastien:Bastien975@projetbecrazy.h0ghj.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err: any, client: any) => {
@@ -44,7 +43,7 @@ const collectionUsers: any = db.collection('users');
 //openai setup
 const { Configuration, OpenAIApi } = require("openai");
 const configuration: any = new Configuration({
-    apiKey: "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"
+    apiKey: process.env.OPENAI_API_KEY,
 });
 const openai: any = new OpenAIApi(configuration);
 
@@ -58,6 +57,7 @@ async function getCompletion() {
         frequency_penalty: 0,
         presence_penalty: 0,
     });
+    console.log(response.data.choices[0].text);
     return response.data.choices[0].text;
 }
 
@@ -147,13 +147,9 @@ app.post("/login", async (req: Request, res: Response) => {
     }
 });
 
-app.get("/aiChallenge", (req: Request, res: Response) => {
-    getCompletion().then((response: any) => {
-        console.log(response);
-        res.send(response);
-    }
-    ).catch((error: any) => {
-        console.log(error);
+app.post("/aiChallenge", async (req: Request, res: Response) => {
+    getCompletion().then((result: any) => {
+        res.status(200).send(result);
     }
     );
 });

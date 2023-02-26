@@ -9,7 +9,6 @@ yarn-error.log*
 
 coverage/
 
-.env
 # Output of 'npm pack'
 *.tgz
 
