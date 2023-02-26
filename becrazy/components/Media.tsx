@@ -5,13 +5,12 @@ import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
 import Colors from '../constants/Colors';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'react-native';
+import { Comment } from './Comment';
 import useColorScheme from '../hooks/useColorScheme';
-import { allMedia } from '../interfaces/media/allMedia';
 import { isMobile } from 'react-device-detect';
 import { server } from '../constants/Server';
 import { MyContext } from '../App';
-import { StatusBar } from 'expo-status-bar';
-import EditScreenInfo from './EditScreenInfo';
+import { comments } from '../interfaces/media/comments';
 
 
 
@@ -23,15 +22,34 @@ export function Media(props: any) {
     const [likes, setLikes] = useState(props.allMedia.nbLikes)
     const { token } = useContext(MyContext);
     const [commentsModalVisible, setCommentsModalVisible] = useState(false);
-    const [comments, setComments] = useState([{
-        idMedia: '1', comment: 'ta video est nul'
+    const [comments, setComments] = useState<Array<comments>>([{
+        idMedia: '1', username: 'momo', comment: 'ta video est nulle'
     }, {
-        idMedia: '2', comment: 'deadass c nul bro'
+        idMedia: '2', username: 'Deadass', comment: 'deadass c nulle bro'
     }])
+    const [commentInput, setCommentInput] = useState('');
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
         likeVideo()
+    }
+
+    const postComment = async () => {
+        const urlPostComment = `${server}/commentsMedia/${token}`
+        const resPostComment = await fetch(urlPostComment, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idMedia: props.allMedia._id,
+                comment: commentInput
+            })
+        });
+        if (resPostComment.ok) {
+            const data = await resPostComment.json();
+            console.log(data);
+        }
     }
 
     async function likeVideo() {
@@ -113,6 +131,7 @@ export function Media(props: any) {
                 </View>
             </View>
             <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -130,32 +149,7 @@ export function Media(props: any) {
                     </View>
                     <ScrollView style={{ marginTop: 100 }}>
                         {comments?.map((comment) => {
-                            return <View key={comment.idMedia}>
-                                <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, width: "100%", height: 200, marginBottom: 10 }} key={comment.idMedia}>
-                                    <Image source={
-                                        // user icon placeholder
-                                        require('../assets/images/icon.png')} style={{
-                                            width: 50,
-                                            height: 50,
-                                            borderRadius: 50,
-                                            marginTop: 25,
-                                            marginEnd: 25,
-                                            marginStart: 25,
-                                        }} />
-                                    <View style={isMobile ?
-                                        { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "80%", flex: 1, marginEnd: 5 } :
-                                        { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "90%", flex: 1, marginEnd: 5 }
-                                    }>
-                                        <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.allMedia.username}</Text>
-                                        <Text style={[styles.comment, { color: Colors[colorScheme].text, marginTop: 5 }]}>
-                                            {comment.comment}
-                                        </Text>
-
-
-                                    </View>
-                                </View>
-                                <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-                            </View>
+                            return <Comment key={comment.idMedia} comment={comment} />
                         })}</ScrollView>
                     <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' }}>
 
@@ -165,8 +159,12 @@ export function Media(props: any) {
                             marginTop: 14,
                             backgroundColor: Colors[colorScheme].textInput,
                             color: Colors[colorScheme].text
-                        }]}></TextInput>
-                        <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
+                        }]}
+                        value={commentInput}
+                        onChangeText={input => setCommentInput(input)}
+                        keyboardType='default'
+                        ></TextInput>
+                        <Pressable style={{ margin: 20 }} onPress={() => postComment()}>
                             <MaterialIcons name='send' size={30} color={Colors[colorScheme].tint} />
                         </Pressable>
                     </View>
@@ -227,10 +225,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         textAlign: 'justify'
     },
-    comment: {
-        fontSize: 16,
-        textAlign: 'justify'
-    },
+    
     icon: {
         marginEnd: 10,
         maxHeight: 24,
