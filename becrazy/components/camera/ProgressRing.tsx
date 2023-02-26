@@ -21,14 +21,14 @@ const ProgressRing: FC<Props> = ({ size, strokeWidth, progress }) => {
             cx={size / 2}
             cy={size / 2}
             r={radius - strokeWidth / 2}
-            stroke="none"
+            stroke="#D8D8D8"
             strokeWidth={strokeWidth}
             fill="red"
           />
           <Circle
             cx={size / 2}
             cy={size / 2}
-            r={radius}
+            r={radius - strokeWidth / 2}
             stroke="blue"
             strokeWidth={strokeWidth}
             strokeDasharray={`${circumference} ${circumference}`}

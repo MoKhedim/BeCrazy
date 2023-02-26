@@ -23,8 +23,8 @@ import FillButton from '../../components/camera/FillButton'
 export default function CameraScreen({ navigation }: RootStackScreenProps<'CameraScreen'>) {
     // check if the camera is ready and the user is focused on the screen to know when to show the camera preview
     const isFocused = useIsFocused()
+    // is camera ready is for when the camera initializes
     const [isCameraReady, setIsCameraReady] = useState(false)
-    const [isRecording, setIsRecording] = useState(false)
 
 
     // the state for the camera permissions and the gallery permissions
@@ -39,6 +39,8 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     const [cameraRef, setCameraRef] = useState<Camera | null>(null)
     const [cameraType, setCameraType] = useState(CameraType.back)
     const [cameraFlash, setCameraFlash] = useState(FlashMode.off)
+    const [isMuted, setIsMuted] = useState(true)
+    const [maxDuration, setMaxDuration] = useState(60)
 
 
 
@@ -65,19 +67,34 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
 
 
     const recordVideo = async () => {
-        if (cameraRef && !isRecording) {
+        if (cameraRef) {
             try {
                 /*
                 * The options for the video recording
                 * maxDuration: the maximum duration of the video = 60 seconds
                 * quality: the quality of the video = 480p
                 * */
-                const options = { maxDuration: 60, quality: Camera.Constants.VideoQuality['480'] }
+                const options = {
+                    maxDuration: 60,
+                    quality: Camera.Constants.VideoQuality['480'],
+                    mute: isMuted,
+                }
+                const trimOptions = {
+                    startTime: 3000, // set the start time to 3000 milliseconds (3 seconds) to trim the first 3 seconds of the video
+                    endTime: null, // set the end time to null to trim to the end of the video
+                };
+
+
+
                 const videoRecordPromise = cameraRef.recordAsync(options)
+
                 if (videoRecordPromise) {
                     const data = await videoRecordPromise;
-                    const source = data.uri
-                    navigation.navigate('SavePostScreen', { source })
+                    const originalVideoUri = data.uri
+                    const asset = await MediaLibrary.getAssetInfoAsync(originalVideoUri);
+                    const trimmedUri = asset.uri + '?starttime=' + trimOptions.startTime + '&endtime=' + trimOptions.endTime;
+                    const trimmedAsset = await MediaLibrary.createAssetAsync(trimmedUri); // create a new video asset representing the trimmed portion of the original video
+                    navigation.navigate('SavePostScreen', { source: trimmedAsset.uri })
                 }
             } catch (error) {
                 console.warn(error)
@@ -88,7 +105,6 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     const stopVideo = async () => {
         if (cameraRef) {
             cameraRef.stopRecording()
-            setIsRecording(false)
         }
     }
 
@@ -99,7 +115,8 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
             mediaTypes: ImagePicker.MediaTypeOptions.Videos,
             allowsEditing: true,
             aspect: [16, 9],
-            quality: 1
+            quality: 1,
+            videoMaxDuration: maxDuration
         })
         if (!result.canceled) {
             navigation.navigate('SavePostScreen', { source: result.assets[0].uri })
@@ -153,6 +170,14 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
                     <Feather name="zap" size={24} color={'white'} />
                     <Text style={styles.iconText}>Flash</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.sideBarButton}
+                    onPress={() => setIsMuted(!isMuted)}>
+
+                    <Feather name={isMuted ? "mic-off" : "mic"} size={24} color={'white'} />
+                    <Text style={styles.iconText}>Mute</Text>
+                </TouchableOpacity>
             </View>
 
 
@@ -163,6 +188,8 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
                         <FillButton
                             whenPressed={() => recordVideo()}
                             whenReleased={() => stopVideo()}
+                            // convert the max duration to milliseconds
+                            progressTimer={maxDuration * 1000}
                         />
                     )}
                 </View>

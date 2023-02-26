@@ -4,13 +4,15 @@ import ProgressRing from './ProgressRing';
 import { Text } from '../Themed';
 
 
+
 interface FillButtonProps {
     whenPressed: () => void;
     whenReleased: () => void;
+    progressTimer: number;
   }
 
 
-const FillButton: FC<FillButtonProps> = ({whenPressed, whenReleased}) => {
+const FillButton: FC<FillButtonProps> = ({whenPressed, whenReleased, progressTimer}) => {
     const [progress, setProgress] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -24,7 +26,7 @@ const FillButton: FC<FillButtonProps> = ({whenPressed, whenReleased}) => {
         timerRef.current = setInterval(() => {
             const currentTime = new Date().getTime();
             const elapsedTime = currentTime - startTime;
-            const newProgress = elapsedTime / 60000;
+            const newProgress = elapsedTime / progressTimer;
             if (newProgress >= 1) {
                 clearInterval(timerRef.current!);
             }

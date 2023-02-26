@@ -2,8 +2,8 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 30,
-        backgroundColor: 'white'
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     uploadingContainer: {
         flex: 1,
@@ -13,23 +13,28 @@ const styles = StyleSheet.create({
     spacer: {
         flex: 1
     },
-    formContainer: {
-        margin: 20,
-        flexDirection: 'row'
-    },
     buttonsContainer: {
         flexDirection: 'row',
         margin: 20,
     },
+    // make inputText an input field for a description with rounded corners
     inputText: {
-        paddingVertical: 10,
-        marginRight: 20,
-        flex: 1
+        width: '75%',
+        height: 100,
+        margin: 10,
+        borderWidth: 1,
+        borderColor: 'lightgray',
+        borderRadius: 4,
+        padding: 10,
+        color: 'black',
+        fontSize: 18,
     },
     mediaPreview: {
+        height: '70%',
         aspectRatio: 9 / 16,
+        borderRadius: 4,
+        margin: 10,
         backgroundColor: 'black',
-        width: 60
     },
     cancelButton: {
         alignItems: 'center',
@@ -46,7 +51,7 @@ const styles = StyleSheet.create({
     postButton: {
         alignItems: 'center',
         flex: 1,
-        backgroundColor: '#ff4040',
+        backgroundColor: '#0000ff',
         flexDirection: 'row',
         paddingVertical: 10,
         paddingHorizontal: 20,
