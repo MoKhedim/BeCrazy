@@ -14,11 +14,11 @@ import { MyContext } from '../App';
 
 export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
     const colorScheme = useColorScheme();
-    const desc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam fermentum tristique est, eget maximus felis sagittis at. Phasellus eu finibus odio, vitae tincidunt nisl."
     // array de AllMedias par les users
     const [allMedias, setAllMedias] = useState<Array<allMedia>>([])
     const { token } = useContext(MyContext);
 
+    // Get tous les medias à l'initialisation de la page
     useEffect(() => {
         async function getAllMedias() {
             const urlAllMedias = `${server}/getAllMedia/${token}`;

@@ -1,17 +1,16 @@
-import { Modal, Platform, Pressable, StyleSheet } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { Text, View } from './Themed';
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
 import Colors from '../constants/Colors';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'react-native';
+import { Comment } from './Comment';
 import useColorScheme from '../hooks/useColorScheme';
-import { allMedia } from '../interfaces/media/allMedia';
 import { isMobile } from 'react-device-detect';
 import { server } from '../constants/Server';
 import { MyContext } from '../App';
-import { StatusBar } from 'expo-status-bar';
-import EditScreenInfo from './EditScreenInfo';
+import { comments } from '../interfaces/media/comments';
 
 
 
@@ -22,11 +21,59 @@ export function Media(props: any) {
     const [iconName, setIconName] = useState<IconName>('heart-o')
     const [likes, setLikes] = useState(props.allMedia.nbLikes)
     const { token } = useContext(MyContext);
-    const [commentsModalVisible, setCommentsModalVisible] = useState(false)
+    const [commentsModalVisible, setCommentsModalVisible] = useState(false);
+    const [comments, setComments] = useState<Array<comments>>([{
+        idMedia: '1', username: 'momo', comment: 'ta video est nulle'
+    }, {
+        idMedia: '2', username: 'Deadass', comment: 'deadass c nulle bro'
+    }])
+    const [commentInput, setCommentInput] = useState('');
+
+    // get comments lorsqu'on ouvre le modale des commentaires
+    useEffect(() => { getComments() }, [commentsModalVisible])
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
         likeVideo()
+    }
+
+    const getComments = async () => {
+        if (commentsModalVisible === true) {
+            console.log('opening comments');
+            const urlGetComments = `${server}/getComments/${props.allMedia._id}`;
+            const resGetComments = await fetch(urlGetComments);
+            if (resGetComments.ok) {
+                const data = await resGetComments.json();
+                console.log(data);
+                setComments(data);
+            }
+        }
+    }
+
+    const postComment = async () => {
+        const urlPostComment = `${server}/commentsMedia/${token}`
+        const resPostComment = await fetch(urlPostComment, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idMedia: props.allMedia._id,
+                comment: commentInput
+            })
+        });
+        if (resPostComment.ok) {
+            const data = await resPostComment.json();
+            console.log(data);
+            let newComment = {
+                idMedia: data.idMedia,
+                username: data.username,
+                comment: data.comment
+            }
+            setComments(comments => [...comments, newComment]);
+            props.allMedia.nbComments += 1;
+            setCommentInput('');
+        }
     }
 
     async function likeVideo() {
@@ -86,15 +133,15 @@ export function Media(props: any) {
                         <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>
                             {props.allMedia.created.split('T')[0].replaceAll('-', '/')}</Text>
                     </View>
-                    <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
+                    <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 0, marginBottom: 0 }]}>
                         {props.allMedia.description}
                     </Text>
-                    <Video style={[styles.video, { backgroundColor: Colors[colorScheme].text }]}
+                    <Video style={[styles.video, { backgroundColor: Colors[colorScheme].background }]}
                         source={{ uri: `${server}/getMedia/${props.allMedia.videoId}` }}
                         useNativeControls={true}
                         isLooping={true}
                         onError={(error) => console.error(error)}
-                        resizeMode={isMobile ? ResizeMode.COVER : ResizeMode.CONTAIN}
+                        resizeMode={ResizeMode.CONTAIN}
                     />
                     <View style={{
                         flexDirection: 'row', marginTop: 10, alignItems: 'flex-end',
@@ -108,6 +155,7 @@ export function Media(props: any) {
                 </View>
             </View>
             <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -115,13 +163,37 @@ export function Media(props: any) {
                 onRequestClose={() => {
                     setCommentsModalVisible(!commentsModalVisible);
                 }}>
-                <View style={{ backgroundColor: Colors[colorScheme].background, flex: 1, flexDirection: 'row' }}>
-                    <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
-                        <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
-                    </Pressable>
-                    <Text style={[styles.title, {alignItems: 'center', marginTop: 14 }]}>Comments</Text>
+                <View style={Platform.OS == 'web' ? { height: '92%' }: {height: '100%'}}>
+                    <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 0 }}>
+                        <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
+                            <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
+                        </Pressable>
+                        <Text style={[styles.title, { alignItems: 'center', marginTop: 16 }]}>Comments</Text>
+                    </View>
+                    <ScrollView style={{ marginTop: 100 }}>
+                        {comments?.map((comment) => {
+                            return <Comment key={comment._id} comment={comment} />
+                        })}</ScrollView>
+
                 </View>
-                <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+                <View style={Platform.OS == 'web' ? { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' } :
+                    { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '80%' }}>
+
+                    <TextInput style={[styles.input,
+                    {
+                        alignItems: 'center',
+                        marginTop: 14,
+                        backgroundColor: Colors[colorScheme].textInput,
+                        color: Colors[colorScheme].text
+                    }]}
+                        value={commentInput}
+                        onChangeText={input => setCommentInput(input)}
+                        keyboardType='default'
+                    ></TextInput>
+                    <TouchableOpacity style={{ margin: 20 }} onPress={postComment}>
+                        <MaterialIcons name='send' size={32} color={Colors[colorScheme].tint} />
+                    </TouchableOpacity>
+                </View>
             </Modal>
         </>
     )
@@ -163,23 +235,36 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     video: {
+        flex: 1,
         borderRadius: 8,
         width: "100%",
         maxWidth: 350,
-        height: 622,
+        aspectRatio: 9 / 16,
         marginTop: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     name: {
         fontSize: 14,
-        fontFamily: 'Century Gothic',
         fontWeight: 'bold',
     },
     desc: {
         fontSize: 14,
         textAlign: 'justify'
     },
+
     icon: {
         marginEnd: 10,
         maxHeight: 24,
+    },
+    input: {
+        borderRadius: 30,
+        width: '100%',
+        borderWidth: 1,
+        padding: 10,
+        overflow: 'hidden',
+        marginVertical: 10,
+        marginStart: 10,
+        height: 40,
     }
 });

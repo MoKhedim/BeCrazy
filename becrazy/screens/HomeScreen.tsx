@@ -5,7 +5,6 @@ import { RootTabScreenProps } from '../types';
 import { server } from '../constants/Server';
 import { allMedia } from '../interfaces/media/allMedia';
 
-export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
   const [sortedData, setSortedData] = useState<allMedia[]>([]);
   const [leaderboard, setLeaderboard] = useState<allMedia[]>([]);
   const [aiChallenge, setAiChallenge] = useState("Voler un sans-abris");
@@ -59,6 +58,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
   }, [leaderboard]);
 
 
+export default function HomeScreen({ navigation }: RootTabScreenProps<'Leaderboard'>) {
   return (
     <ScrollView>
       <View style={styles.container}>
