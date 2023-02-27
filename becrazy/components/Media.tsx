@@ -172,7 +172,7 @@ export function Media(props: any) {
                     </View>
                     <ScrollView style={{ marginTop: 100 }}>
                         {comments?.map((comment) => {
-                            return <Comment key={comment.idMedia} comment={comment} />
+                            return <Comment key={comment._id} comment={comment} />
                         })}</ScrollView>
                     
                 </View>
@@ -234,6 +234,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     video: {
+        flex: 1,
         borderRadius: 8,
         width: "100%",
         maxWidth: 350,
