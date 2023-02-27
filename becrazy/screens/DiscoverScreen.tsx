@@ -54,11 +54,6 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
     <View style={styles.container}>
       <View style={styles.alignCenter}>
         <View style={styles.searchSection}>
-          <Entypo
-            style={styles.searchIcon}
-            name={canEdit ? "magnifying-glass" : "back-in-time"}
-            size={20}
-          />
           <TextInput
             style={styles.input}
             placeholder="Username"
@@ -71,7 +66,11 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
           <TouchableOpacity
             style={styles.searchIcon}
             onPress={() => console.log('search')}>
-            <Text style={[styles.alignCenter ]} onPress={fetchResults} >Search</Text>
+            <Entypo
+            style={styles.searchIcon}
+            name={canEdit ? "magnifying-glass" : "back-in-time"}
+            size={20}onPress={fetchResults} >
+            </Entypo>
           </TouchableOpacity>
         </View>
         
@@ -120,7 +119,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   searchIcon: {
-    padding: 10,
+    paddingEnd: 10,
   },
   input: {
     flex: 1,
