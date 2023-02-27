@@ -9,7 +9,9 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
   const [sortedData, setSortedData] = useState<allMedia[]>([]);
   const [leaderboard, setLeaderboard] = useState<allMedia[]>([]);
   const [aiChallenge, setAiChallenge] = useState("Voler un sans-abris");
-  
+  const [placeholderCount, setPlaceholderCount] = useState(0);
+
+
   useEffect(() => {
     async function getTop10() {
       const urlTop10Media = `${server}/top10Media`;
@@ -53,9 +55,8 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
       .sort((a, b) => b.nbLikes - a.nbLikes)
       .slice(0, 10);
     setSortedData(sorted);
+    setPlaceholderCount(Math.max(10 - sorted.length, 0))
   }, [leaderboard]);
-
-
 
 
   return (
@@ -84,6 +85,13 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
                   <View style={[styles.cell, styles.likesCell]}><Text>{user.nbLikes}</Text></View>
                 </View>
               ))}
+              {Array.from({ length: placeholderCount }).map((_, index) => (
+                <View key={index + sortedData.length} style={[styles.row, index % 2 == 0 ? styles.evenRow : styles.oddRow]}>
+                  <View style={[styles.cell, styles.rankCell]}><Text>{sortedData.length + index + 1}</Text></View>
+                  <View style={[styles.cell, styles.nameCell]}><Text>-----------------</Text></View>
+                  <View style={[styles.cell, styles.likesCell]}><Text>---</Text></View>
+                </View>
+              ))}
             </View>
           </View>
         </View>
@@ -95,7 +103,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-container: {
+  container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
