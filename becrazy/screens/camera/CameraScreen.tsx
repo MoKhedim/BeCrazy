@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { View, TouchableOpacity, Image, Platform } from 'react-native'
 import { Text } from '../../components/Themed'
-import { Camera, CameraType, FlashMode } from 'expo-camera'
-import { Video, Audio, AVPlaybackStatus } from 'expo-av'
+import { Camera, CameraRecordingOptions, CameraType, FlashMode } from 'expo-camera'
+import { Audio } from 'expo-av'
 import * as ImagePicker from 'expo-image-picker'
 import * as MediaLibrary from 'expo-media-library'
 
 import { Feather } from '@expo/vector-icons'
+
 
 import styles from './styles/camera'
 import { RootStackScreenProps } from '../../types'
@@ -23,6 +24,7 @@ import FillButton from '../../components/camera/FillButton'
 export default function CameraScreen({ navigation }: RootStackScreenProps<'CameraScreen'>) {
     // check if the camera is ready and the user is focused on the screen to know when to show the camera preview
     const isFocused = useIsFocused()
+
     // is camera ready is for when the camera initializes
     const [isCameraReady, setIsCameraReady] = useState(false)
 
@@ -76,15 +78,14 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
                 * maxDuration: the maximum duration of the video = 60 seconds
                 * quality: the quality of the video = 480p
                 * */
-                const options = {
-                    maxDuration: 60,
+                const options: CameraRecordingOptions = {
+                    maxDuration: maxDuration,
                     quality: Camera.Constants.VideoQuality['480'],
                     mute: isMuted,
                 }
 
                 // Start the stopwatch
                 const startTime = new Date();
-
                 const videoRecordPromise = await cameraRef.recordAsync(options)
 
                 // Calculate the elapsed time
@@ -98,7 +99,7 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
                 if (videoRecordPromise) {
                     const data = videoRecordPromise;
                     const source = data.uri
-                    //navigation.navigate('SavePostScreen', { source })
+                    navigation.navigate('SavePostScreen', { source })
                 }
             } catch (error) {
                 console.warn(error)

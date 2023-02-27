@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
         padding: 10,
         color: 'black',
         fontSize: 18,
+        backgroundColor: 'white',
     },
     mediaPreview: {
         height: '70%',
