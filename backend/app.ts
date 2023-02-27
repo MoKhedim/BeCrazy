@@ -341,7 +341,7 @@ app.post('/commentsMedia/:token', async (req: Request, res: Response) => {
             const result1: any = await collectionAllMedia.findOneAndUpdate({ _id: new ObjectId(idMedia) }, addComment);
             if (result1.value) {
                 const result2: any = await collectionMediaComments.insertOne({ idMedia: new ObjectId(idMedia), username: username, comment: comment });
-                res.status(200).json({ message: "Succès!", result1, result2 });
+                res.status(200).json({ message: "Succès!", comment, idMedia, username });
             } else {
                 res.status(400).json({ message: "Erreur!", result1 });
             }
