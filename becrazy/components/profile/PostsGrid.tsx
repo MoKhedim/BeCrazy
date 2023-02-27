@@ -1,6 +1,5 @@
-import { View, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text } from '../Themed';
-import { useState, useEffect } from 'react';
 import Post from '../../interfaces/Post';
 import { server } from '../../constants/Server';
 import { ResizeMode, Video } from 'expo-av';
