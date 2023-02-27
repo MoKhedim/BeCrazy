@@ -171,8 +171,8 @@ export function Media(props: any) {
                         <Text style={[styles.title, { alignItems: 'center', marginTop: 16 }]}>Comments</Text>
                     </View>
                     <ScrollView style={{ marginTop: 100 }}>
-                        {comments?.map((comment) => {
-                            return <Comment key={comment._id} comment={comment} />
+                        {comments?.map((comment, index) => {
+                            return <Comment key={comment.idMedia + index} comment={comment} />
                         })}</ScrollView>
 
                 </View>

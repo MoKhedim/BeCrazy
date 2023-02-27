@@ -5,6 +5,8 @@ import { RootTabScreenProps } from '../types';
 import { server } from '../constants/Server';
 import { allMedia } from '../interfaces/media/allMedia';
 
+
+export default function HomeScreen({ navigation }: RootTabScreenProps<'Leaderboard'>) {
   const [sortedData, setSortedData] = useState<allMedia[]>([]);
   const [leaderboard, setLeaderboard] = useState<allMedia[]>([]);
   const [aiChallenge, setAiChallenge] = useState("Voler un sans-abris");
@@ -57,8 +59,6 @@ import { allMedia } from '../interfaces/media/allMedia';
     setPlaceholderCount(Math.max(10 - sorted.length, 0))
   }, [leaderboard]);
 
-
-export default function HomeScreen({ navigation }: RootTabScreenProps<'Leaderboard'>) {
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -83,7 +83,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Leaderboa
               {sortedData.map((user, index) => (
                 <View key={index} style={[styles.row, index % 2 == 0 ? styles.evenRow : styles.oddRow]}>
                   <View style={[styles.cell, styles.rankCell]}><Text style={styles.headerText}>{index + 1}</Text></View>
-                  <View style={[styles.cell, styles.nameCell]} ><Text onPress={() => navigation.navigate (`ProfileScreen`)}>{user.username}</Text></View>
+                  <View style={[styles.cell, styles.nameCell]} ><Text onPress={() => navigation.navigate(`ProfileScreen`)}>{user.username}</Text></View>
                   <View style={[styles.cell, styles.likesCell]}><Text>{user.nbLikes}</Text></View>
                 </View>
               ))}
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     margin: 5,
     maxWidth: width > 600 ? 450 : 300,
   },
-  leaderboard: {  
+  leaderboard: {
     alignItems: 'center',
   },
 
