@@ -29,9 +29,25 @@ export function Media(props: any) {
     }])
     const [commentInput, setCommentInput] = useState('');
 
+    // get comments lorsqu'on ouvre le modale des commentaires
+    useEffect(() => {getComments()}, [commentsModalVisible])
+
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
         likeVideo()
+    }
+
+    const getComments = async () => {
+        if(commentsModalVisible === true) {
+            console.log('opening comments');
+            const urlGetComments = `${server}/getComments/${props.allMedia._id}`;
+            const resGetComments = await fetch(urlGetComments);
+            if (resGetComments.ok) {
+                const data = await resGetComments.json();
+                console.log(data);
+                setComments(data);
+            }
+        }
     }
 
     const postComment = async () => {
@@ -49,6 +65,13 @@ export function Media(props: any) {
         if (resPostComment.ok) {
             const data = await resPostComment.json();
             console.log(data);
+            let newComment = {
+                idMedia: data.idMedia,
+                username: data.username,
+                comment: data.comment
+            }
+            setComments(comments => [...comments, newComment]);
+            setCommentInput('');
         }
     }
 
@@ -117,7 +140,7 @@ export function Media(props: any) {
                         useNativeControls={true}
                         isLooping={true}
                         onError={(error) => console.error(error)}
-                        resizeMode={isMobile ? ResizeMode.COVER : ResizeMode.CONTAIN}
+                        resizeMode={ResizeMode.CONTAIN}
                     />
                     <View style={{
                         flexDirection: 'row', marginTop: 10, alignItems: 'flex-end',
@@ -140,7 +163,7 @@ export function Media(props: any) {
                     setCommentsModalVisible(!commentsModalVisible);
                 }}
                 presentationStyle={'fullScreen'}>
-                <View style={{ height: '100%' }}>
+                <View style={{ height: '92%' }}>
                     <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 0 }}>
                         <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
                             <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
@@ -151,7 +174,9 @@ export function Media(props: any) {
                         {comments?.map((comment) => {
                             return <Comment key={comment.idMedia} comment={comment} />
                         })}</ScrollView>
-                    <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' }}>
+                    
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' }}>
 
                         <TextInput style={[styles.input,
                         {
@@ -168,7 +193,6 @@ export function Media(props: any) {
                             <MaterialIcons name='send' size={30} color={Colors[colorScheme].tint} />
                         </Pressable>
                     </View>
-                </View>
             </Modal>
         </>
     )
@@ -213,8 +237,10 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         width: "100%",
         maxWidth: 350,
-        height: 622,
+        aspectRatio: 9/16,
         marginTop: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     name: {
         fontSize: 14,
