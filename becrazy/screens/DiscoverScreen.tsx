@@ -1,20 +1,39 @@
 import { useState, useEffect } from 'react';
 import { Entypo } from '@expo/vector-icons';
-import { StyleSheet, TextInput, Image } from 'react-native';
+import { StyleSheet, TextInput, Image, TouchableOpacity, ImageBackground, useColorScheme, Button } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 import { server } from '../constants/Server';
-import UserInfo from '../interfaces/profile/UserInfo';
+import UserInfo from '../interfaces/UserInfo';
+import UserInfoFull from '../interfaces/media/UserInfoFull';
+import Colors from '../constants/Colors';
 
 
 export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Discover'>) {
   const [searchString, setSearchString] = useState('')
-  const [searchResults, setSearchResults] = useState(Array<UserInfo>)
+  const [searchResults, setSearchResults] = useState(Array<UserInfoFull>)
+
+
+  // state to determine if the user can reserach to prevent spamming
+  const [canEdit, setCanEdit] = useState(true)
+
+  async function fetchResults() {
+      const res = await fetch(`${server}/searchUser/${searchString}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      });
+      const data = await res.json();
+      setSearchResults(data)
+      console.log(searchResults)
+    }
 
   // when the search string changes, fetch the results
-  useEffect(() => {
+  /*
     const search = async () => {
       if (searchString.length > 0) {
+        setCanEdit(false)
         const res = await fetch(`${server}/searchUser/${searchString}`, {
           method: "POST",
           headers: {
@@ -25,43 +44,57 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
           })
         });
         const data = await res.json();
-        //setSearchResults(data)
+        setSearchResults(data)
+        setCanEdit(true)
       }
     }
-
-
-  }, [searchString])
-
+  */
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchSection}>
-        <Entypo style={styles.searchIcon} name="magnifying-glass" size={20} />
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          onChangeText={(searchString: string) => setSearchString(searchString)}
-          value={searchString}
-        />
-      </View>
-      {searchString.length > 0 && (
-        <View style={styles.listContainer}>
-          {searchResults.map((result: UserInfo) => {
-            return (
-              // list of users with their profile picture, username, and number of posts
-              <View key={result.username} style={styles.list}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Image
-                    style={{ width: 50, height: 50, borderRadius: 25 }}
-                    source={{ uri: 'https://i.pravatar.cc/300' }}
-                  />
-                  <Text style={{ marginLeft: 10 }}>{result.username}</Text>
-                </View>
-              </View>
-            )
-          })}
+      <View style={styles.alignCenter}>
+        <View style={styles.searchSection}>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+           
+            value={searchString}
+            editable={canEdit}
+            selectTextOnFocus={canEdit}
+            onChangeText={(text) => setSearchString(text)}
+          />
+          <TouchableOpacity
+            style={styles.searchIcon}
+            onPress={() => console.log('search')}>
+            <Entypo
+            style={styles.searchIcon}
+            name={canEdit ? "magnifying-glass" : "back-in-time"}
+            size={20}onPress={fetchResults} >
+            </Entypo>
+          </TouchableOpacity>
         </View>
-      )}
+        
+        <View style={[styles.separator, { "backgroundColor": useColorScheme() === "light" ? "black" : "white" }]} />
+        {searchResults.length > 0 && (
+          <View style={[styles.listContainer]}>
+            {searchResults.map((result: UserInfoFull) => {
+              return (
+                // list of users with their profile picture, username, and number of posts
+                <View key={result.username} style={styles.list}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image
+                      style={{ width: 50, height: 50, borderRadius: 25 }}
+                      source={{ uri: result.profilePicture }}
+                    /> 
+                    <Text onPress={() => navigation.navigate ('ProfileScreen')} style={{ marginLeft: 10 }}>{result.username}</Text>
+                    <Text style={{ marginLeft: 20 }}>{result.nbFollowers + " followers"}</Text>
+                  </View>
+                </View>
+              )
+            })}
+          </View>
+        )}
+      </View>
     </View>
   )
 }
@@ -69,9 +102,10 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    //justifyContent: 'center',
     marginTop: 20,
+  },
+  alignCenter: {
+    alignItems: 'center',
   },
   searchSection: {
     flexDirection: 'row',
@@ -85,7 +119,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   searchIcon: {
-    padding: 10,
+    paddingEnd: 10,
   },
   input: {
     flex: 1,
@@ -118,5 +152,38 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 10,
     marginTop: 10,
-  }
+  },
+
+
+
+  columns: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  column: {
+    width: "33%",
+    padding: 5,
+  },
+  image: {
+    width: "100%",
+    height: 175,
+  },
+  likes: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    color: "#fff",
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+  },
+
+
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  },
+
 })
