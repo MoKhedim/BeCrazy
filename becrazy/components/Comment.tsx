@@ -10,7 +10,7 @@ export function Comment(props: any) {
     return (
         <View>
             <View style={{
-                flexDirection: 'row', flexWrap: 'wrap', flex: 1, width: "100%", height: 200, marginBottom: 10
+                flexDirection: 'row', flexWrap: 'wrap', flex: 1, width: "100%", height: 100, marginBottom: 10
             }}>
                 <Image source={
                     // user icon placeholder
@@ -26,8 +26,8 @@ export function Comment(props: any) {
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "80%", flex: 1, marginEnd: 5 } :
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "90%", flex: 1, marginEnd: 5 }
                 }>
-                    <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.comment.username}</Text>
-                    <Text style={[styles.comment, { color: Colors[colorScheme].text, marginTop: 5 }]}>
+                    <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 20 }]}>{props.comment.username}</Text>
+                    <Text style={[styles.comment, { color: Colors[colorScheme].text, marginTop: 2 }]}>
                         {props.comment.comment}
                     </Text>
                 </View>
@@ -40,7 +40,6 @@ export function Comment(props: any) {
 const styles = StyleSheet.create({
     name: {
         fontSize: 14,
-        fontFamily: 'Century Gothic',
         fontWeight: 'bold',
     },
     comment: {

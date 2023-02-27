@@ -30,7 +30,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> = Nati
 >;
 
 export type RootTabParamList = {
-  Home: undefined;
+  Leaderboard: undefined;
   Feed: undefined;
   Discover: undefined;
 };

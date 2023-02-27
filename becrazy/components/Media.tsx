@@ -1,4 +1,4 @@
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { Text, View } from './Themed';
 import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
@@ -30,7 +30,7 @@ export function Media(props: any) {
     const [commentInput, setCommentInput] = useState('');
 
     // get comments lorsqu'on ouvre le modale des commentaires
-    useEffect(() => {getComments()}, [commentsModalVisible])
+    useEffect(() => { getComments() }, [commentsModalVisible])
 
     function handlePressLike() {
         iconName === 'heart-o' ? setIconName('heart') : setIconName('heart-o');
@@ -38,7 +38,7 @@ export function Media(props: any) {
     }
 
     const getComments = async () => {
-        if(commentsModalVisible === true) {
+        if (commentsModalVisible === true) {
             console.log('opening comments');
             const urlGetComments = `${server}/getComments/${props.allMedia._id}`;
             const resGetComments = await fetch(urlGetComments);
@@ -70,7 +70,8 @@ export function Media(props: any) {
                 username: data.username,
                 comment: data.comment
             }
-            setComments(comments => [...comments, newComment]);
+            setComments(comments => [...comments, newComment]);
+            props.allMedia.nbComments += 1;
             setCommentInput('');
         }
     }
@@ -132,7 +133,7 @@ export function Media(props: any) {
                         <Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>
                             {props.allMedia.created.split('T')[0].replaceAll('-', '/')}</Text>
                     </View>
-                    <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 5 }]}>
+                    <Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 0, marginBottom: 0 }]}>
                         {props.allMedia.description}
                     </Text>
                     <Video style={[styles.video, { backgroundColor: Colors[colorScheme].background }]}
@@ -161,38 +162,38 @@ export function Media(props: any) {
                 visible={commentsModalVisible}
                 onRequestClose={() => {
                     setCommentsModalVisible(!commentsModalVisible);
-                }}
-                presentationStyle={'fullScreen'}>
-                <View style={{ height: '92%' }}>
+                }}>
+                <View style={Platform.OS == 'web' ? { height: '92%' }: {height: '100%'}}>
                     <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 0 }}>
                         <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
                             <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
                         </Pressable>
-                        <Text style={[styles.title, { alignItems: 'center', marginTop: 14 }]}>Comments</Text>
+                        <Text style={[styles.title, { alignItems: 'center', marginTop: 16 }]}>Comments</Text>
                     </View>
                     <ScrollView style={{ marginTop: 100 }}>
                         {comments?.map((comment) => {
                             return <Comment key={comment._id} comment={comment} />
                         })}</ScrollView>
-                    
-                </View>
-                <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' }}>
 
-                        <TextInput style={[styles.input,
-                        {
-                            alignItems: 'center',
-                            marginTop: 14,
-                            backgroundColor: Colors[colorScheme].textInput,
-                            color: Colors[colorScheme].text
-                        }]}
+                </View>
+                <View style={Platform.OS == 'web' ? { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' } :
+                    { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '80%' }}>
+
+                    <TextInput style={[styles.input,
+                    {
+                        alignItems: 'center',
+                        marginTop: 14,
+                        backgroundColor: Colors[colorScheme].textInput,
+                        color: Colors[colorScheme].text
+                    }]}
                         value={commentInput}
                         onChangeText={input => setCommentInput(input)}
                         keyboardType='default'
-                        ></TextInput>
-                        <Pressable style={{ margin: 20 }} onPress={() => postComment()}>
-                            <MaterialIcons name='send' size={30} color={Colors[colorScheme].tint} />
-                        </Pressable>
-                    </View>
+                    ></TextInput>
+                    <TouchableOpacity style={{ margin: 20 }} onPress={postComment}>
+                        <MaterialIcons name='send' size={32} color={Colors[colorScheme].tint} />
+                    </TouchableOpacity>
+                </View>
             </Modal>
         </>
     )
@@ -238,21 +239,20 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         width: "100%",
         maxWidth: 350,
-        aspectRatio: 9/16,
+        aspectRatio: 9 / 16,
         marginTop: 5,
         alignItems: 'center',
         justifyContent: 'center',
     },
     name: {
         fontSize: 14,
-        fontFamily: 'Century Gothic',
         fontWeight: 'bold',
     },
     desc: {
         fontSize: 14,
         textAlign: 'justify'
     },
-    
+
     icon: {
         marginEnd: 10,
         maxHeight: 24,

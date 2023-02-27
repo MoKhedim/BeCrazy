@@ -95,11 +95,11 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Feed"
       // style commun du header et du navbar
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
-        tabBarStyle: { height: 60 },
+        tabBarStyle: { height: '8%' },
         tabBarIconStyle: { marginTop: 10 },
         tabBarLabelStyle: { marginBottom: 10 },
         tabBarLabelPosition: 'below-icon',
@@ -140,13 +140,13 @@ function BottomTabNavigator() {
         ),
       }}>
       <BottomTab.Screen
-        name="Home"
+        name="Leaderboard"
         // style unique à chaque tab
         component={HomeScreen}
-        options={({ navigation }: RootTabScreenProps<'Home'>) => ({
-          title: 'Home',
-          headerTitle: 'BeCrazy  |  Home',
-          tabBarIcon: ({ color }) => <MaterialIcons name="home" size={28} color={color} />,
+        options={({ navigation }: RootTabScreenProps<'Leaderboard'>) => ({
+          title: 'Leaderboard',
+          headerTitle: 'Leaderboard',
+          tabBarIcon: ({ color }) => <MaterialIcons name="leaderboard" size={28} color={color} />,
         })}
       />
       <BottomTab.Screen
@@ -154,7 +154,7 @@ function BottomTabNavigator() {
         component={FeedScreen}
         options={({ navigation }: RootTabScreenProps<'Feed'>) => ({
           title: 'Feed',
-          headerTitle: 'BeCrazy  |  Feed',
+          headerTitle: 'Feed',
           tabBarIcon: ({ color }) => <MaterialIcons name="dynamic-feed" size={28} color={color} />,
         })}
       />
@@ -163,7 +163,7 @@ function BottomTabNavigator() {
         component={DiscoverScreen}
         options={{
           title: 'Discover',
-          headerTitle: 'BeCrazy  |  Discover',
+          headerTitle: 'Discover',
           tabBarIcon: ({ color }) => <MaterialIcons name="supervised-user-circle" size={28} color={color} />,
         }}
       />
