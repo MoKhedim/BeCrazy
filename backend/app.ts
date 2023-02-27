@@ -354,6 +354,17 @@ app.post('/commentsMedia/:token', async (req: Request, res: Response) => {
     }
 });
 
+app.get('/getComments/:idMedia', async (req: Request, res: Response) => {
+    const idMedia: string = req.params.idMedia;
+    try {
+        const result: any = await collectionMediaComments.find({ idMedia: new ObjectId(idMedia) }).toArray();
+        res.status(200).send(result);
+    }
+    catch (err) {
+        res.status(401).send(err);
+    }
+}); 
+
 //route pour supprimer un commentaire
 //http://localhost:4000/deleteComments/:token
 //exemple body:
