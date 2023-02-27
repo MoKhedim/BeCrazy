@@ -64,13 +64,15 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
       <View style={styles.container}>
         <Text style={styles.title}>Home</Text>
         <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <View style={styles.container} />
         <Text style={styles.challengeTitle}>Daily Challenge</Text>
         <View style={[styles.challenge]}>
           <Text style={styles.challengeDaily}> {aiChallenge} </Text>
         </View>
+      </View>
+      <View>
         <View>
-          <View>
+          <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+          <View style={styles.leaderboard}>
             <Text style={styles.leaderboardTitle}>Top 10 Daily Challenge</Text>
             <View style={styles.table}>
               <View style={[styles.row, styles.headerRow]}>
@@ -80,15 +82,15 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
               </View>
               {sortedData.map((user, index) => (
                 <View key={index} style={[styles.row, index % 2 == 0 ? styles.evenRow : styles.oddRow]}>
-                  <View style={[styles.cell, styles.rankCell]}><Text>{index + 1}</Text></View>
-                  <View style={[styles.cell, styles.nameCell]}><Text>{user.username}</Text></View>
+                  <View style={[styles.cell, styles.rankCell]}><Text style={styles.headerText}>{index + 1}</Text></View>
+                  <View style={[styles.cell, styles.nameCell]} ><Text onPress={() => navigation.navigate (`ProfileScreen`)}>{user.username}</Text></View>
                   <View style={[styles.cell, styles.likesCell]}><Text>{user.nbLikes}</Text></View>
                 </View>
               ))}
               {Array.from({ length: placeholderCount }).map((_, index) => (
                 <View key={index + sortedData.length} style={[styles.row, index % 2 == 0 ? styles.evenRow : styles.oddRow]}>
-                  <View style={[styles.cell, styles.rankCell]}><Text>{sortedData.length + index + 1}</Text></View>
-                  <View style={[styles.cell, styles.nameCell]}><Text>-----------------</Text></View>
+                  <View style={[styles.cell, styles.rankCell]}><Text style={styles.headerText}>{sortedData.length + index + 1}</Text></View>
+                  <View style={[styles.cell, styles.nameCell]}><Text>--------------</Text></View>
                   <View style={[styles.cell, styles.likesCell]}><Text>---</Text></View>
                 </View>
               ))}
@@ -106,7 +108,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     padding: 10,
   },
   title: {
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   table: {
     borderWidth: 1,
     borderColor: '#ddd',
-    width: '100%',
+    width: '90%',
     marginVertical: 10,
     boxShadow: '0 0 2px rgba(0, 0, 0, 0.5)',
   },
@@ -161,14 +162,14 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   rankCell: {
-    width: width > 600 ? 200 : 60,
+    width: width > 600 ? 200 : '28%',
   },
   nameCell: {
     flex: 1,
-    width: width > 600 ? 290 : 150,
+    width: width > 600 ? 290 : '44%',
   },
   likesCell: {
-    width: width > 600 ? 240 : 100,
+    width: width > 600 ? 240 : '28%',
   },
   headerText: {
     fontWeight: 'bold',
@@ -186,6 +187,9 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     margin: 5,
     maxWidth: width > 600 ? 450 : 300,
+  },
+  leaderboard: {  
+    alignItems: 'center',
   },
 
 });
