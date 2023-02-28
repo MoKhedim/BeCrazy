@@ -7,6 +7,8 @@ import { RootStackScreenProps } from '../../types'
 import { ResizeMode, Video } from 'expo-av'
 import { server } from '../../constants/Server'
 import { MyContext } from '../../App'
+import Colors from '../../constants/Colors';
+import useColorScheme from '../../hooks/useColorScheme';
 import * as FileSystem from 'expo-file-system';
 
 
@@ -14,6 +16,7 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
     const { token } = useContext(MyContext)
     const [description, setDescription] = useState('')
     const [requestRunning, setRequestRunning] = useState(false)
+    const colorScheme = useColorScheme();
 
     const handleSavePost = async () => {
         setRequestRunning(true)
@@ -63,7 +66,7 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
                     useNativeControls
                 />
                 <TextInput
-                    style={styles.inputText}
+                    style={[styles.inputText, { backgroundColor: Colors[colorScheme].textInput, color: Colors[colorScheme].text }]}
                     maxLength={150}
                     multiline
                     onChangeText={(text) => setDescription(text)}
@@ -74,15 +77,15 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
                     <TouchableOpacity
                         onPress={() => navigation.goBack()}
                         style={styles.cancelButton}>
-                        <Feather name="x" size={24} color="black" />
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                        <Feather name="x" size={24} color={Colors[colorScheme].text} />
+                        <Text style={[styles.cancelButtonText, { color: Colors[colorScheme].text }]}>Cancel</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => handleSavePost()}
-                        style={styles.postButton}>
-                        <Feather name="corner-left-up" size={24} color="white" />
-                        <Text style={styles.postButtonText}>Post</Text>
+                        style={[styles.postButton, { backgroundColor: Colors[colorScheme].tint }]}>
+                        <Feather name="corner-left-up" size={24} color={Colors[colorScheme].background} />
+                        <Text style={[styles.postButtonText, { color: Colors[colorScheme].background }]}>Post</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

@@ -1,11 +1,15 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import Colors from '../../constants/Colors';
+import useColorScheme from '../../hooks/useColorScheme';
 
 export const Button = ({ ...props }) => {
+    const colorScheme = useColorScheme();
+
     return (
         // props est égal aux props so like style or color or classnames
         // props.children est égal au texte entre les balises
-        <TouchableOpacity style={style.button} {...props}>
-            <Text style={style.buttonTitle}>{props.children}</Text>
+        <TouchableOpacity style={[style.button, { backgroundColor: Colors[colorScheme].tint }]} {...props}>
+            <Text style={[style.buttonTitle, { color: Colors[colorScheme].background }]}>{props.children}</Text>
         </TouchableOpacity>
     );
 };

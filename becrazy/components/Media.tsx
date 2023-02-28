@@ -124,7 +124,7 @@ export function Media(props: any) {
                         right: 12,
                     }} />
                 <View style={Platform.OS !== 'web' ?
-                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "80%", flex: 1, marginEnd: 5 } :
+                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "70%", flex: 1, marginEnd: 5 } :
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
                 }>
                     <View style={{ flexDirection: 'row' }}>
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         height: 1,
         width: '60%',
+        marginBottom: 10,
     },
     modalText: {
         marginBottom: 15,
