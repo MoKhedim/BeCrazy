@@ -7,7 +7,6 @@ import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'react-native';
 import { Comment } from './Comment';
 import useColorScheme from '../hooks/useColorScheme';
-import { isMobile } from 'react-device-detect';
 import { server } from '../constants/Server';
 import { MyContext } from '../App';
 import { comments } from '../interfaces/media/comments';
@@ -124,7 +123,7 @@ export function Media(props: any) {
                         marginTop: 25,
                         right: 12,
                     }} />
-                <View style={isMobile ?
+                <View style={Platform.OS !== 'web' ?
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "80%", flex: 1, marginEnd: 5 } :
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
                 }>

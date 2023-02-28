@@ -1,6 +1,5 @@
 import { Text, View } from './Themed';
-import { Image, StyleSheet } from 'react-native';
-import { isMobile } from 'react-device-detect';
+import { Image, Platform, StyleSheet } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
 
@@ -22,7 +21,7 @@ export function Comment(props: any) {
                         marginEnd: 25,
                         marginStart: 25,
                     }} />
-                <View style={isMobile ?
+                <View style={Platform.OS !== 'web' ?
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "80%", flex: 1, marginEnd: 5 } :
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "90%", flex: 1, marginEnd: 5 }
                 }>

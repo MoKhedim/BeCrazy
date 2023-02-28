@@ -83,7 +83,7 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Leaderboa
               {sortedData.map((user, index) => (
                 <View key={index} style={[styles.row, index % 2 == 0 ? styles.evenRow : styles.oddRow]}>
                   <View style={[styles.cell, styles.rankCell]}><Text style={styles.headerText}>{index + 1}</Text></View>
-                  <View style={[styles.cell, styles.nameCell]} ><Text onPress={() => navigation.navigate(`ProfileScreen`)}>{user.username}</Text></View>
+                  <View style={[styles.cell, styles.nameCell]} ><Text onPress={() => navigation.navigate(`ProfileScreen`, {})}>{user.username}</Text></View>
                   <View style={[styles.cell, styles.likesCell]}><Text>{user.nbLikes}</Text></View>
                 </View>
               ))}
