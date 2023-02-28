@@ -485,7 +485,8 @@ app.get('/top10media', async (req: Request, res: Response) => {
 app.get('/searchUser/:username', async (req: Request, res: Response) => {
     const username: string = req.params.username;
     try {
-        const result: any = await collectionUsers.find({ username: { $regex: `^${username}` } }).toArray();
+        //search case insensitive
+        const result: any = await collectionUsers.find({ username: { $regex: `^${username}`, $options: 'i' } }).toArray();
         res.status(200).send(result);
     }
     catch (err) {
