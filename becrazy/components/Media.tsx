@@ -164,7 +164,7 @@ export function Media(props: any) {
                     setCommentsModalVisible(!commentsModalVisible);
                 }}>
                 <View style={Platform.OS == 'web' ? { height: '92%' }: {height: '100%'}}>
-                    <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 0 }}>
+                    <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 20 }}>
                         <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
                             <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
                         </Pressable>

@@ -48,7 +48,7 @@ function RootNavigator() {
   const colorScheme = useColorScheme();
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName='LoginScreen'>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
 
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'Login' }} />
@@ -128,7 +128,7 @@ function BottomTabNavigator() {
             )}
             {token ? (
               <View>
-                <Pressable style={{ marginEnd: 20 }} onPress={() => setToken(null)}>
+                <Pressable style={{ marginEnd: 20 }} onPress={() => { navigation.reset({ routes: [{ name: 'LoginScreen' }] }), setToken(null) }}>
                   <MaterialIcons name='logout' size={28} color={Colors[colorScheme].text} />
                 </Pressable>
               </View>
