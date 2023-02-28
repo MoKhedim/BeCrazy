@@ -22,8 +22,6 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
         formData.append('description', description);
         formData.append('video', route.params.source);
 
-        console.log(formData)
-
         const response = await fetch(`${server}/postMedia/${token}`, {
             method: 'POST',
             headers: {

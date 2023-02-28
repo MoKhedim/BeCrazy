@@ -1,7 +1,7 @@
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { Text, View } from './Themed';
-import { Video, AVPlaybackStatus, ResizeMode } from 'expo-av';
+import { Video, ResizeMode } from 'expo-av';
 import Colors from '../constants/Colors';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'react-native';
