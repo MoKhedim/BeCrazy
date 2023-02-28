@@ -22,6 +22,17 @@ import FillButton from '../../components/camera/FillButton'
  * @returns Functional Component
  */
 export default function CameraScreen({ navigation }: RootStackScreenProps<'CameraScreen'>) {
+    // check if the user is on web and if so show message
+    if (Platform.OS === 'web') {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.noPermissionsText}>This feature is not available on web</Text>
+            </View>
+        )
+    }
+
+
+
     // check if the camera is ready and the user is focused on the screen to know when to show the camera preview
     const isFocused = useIsFocused()
 
@@ -134,15 +145,6 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
         return (
             <View style={styles.container}>
                 <Text style={styles.noPermissionsText}>You need to grant camera and audio permissions to use this feature</Text>
-            </View>
-        )
-    }
-
-    // check if the user is on web and if so show message
-    if (Platform.OS === 'web') {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.noPermissionsText}>This feature is not available on web</Text>
             </View>
         )
     }

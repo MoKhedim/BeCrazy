@@ -121,7 +121,7 @@ function BottomTabNavigator() {
           <View style={{ flexDirection: 'row' }}>
             {token && (
               <View>
-                <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('ProfileScreen')}>
+                <Pressable style={{ marginEnd: 20 }} onPress={() => navigation.navigate('ProfileScreen', {})}>
                   <FontAwesome name='user' size={28} color={Colors[colorScheme].text} />
                 </Pressable>
               </View>

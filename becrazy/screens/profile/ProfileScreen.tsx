@@ -12,9 +12,11 @@ import Post from "../../interfaces/Post";
 import { PostsGrid } from "../../components/profile/PostsGrid";
 
 
-export default function ProfileScreen({ navigation }: RootStackScreenProps<'ProfileScreen'>) {
-    const colorScheme = useColorScheme();
+export default function ProfileScreen({ navigation, route }: RootStackScreenProps<'ProfileScreen'>) {
     const { token } = useContext(MyContext);
+    const [isMyProfile, setIsMyProfile] = useState<boolean>(true);
+
+    const colorScheme = useColorScheme();
     const { pickImage } = useImagePicker();
 
     // state for the user info and posts
@@ -26,9 +28,9 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
     const [modalVisible, setModalVisible] = useState(false);
 
 
-    // at the start of the page
+    // get the user info from the server with the token
+    // so we only use it if it is our profile
     const getUserInfo = async () => {
-        // get the user info from the server
         const res = await fetch(`${server}/getuser/${token}`, {
             method: "GET",
             headers: {
@@ -36,33 +38,49 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
             }
         });
         if (res.status !== 200) return
+
         const data = await res.json();
         setUserInfo(data.info);
+
+
+        const res2 = await fetch(`${server}/userProfil/${data.info.username}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        if (res2.status !== 200) return
+        const data2 = await res2.json();
+        setUserPosts(data2.result2);
     }
 
+
+    // get the user info from the server with the username
+    // so we only use it if it is not our profile
+    const getUserInfoNotMyProfile = async (username: string) => {
+        const res = await fetch(`${server}/userProfil/${username}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        if (res.status !== 200) return
+        const data = await res.json();
+        setUserInfo(data.result[0]);
+        setUserPosts(data.result2);
+    }
+
+
     useEffect(() => {
-        getUserInfo();
+        if (route.params.username === undefined) {
+            setIsMyProfile(true);
+            getUserInfo();
+        } else {
+            setIsMyProfile(false);
+            getUserInfoNotMyProfile(route.params.username);
+        }
     }, []);
 
-
-
-    useEffect(() => {
-        // get the user posts from the server
-        if (!userInfo) return
-        const getUserPosts = async () => {
-            const res2 = await fetch(`${server}/userProfil/${userInfo.username}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            });
-            if (res2.status !== 200) return
-            const data2 = await res2.json();
-            setUserPosts(data2.result2);
-        }
-
-        getUserPosts();
-    }, [userInfo]);
 
 
     // function to modify the bio
@@ -94,18 +112,20 @@ export default function ProfileScreen({ navigation }: RootStackScreenProps<'Prof
                 />
                 <View style={styles.header}>
                     <ImageBackground imageStyle={{ borderRadius: 50, }} style={styles.avatar} source={{ uri: userInfo.profilePicture }} >
-                        <TouchableOpacity onPress={() => pickImage()}>
-                            <FontAwesome
-                                name="camera"
-                                size={76}
-                                color="white"
-                                style={styles.camera}
-                            />
-                        </TouchableOpacity>
+                        {isMyProfile && (
+                            <TouchableOpacity onPress={() => pickImage()}>
+                                <FontAwesome
+                                    name="camera"
+                                    size={76}
+                                    color="white"
+                                    style={styles.camera}
+                                />
+                            </TouchableOpacity>
+                        )}
                     </ImageBackground>
                     <View style={styles.headerInfo}>
                         <Text style={styles.username}>{userInfo.username}</Text>
-                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                        <TouchableOpacity onPress={() => isMyProfile && setModalVisible(true)}>
                             <Text style={styles.bio}>{userInfo.bio}</Text>
                         </TouchableOpacity>
                         <View style={styles.stats}>

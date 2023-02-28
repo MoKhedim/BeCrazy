@@ -17,7 +17,9 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
   NotFound: undefined;
-  ProfileScreen: undefined;
+  ProfileScreen: {
+    username?: string;
+  };
   CameraScreen: undefined;
   // SavePostScreen needs to have params because it need to know what image to save
   SavePostScreen: { 

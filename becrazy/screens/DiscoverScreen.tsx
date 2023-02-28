@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Entypo } from '@expo/vector-icons';
-import { StyleSheet, TextInput, Image, TouchableOpacity, ImageBackground, useColorScheme, Button } from 'react-native';
+import { StyleSheet, TextInput, Image, TouchableOpacity, useColorScheme } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 import { server } from '../constants/Server';
-import UserInfo from '../interfaces/UserInfo';
 import UserInfoFull from '../interfaces/media/UserInfoFull';
-import Colors from '../constants/Colors';
 
 
 export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Discover'>) {
@@ -18,16 +16,16 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
   const [canEdit, setCanEdit] = useState(true)
 
   async function fetchResults() {
-      const res = await fetch(`${server}/searchUser/${searchString}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      });
-      const data = await res.json();
-      setSearchResults(data)
-      console.log(searchResults)
-    }
+    const res = await fetch(`${server}/searchUser/${searchString}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    });
+    const data = await res.json();
+    setSearchResults(data)
+    console.log(searchResults)
+  }
 
   // when the search string changes, fetch the results
   /*
@@ -50,6 +48,12 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
     }
   */
 
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      fetchResults()
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.alignCenter}>
@@ -57,23 +61,24 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
           <TextInput
             style={styles.input}
             placeholder="Username"
-           
+
             value={searchString}
             editable={canEdit}
             selectTextOnFocus={canEdit}
             onChangeText={(text) => setSearchString(text)}
+            onKeyPress={(e) => handleKeyPress(e)}
           />
           <TouchableOpacity
             style={styles.searchIcon}
             onPress={() => console.log('search')}>
             <Entypo
-            style={styles.searchIcon}
-            name={canEdit ? "magnifying-glass" : "back-in-time"}
-            size={20}onPress={fetchResults} >
+              style={styles.searchIcon}
+              name={canEdit ? "magnifying-glass" : "back-in-time"}
+              size={20} onPress={fetchResults} >
             </Entypo>
           </TouchableOpacity>
         </View>
-        
+
         <View style={[styles.separator, { "backgroundColor": useColorScheme() === "light" ? "black" : "white" }]} />
         {searchResults.length > 0 && (
           <View style={[styles.listContainer]}>
@@ -85,8 +90,8 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<'Disco
                     <Image
                       style={{ width: 50, height: 50, borderRadius: 25 }}
                       source={{ uri: result.profilePicture }}
-                    /> 
-                    <Text onPress={() => navigation.navigate ('ProfileScreen')} style={{ marginLeft: 10 }}>{result.username}</Text>
+                    />
+                    <Text onPress={() => navigation.navigate('ProfileScreen', { username: result.username })} style={{ marginLeft: 10 }}>{result.username}</Text>
                     <Text style={{ marginLeft: 20 }}>{result.nbFollowers + " followers"}</Text>
                   </View>
                 </View>
