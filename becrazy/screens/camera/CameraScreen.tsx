@@ -54,7 +54,7 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
     const [cameraFlash, setCameraFlash] = useState(FlashMode.off)
     const [isMuted, setIsMuted] = useState(true)
     // duration are in seconds
-    const [maxDuration, setMaxDuration] = useState(60)
+    const [maxDuration, setMaxDuration] = useState(30)
     const [minDuration, setMinDuration] = useState(3)
 
 
