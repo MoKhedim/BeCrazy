@@ -22,6 +22,8 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
         formData.append('description', description);
         formData.append('video', route.params.source);
 
+        console.log(formData)
+
         const response = await fetch(`${server}/postMedia/${token}`, {
             method: 'POST',
             headers: {
@@ -29,6 +31,8 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
             },
             body: formData,
         });
+
+
 
         if (response.status !== 200) {
             alert('Error uploading post')
