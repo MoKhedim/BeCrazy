@@ -17,6 +17,7 @@ export function Media(props: any) {
     const colorScheme = useColorScheme();
     type IconName = 'heart-o' | 'heart';
     const [isLiked, setIsLiked] = useState(props.allMedia.isLiked)
+    const [profilePic, setProfilePic] = useState('');
     const [iconName, setIconName] = useState<IconName>('heart-o')
     const [likes, setLikes] = useState(props.allMedia.nbLikes)
     const { token } = useContext(MyContext);
@@ -48,6 +49,17 @@ export function Media(props: any) {
             }
         }
     }
+
+    const getProlfilePic = async () => {
+        const urlGetProfilePic = `${server}/searchUser/${props.allMedia.username}`;
+        const resGetProfilePic = await fetch(urlGetProfilePic);
+        if (resGetProfilePic.ok) { 
+            const data = await resGetProfilePic.json();
+            console.log(data);
+            setProfilePic(data[0].profilePicture);
+        }
+    }
+
 
     const postComment = async () => {
         const urlPostComment = `${server}/commentsMedia/${token}`
@@ -108,15 +120,14 @@ export function Media(props: any) {
             }
         }
         checkLike();
+        getProlfilePic();
     }, [])
 
 
     return (
         <>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, maxWidth: 350, minWidth: 350, marginBottom: 10 }}>
-                <Image source={
-                    // user icon placeholder
-                    require('../assets/images/icon.png')} style={{
+                <Image source={{uri: profilePic}} style={{
                         width: 50,
                         height: 50,
                         borderRadius: 50,

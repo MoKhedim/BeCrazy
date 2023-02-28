@@ -2,18 +2,32 @@ import { Text, View } from './Themed';
 import { Image, Platform, StyleSheet } from 'react-native';
 import useColorScheme from '../hooks/useColorScheme';
 import Colors from '../constants/Colors';
+import { useEffect, useState } from 'react';
+import { server } from '../constants/Server';
 
 export function Comment(props: any) {
     const colorScheme = useColorScheme();
+    const [profilePic, setProfilePic] = useState('')
+
+    useEffect(() => {
+        const getProlfilePic = async () => {
+            const urlGetProfilePic = `${server}/searchUser/${props.comment.username}`;
+            const resGetProfilePic = await fetch(urlGetProfilePic);
+            if (resGetProfilePic.ok) { 
+                const data = await resGetProfilePic.json();
+                console.log(data);
+                setProfilePic(data[0].profilePicture);
+            }
+        }
+        getProlfilePic();
+    }, [])
 
     return (
         <View>
             <View style={{
                 flexDirection: 'row', flexWrap: 'wrap', flex: 1, width: "100%", height: 100, marginBottom: 10
             }}>
-                <Image source={
-                    // user icon placeholder
-                    require('../assets/images/icon.png')} style={{
+                <Image source={{uri: profilePic}} style={{
                         width: 50,
                         height: 50,
                         borderRadius: 50,
