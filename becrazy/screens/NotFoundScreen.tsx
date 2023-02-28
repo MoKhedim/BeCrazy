@@ -1,13 +1,17 @@
+import { useContext } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import { MyContext } from '../App';
 
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 
 export default function NotFoundScreen({ navigation }: RootStackScreenProps<'NotFound'>) {
+  const { token } = useContext(MyContext);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>This screen doesn't exist.</Text>
-      <TouchableOpacity onPress={() => navigation.replace('LoginScreen')} style={styles.link}>
+      <TouchableOpacity onPress={() => {token ? navigation.replace('LoginScreen') : navigation.replace('Root')}} style={styles.link}>
         <Text style={styles.linkText}>Go to home screen!</Text>
       </TouchableOpacity>
     </View>
