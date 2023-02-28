@@ -31,16 +31,16 @@ export function Comment(props: any) {
                         width: 50,
                         height: 50,
                         borderRadius: 50,
-                        marginTop: 25,
+                        marginTop: 4,
                         marginEnd: 25,
                         marginStart: 25,
                     }} />
                 <View style={Platform.OS !== 'web' ?
-                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "80%", flex: 1, marginEnd: 5 } :
-                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "90%", flex: 1, marginEnd: 5 }
+                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "80%", flex: 1} :
+                    { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", width: "90%", flex: 1}
                 }>
-                    <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 20 }]}>{props.comment.username}</Text>
-                    <Text style={[styles.comment, { color: Colors[colorScheme].text, marginTop: 2 }]}>
+                    <Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 4 }]}>{props.comment.username}</Text>
+                    <Text style={[styles.comment, { color: Colors[colorScheme].text, marginTop: 4 }]}>
                         {props.comment.comment}
                     </Text>
                 </View>
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     separator: {
         marginTop: 10,
         height: 1,
-        width: '60%',
+        width: '100%',
+        marginBottom: 10,
     },
 })
