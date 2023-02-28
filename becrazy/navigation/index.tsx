@@ -50,7 +50,7 @@ function RootNavigator() {
   const { token } = useContext(MyContext);
 
   return (
-    <Stack.Navigator initialRouteName={token ? 'LoginScreen' : 'Root'}>
+    <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
 
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'Login' }} />
