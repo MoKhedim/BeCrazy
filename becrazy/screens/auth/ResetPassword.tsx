@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native'
 import { Text } from '../../components/Themed'
 import { Button } from '../../components/auth/Button'
 import { TextInput } from '../../components/auth/TextInput'
@@ -73,39 +73,41 @@ export default function ResetPasswordScreen({ navigation }: RootStackScreenProps
 
 
     return (
-        <View style={styles.container}>
-            <ChangePasswordModal
-                visible={modalVisible}
-                onPress={() => modifyPassword()}
-                error={newPassword.error}
-                password={newPassword.value}
-                onChangePassword={(text: string) => setNewPassword({ value: text, error: '' })}
-                code={code}
-                onChangeCode={(text: string) => setCode(text)}
-                onClose={() => setModalVisible(false)}
-            />
-            <Logo />
-            <Text style={styles.title}>Reset Password</Text>
-            <TextInput
-                returnKeyType="done"
-                placeholder='Email'
-                value={email.value}
-                onChangeText={(text: string) => setEmail({ value: text, error: '' })}
-                autoCapitalize="none"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-            />
-            <Text style={styles.error}>{email.error}</Text>
-            <View style={styles.forgotPassword}>
-                <TouchableOpacity
-                    onPress={() => setModalVisible(true)}
-                >
-                    <Text style={styles.forgot}>Show modal</Text>
-                </TouchableOpacity>
-            </View>
-            <Button onPress={onResetPressed}>
-                Reset Password
-            </Button>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
+                <ChangePasswordModal
+                    visible={modalVisible}
+                    onPress={() => modifyPassword()}
+                    error={newPassword.error}
+                    password={newPassword.value}
+                    onChangePassword={(text: string) => setNewPassword({ value: text, error: '' })}
+                    code={code}
+                    onChangeCode={(text: string) => setCode(text)}
+                    onClose={() => setModalVisible(false)}
+                />
+                <Logo />
+                <Text style={styles.title}>Reset Password</Text>
+                <TextInput
+                    returnKeyType="done"
+                    placeholder='Email'
+                    value={email.value}
+                    onChangeText={(text: string) => setEmail({ value: text, error: '' })}
+                    autoCapitalize="none"
+                    textContentType="emailAddress"
+                    keyboardType="email-address"
+                />
+                <Text style={styles.error}>{email.error}</Text>
+                <View style={styles.forgotPassword}>
+                    <TouchableOpacity
+                        onPress={() => setModalVisible(true)}
+                    >
+                        <Text style={styles.forgot}>Show modal</Text>
+                    </TouchableOpacity>
+                </View>
+                <Button onPress={onResetPressed}>
+                    Reset Password
+                </Button>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     )
 }

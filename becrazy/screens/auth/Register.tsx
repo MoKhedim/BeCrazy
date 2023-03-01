@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native'
 import { Text } from '../../components/Themed'
 import { Button } from '../../components/auth/Button'
 import { TextInput } from '../../components/auth/TextInput'
@@ -55,51 +55,53 @@ export default function RegisterScreen({ navigation }: RootStackScreenProps<'Reg
     }
 
     return (
-        <View style={styles.container}>
-            <Logo />
-            <Text style={styles.title}>Register</Text>
-            <TextInput
-                returnKeyType="next"
-                placeholder='Username'
-                value={username.value}
-                onChangeText={(text: string) => setUsername({ value: text, error: '' })}
-                autoCapitalize="none"
-            />
-            <TextInput
-                returnKeyType="next"
-                placeholder='Email'
-                value={email.value}
-                onChangeText={(text: string) => setEmail({ value: text, error: '' })}
-                autoCapitalize="none"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-            />
-            <TextInput
-                returnKeyType="next"
-                placeholder='Password'
-                value={password.value}
-                onChangeText={(text: string) => setPassword({ value: text, error: '' })}
-                secureTextEntry
-            />
-            <TextInput
-                returnKeyType="done"
-                placeholder='Confirm Password'
-                value={passwordConfirm.value}
-                onChangeText={(text: string) => setPasswordConfirm({ value: text, error: '' })}
-                secureTextEntry
-            />
-            <Text style={styles.error}>{email.error || password.error || passwordConfirm.error}</Text>
-            <Button onPress={onRegisterPressed}>
-                Register
-            </Button>
-            <View style={styles.row}>
-                <Text>Already have an account? </Text>
-                <TouchableOpacity
-                    onPress={() => navigation.replace('LoginScreen')}
-                >
-                    <Text style={styles.link}>Login</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
+                <Logo />
+                <Text style={styles.title}>Register</Text>
+                <TextInput
+                    returnKeyType="next"
+                    placeholder='Username'
+                    value={username.value}
+                    onChangeText={(text: string) => setUsername({ value: text, error: '' })}
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    returnKeyType="next"
+                    placeholder='Email'
+                    value={email.value}
+                    onChangeText={(text: string) => setEmail({ value: text, error: '' })}
+                    autoCapitalize="none"
+                    textContentType="emailAddress"
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    returnKeyType="next"
+                    placeholder='Password'
+                    value={password.value}
+                    onChangeText={(text: string) => setPassword({ value: text, error: '' })}
+                    secureTextEntry
+                />
+                <TextInput
+                    returnKeyType="done"
+                    placeholder='Confirm Password'
+                    value={passwordConfirm.value}
+                    onChangeText={(text: string) => setPasswordConfirm({ value: text, error: '' })}
+                    secureTextEntry
+                />
+                <Text style={styles.error}>{email.error || password.error || passwordConfirm.error}</Text>
+                <Button onPress={onRegisterPressed}>
+                    Register
+                </Button>
+                <View style={styles.row}>
+                    <Text>Already have an account? </Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.replace('LoginScreen')}
+                    >
+                        <Text style={styles.link}>Login</Text>
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     )
 }

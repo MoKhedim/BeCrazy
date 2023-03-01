@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { TouchableOpacity, StyleSheet, View, useColorScheme } from 'react-native'
+import { TouchableOpacity, View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { Text } from '../../components/Themed'
 import { Button } from '../../components/auth/Button'
 import { TextInput } from '../../components/auth/TextInput'
@@ -50,45 +50,47 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<'LoginS
     }
 
     return (
-        <View style={styles.container}>
-            <Logo />
-            <Text style={styles.title}>Login</Text>
-            <TextInput
-                returnKeyType="next"
-                placeholder='Email'
-                value={email.value}
-                onChangeText={(text: string) => setEmail({ value: text, error: '' })}
-                autoCapitalize="none"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-            />
-            <TextInput
-                returnKeyType="done"
-                placeholder='Password'
-                value={password.value}
-                onChangeText={(text: string) => setPassword({ value: text, error: '' })}
-                secureTextEntry
-            />
-            {/**Show the error of either email or password */}
-            <Text style={styles.error}>{email.error || password.error}</Text>
-            <View style={styles.forgotPassword}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('ResetPasswordScreen')}
-                >
-                    <Text style={styles.forgot}>Forgot your password?</Text>
-                </TouchableOpacity>
-            </View>
-            <Button onPress={onLoginPressed}>
-                Login
-            </Button>
-            <View style={styles.row}>
-                <Text>Don't have an account? </Text>
-                <TouchableOpacity
-                    onPress={() => navigation.replace('RegisterScreen')}
-                >
-                    <Text style={styles.link}>Register</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
+                <Logo />
+                <Text style={styles.title}>Login</Text>
+                <TextInput
+                    returnKeyType="next"
+                    placeholder='Email'
+                    value={email.value}
+                    onChangeText={(text: string) => setEmail({ value: text, error: '' })}
+                    autoCapitalize="none"
+                    textContentType="emailAddress"
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    returnKeyType="done"
+                    placeholder='Password'
+                    value={password.value}
+                    onChangeText={(text: string) => setPassword({ value: text, error: '' })}
+                    secureTextEntry
+                />
+                {/**Show the error of either email or password */}
+                <Text style={styles.error}>{email.error || password.error}</Text>
+                <View style={styles.forgotPassword}>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('ResetPasswordScreen')}
+                    >
+                        <Text style={styles.forgot}>Forgot your password?</Text>
+                    </TouchableOpacity>
+                </View>
+                <Button onPress={onLoginPressed}>
+                    Login
+                </Button>
+                <View style={styles.row}>
+                    <Text>Don't have an account? </Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.replace('RegisterScreen')}
+                    >
+                        <Text style={styles.link}>Register</Text>
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView >
+        </TouchableWithoutFeedback>
     )
 }

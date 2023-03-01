@@ -68,9 +68,8 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
             setHasAudioPermissions(audioStatus.status == 'granted')
 
             const galleryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync()
-            setHasGalleryPermissions(galleryStatus.status == 'granted')
-
             if (galleryStatus.status == 'granted') {
+                setHasGalleryPermissions(true)
                 const userGalleryMedia = await MediaLibrary.getAssetsAsync({ sortBy: ['creationTime'], mediaType: ['video'] })
                 setGalleryItems(userGalleryMedia.assets)
             }
@@ -97,10 +96,13 @@ export default function CameraScreen({ navigation }: RootStackScreenProps<'Camer
 
                 // Start the stopwatch
                 const startTime = new Date();
+
+                // Start recording the video
                 const videoRecordPromise = await cameraRef.recordAsync(options)
 
                 // Calculate the elapsed time
                 const elapsedTime = new Date().getTime() - startTime.getTime();
+                // Check if the video is too short
                 if (elapsedTime < minDuration * 1000) {
                     alert('Video is too short')
                     return

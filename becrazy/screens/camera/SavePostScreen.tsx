@@ -27,9 +27,9 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
 
         const response = await fetch(`${server}/postMedia/${token}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
+            // headers: {
+            //     'Content-Type': 'multipart/form-data',
+            // },
             body: formData,
         });
 
