@@ -444,8 +444,8 @@ app.post("/forgotpassword", async (req: Request, res: Response) => {
 app.post("/follow/:username/:token", async (req: Request, res: Response) => {
     const username: string = req.params.username;
     const token: string = req.params.token;
-    const addFollow: any = { $inc: { nbFollowers: 1 } };
-    const addFollowing: any = { $inc: { nbFollowing: 1 } };
+    const addFollow: any = { $inc: { nbFollows: 1 } };
+    const addFollowing: any = { $inc: { nbFollowers: 1 } };
     try {
         const result = await collectionUsers.findOneAndUpdate({ username: username }, addFollow);
         if (result.value) {
