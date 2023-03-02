@@ -62,7 +62,7 @@ app.use(cors());
 const uri = "mongodb+srv://Bastien:Bastien975@projetbecrazy.h0ghj.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err, client) => {
     if (err) {
-        console.log(err);
+        
         return;
     }
 });
@@ -88,7 +88,7 @@ function getCompletion() {
             frequency_penalty: 0,
             presence_penalty: 0,
         });
-        console.log(response.data.choices[0].text);
+        
         return response.data.choices[0].text;
     });
 }
@@ -201,7 +201,7 @@ app.post('/postMedia/:token', upload.single("video"), (req, res) => __awaiter(vo
         const verifytoken = yield collectionUsers.findOne({ token: token });
         if (verifytoken) {
             const username = verifytoken.username;
-            console.log("Inserting data into database:", { username, description, videoId: uploadStream.id });
+            
             collectionAllMedia.insertOne({
                 username: username,
                 description: description,
@@ -212,7 +212,7 @@ app.post('/postMedia/:token', upload.single("video"), (req, res) => __awaiter(vo
             });
             videoStream.pipe(uploadStream)
                 .on('error', (error) => {
-                console.log(error);
+                
                 res.status(500).json({ message: 'Error uploading video' });
             })
                 .on('finish', (file) => {
@@ -235,7 +235,7 @@ app.get('/getMedia/:id', (req, res) => {
     downloadStream.pipe(res);
     //send the video to the upload folder
     downloadStream.on('error', (error) => {
-        console.log(error);
+        
         res.status(500).json({ message: 'Error downloading video' });
     });
     downloadStream.on('finish', () => {
@@ -450,10 +450,10 @@ app.post("/forgotpassword", (req, res) => __awaiter(void 0, void 0, void 0, func
         if (verifEmailExist) {
             index_1.transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
-                    console.log(error);
+                    
                 }
                 else {
-                    console.log('Email sent: ' + info.response);
+                    
                 }
             });
             res.status(200).json({ message: "Email envoyé avec succes!" });
@@ -501,7 +501,7 @@ app.get('/top10media', (req, res) => __awaiter(void 0, void 0, void 0, function*
     const startOfDay = new Date(today.setHours(0, 0, 0, 0));
     const endOfDay = new Date(today.setHours(23, 59, 59, 999));
     try {
-        console.log(today);
+        
         const result = yield collectionAllMedia.find({ created: { $gte: startOfDay, $lte: endOfDay } }).sort({ nbLikes: -1 }).limit(10).toArray();
         res.status(200).send(result);
     }
@@ -637,5 +637,5 @@ app.get("/getuser/:token", (req, res) => __awaiter(void 0, void 0, void 0, funct
 }));
 //listen 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+    
 });
