@@ -447,14 +447,14 @@ app.post("/follow/:username/:token", async (req: Request, res: Response) => {
     const addFollow: any = { $inc: { nbFollows: 1 } };
     const addFollowing: any = { $inc: { nbFollowers: 1 } };
     try {
-        const result = await collectionUsers.findOneAndUpdate({ username: username }, addFollow);
+        const result = await collectionUsers.findOneAndUpdate({ username: username }, addFollowing);
         if (result.value) {
             res.status(200).json({ message: "Succès!", result });
         } else {
             res.status(400).json({ message: "Erreur", result });
         }
 
-        const result2 = await collectionUsers.findOneAndUpdate({ token: token }, addFollowing);
+        const result2 = await collectionUsers.findOneAndUpdate({ token: token }, addFollow);
         if (result2.value) {
             res.status(200).json({ message: "Succès!", result2 });
         }
