@@ -47,7 +47,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   const colorScheme = useColorScheme();
-  const { token } = useContext(MyContext);
 
   return (
     <Stack.Navigator>

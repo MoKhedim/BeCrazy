@@ -10,10 +10,12 @@ import useColorScheme from '../hooks/useColorScheme';
 import { server } from '../constants/Server';
 import { MyContext } from '../App';
 import { comments } from '../interfaces/media/comments';
+import { useNavigation } from '@react-navigation/native';
 
 
 
 export function Media(props: any) {
+	const navigation = useNavigation();
 	const colorScheme = useColorScheme();
 	type IconName = 'heart-o' | 'heart';
 	const [isLiked, setIsLiked] = useState(props.allMedia.isLiked)
@@ -121,90 +123,97 @@ export function Media(props: any) {
 
 
 	return (
-		<>
-			<View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, maxWidth: 350, minWidth: 350, marginBottom: 10 }}>
-				<Image source={{ uri: profilePic }} style={{
-					width: 50,
-					height: 50,
-					borderRadius: 50,
-					marginTop: 25,
-					right: 12,
-				}} />
-				<View style={Platform.OS !== 'web' ?
-					{ flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "70%", flex: 1, marginEnd: 5 } :
-					{ flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
-				}>
-					<View style={{ flexDirection: 'row' }}>
-						<Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>{props.allMedia.username}</Text>
-						<Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>
-							{props.allMedia.created.split('T')[0].replaceAll('-', '/')}</Text>
+		profilePic === '' ? <View></View> : 
+			<>
+				<View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, maxWidth: 350, minWidth: 350, marginBottom: 10 }}>
+					<TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { username: props.allMedia.username })}>
+						<Image source={{ uri: profilePic }} style={{
+							width: 50,
+							height: 50,
+							borderRadius: 50,
+							marginTop: 25,
+							right: 12,
+						}} />
+					</TouchableOpacity>
+					<View style={Platform.OS !== 'web' ?
+						{ flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "70%", flex: 1, marginEnd: 5 } :
+						{ flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
+					}>
+						<View style={{ flexDirection: 'row' }}>
+							<TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', { username: props.allMedia.username })}>
+								<Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 25 }]}>
+									{props.allMedia.username}
+								</Text>
+							</TouchableOpacity>
+							<Text style={{ color: Colors[colorScheme].tabIconDefault, marginStart: 10, marginTop: 25, fontSize: 12 }}>
+								{props.allMedia.created.split('T')[0].replaceAll('-', '/')}</Text>
+						</View>
+						<Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 0, marginBottom: 0 }]}>
+							{props.allMedia.description}
+						</Text>
+						<Video style={[styles.video, { backgroundColor: Colors[colorScheme].background }]}
+							source={{ uri: `${server}/getMedia/${props.allMedia.videoId}` }}
+							useNativeControls={true}
+							isLooping={true}
+							onError={(error) => console.error(error)}
+							resizeMode={ResizeMode.CONTAIN}
+						/>
+						<View style={{
+							flexDirection: 'row', marginTop: 10, alignItems: 'flex-end',
+							justifyContent: 'flex-end', marginBottom: 20,
+						}}>
+							<MaterialIcons size={24} name='chat-bubble' color={Colors[colorScheme].text} style={styles.icon} onPress={() => setCommentsModalVisible(true)} />
+							<Text style={{ marginEnd: 10 }}>{props.allMedia.nbComments}</Text>
+							<FontAwesome size={24} name={iconName} color={Colors[colorScheme].text} style={styles.icon} onPress={handlePressLike} />
+							<Text style={{ marginEnd: 10 }}>{likes}</Text>
+						</View>
 					</View>
-					<Text style={[styles.desc, { color: Colors[colorScheme].text, marginTop: 0, marginBottom: 0 }]}>
-						{props.allMedia.description}
-					</Text>
-					<Video style={[styles.video, { backgroundColor: Colors[colorScheme].background }]}
-						source={{ uri: `${server}/getMedia/${props.allMedia.videoId}` }}
-						useNativeControls={true}
-						isLooping={true}
-						onError={(error) => console.error(error)}
-						resizeMode={ResizeMode.CONTAIN}
-					/>
-					<View style={{
-						flexDirection: 'row', marginTop: 10, alignItems: 'flex-end',
-						justifyContent: 'flex-end', marginBottom: 20,
+				</View>
+				<View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+
+				<Modal
+					animationType="slide"
+					transparent={true}
+					visible={commentsModalVisible}
+					onRequestClose={() => {
+						setCommentsModalVisible(!commentsModalVisible);
 					}}>
-						<MaterialIcons size={24} name='chat-bubble' color={Colors[colorScheme].text} style={styles.icon} onPress={() => setCommentsModalVisible(true)} />
-						<Text style={{ marginEnd: 10 }}>{props.allMedia.nbComments}</Text>
-						<FontAwesome size={24} name={iconName} color={Colors[colorScheme].text} style={styles.icon} onPress={handlePressLike} />
-						<Text style={{ marginEnd: 10 }}>{likes}</Text>
-					</View>
-				</View>
-			</View>
-			<View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+					<View style={Platform.OS == 'web' ? { height: '92%' } : { height: '100%' }}>
+						<View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 20 }}>
+							<Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
+								<MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
+							</Pressable>
+							<Text style={[styles.title, { alignItems: 'center', marginTop: 16 }]}>Comments</Text>
+						</View>
+						<ScrollView style={{ marginTop: 100 }}>
+							{comments?.map((comment, index) => {
+								return <Comment key={comment.idMedia + index} comment={comment} modalTime={() => setCommentsModalVisible(false)} />
+							})}</ScrollView>
 
-			<Modal
-				animationType="slide"
-				transparent={true}
-				visible={commentsModalVisible}
-				onRequestClose={() => {
-					setCommentsModalVisible(!commentsModalVisible);
-				}}>
-				<View style={Platform.OS == 'web' ? { height: '92%' } : { height: '100%' }}>
-					<View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 20 }}>
-						<Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
-							<MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
-						</Pressable>
-						<Text style={[styles.title, { alignItems: 'center', marginTop: 16 }]}>Comments</Text>
 					</View>
-					<ScrollView style={{ marginTop: 100 }}>
-						{comments?.map((comment, index) => {
-							return <Comment key={comment.idMedia + index} comment={comment} />
-						})}</ScrollView>
+					<KeyboardAvoidingView behavior='position'>
+						<View style={Platform.OS == 'web' ? { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' } :
+							{ flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '80%' }}>
 
-				</View>
-				<KeyboardAvoidingView behavior='position'>
-					<View style={Platform.OS == 'web' ? { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' } :
-						{ flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '80%' }}>
-
-						<TextInput style={[styles.input,
-						{
-							alignItems: 'center',
-							marginTop: 14,
-							backgroundColor: Colors[colorScheme].textInput,
-							color: Colors[colorScheme].text
-						}]}
-							value={commentInput}
-							onChangeText={input => setCommentInput(input)}
-							keyboardType='default'
-						></TextInput>
-						<TouchableOpacity style={{ margin: 20 }} onPress={postComment}>
-							<MaterialIcons name='send' size={32} color={Colors[colorScheme].tint} />
-						</TouchableOpacity>
-					</View>
-				</KeyboardAvoidingView>
-			</Modal>
-		</>
-	)
+							<TextInput style={[styles.input,
+							{
+								alignItems: 'center',
+								marginTop: 14,
+								backgroundColor: Colors[colorScheme].textInput,
+								color: Colors[colorScheme].text
+							}]}
+								value={commentInput}
+								onChangeText={input => setCommentInput(input)}
+								keyboardType='default'
+							></TextInput>
+							<TouchableOpacity style={{ margin: 20 }} onPress={postComment}>
+								<MaterialIcons name='send' size={32} color={Colors[colorScheme].tint} />
+							</TouchableOpacity>
+						</View>
+					</KeyboardAvoidingView>
+				</Modal>
+			</>
+		)
 }
 
 const styles = StyleSheet.create({

@@ -58,9 +58,12 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
                 {
                     // afficher tous les médias postés
                     allMedias?.map((post) => {
-                        return <Media
-                            key={post._id}
-                            allMedia={post} />
+                        return (
+                            <Media
+                                key={post._id}
+                                allMedia={post}
+                            />
+                        )
                     })
                 }
             </View>
