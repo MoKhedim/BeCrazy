@@ -161,11 +161,11 @@ app.post("/aiChallenge", async (req: Request, res: Response) => {
 app.post('/postMedia/:token', upload.single("video"), async (req: Request, res: Response) => {
     const token: string = req.params.token;
     const description: string = req.body.description;
+    console.log("body:", req.body);
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
     const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
-    console.log("body:", req.body);
-    
+
     try {
         const verifytoken: any = await collectionUsers.findOne({ token: token });
         if (verifytoken) {
