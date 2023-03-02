@@ -1,5 +1,5 @@
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import React, { useContext, useEffect, useState } from "react";
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { useContext, useEffect, useState } from "react";
 import { Text, View } from "./Themed";
 import { Video, ResizeMode } from "expo-av";
 import Colors from "../constants/Colors";
