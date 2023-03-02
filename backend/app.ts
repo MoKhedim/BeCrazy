@@ -441,7 +441,7 @@ app.post("/forgotpassword", async (req: Request, res: Response) => {
     }
 });
 
-app.post("/follow/:username/:token", async (req: Request, res: Response) => {
+/* app.post("/follow/:username/:token", async (req: Request, res: Response) => {
     const username: string = req.params.username;
     const token: string = req.params.token;
     const addFollow: any = { $inc: { nbFollowers: 1 } };
@@ -464,7 +464,7 @@ app.post("/follow/:username/:token", async (req: Request, res: Response) => {
     }
     catch (err) {
         console.log(err);
-    }
+    } */
 
 //route pour vérifié si le code correspond au code envoyé VIA email.
 //http://localhost:4000/verifCode/bastiencambray975@gmail.com
@@ -642,4 +642,4 @@ app.get("/getuser/:token", async (req: Request, res: Response) => {
 //listen 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
-})})
+})
