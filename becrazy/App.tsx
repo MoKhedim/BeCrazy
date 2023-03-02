@@ -8,7 +8,14 @@ import Navigation from "./navigation";
 
 
 import { useAsyncStorage } from "./hooks/useAsyncStorage";
-export const MyContext = createContext({} as any);
+
+
+// create the interface for the context value
+interface IContext {
+	token: string | null;
+	setToken: React.Dispatch<React.SetStateAction<string | null>>;
+}
+export const MyContext = createContext({} as IContext);
 
 
 export default function App() {
@@ -26,12 +33,12 @@ export default function App() {
 			const token = await getItem("token");
 			setToken(token);
 		};
-		getToken();
+		void getToken();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		if (token) addItem("token", token);
+		if (token) void addItem("token", token);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [token]);
 
