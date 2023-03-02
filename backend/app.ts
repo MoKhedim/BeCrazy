@@ -20,6 +20,7 @@ const jwt = require("jsonwebtoken");
 const ffmpeg = require('fluent-ffmpeg');
 const secret = "dgjkgevuyetggvdghdfhegchgjdg,dvbmdghkdvghmdvhmshmg";//express setup
 const saltRounds = 10;
+const { Readable } = require('stream');
 const port = process.env.PORT || 4000;
 //app.use
 app.use(bodyParser.json());
@@ -163,7 +164,7 @@ app.post('/postMedia/:token', upload.single("video"), async (req: Request, res: 
     const description: string = req.body.description;
     console.log("body:", req.body);
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
-    const videoStream = fs.createReadStream((req as unknown as MulterRequest).file.path);
+    const videoStream = Readable.from(fs.createReadStream((req as unknown as MulterRequest).file.path));
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
 
     try {
