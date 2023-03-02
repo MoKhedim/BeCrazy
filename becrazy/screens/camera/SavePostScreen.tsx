@@ -27,9 +27,10 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
 
         const response = await fetch(`${server}/postMedia/${token}`, {
             method: 'POST',
-            // headers: {
-            //     'Content-Type': 'multipart/form-data',
-            // },
+            headers: {
+                 'Content-Type': 'multipart/form-data',
+				 'Access-Control-Allow-Origin': '*',
+             },
             body: formData,
         });
 
@@ -40,6 +41,7 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
             setRequestRunning(false)
             return
         }
+
 
         setRequestRunning(false)
         navigation.replace('Root')
