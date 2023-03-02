@@ -1,4 +1,4 @@
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import { Text, View } from './Themed';
 import { Video, ResizeMode } from 'expo-av';
@@ -53,7 +53,7 @@ export function Media(props: any) {
     const getProlfilePic = async () => {
         const urlGetProfilePic = `${server}/searchUser/${props.allMedia.username}`;
         const resGetProfilePic = await fetch(urlGetProfilePic);
-        if (resGetProfilePic.ok) { 
+        if (resGetProfilePic.ok) {
             const data = await resGetProfilePic.json();
             console.log(data);
             setProfilePic(data[0].profilePicture);
@@ -127,13 +127,13 @@ export function Media(props: any) {
     return (
         <>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 1, maxWidth: 350, minWidth: 350, marginBottom: 10 }}>
-                <Image source={{uri: profilePic}} style={{
-                        width: 50,
-                        height: 50,
-                        borderRadius: 50,
-                        marginTop: 25,
-                        right: 12,
-                    }} />
+                <Image source={{ uri: profilePic }} style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50,
+                    marginTop: 25,
+                    right: 12,
+                }} />
                 <View style={Platform.OS !== 'web' ?
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: "70%", flex: 1, marginEnd: 5 } :
                     { flexDirection: 'column', flexWrap: 'wrap', maxWidth: "100%", minWidth: 265, flex: 1, marginEnd: 5 }
@@ -173,7 +173,7 @@ export function Media(props: any) {
                 onRequestClose={() => {
                     setCommentsModalVisible(!commentsModalVisible);
                 }}>
-                <View style={Platform.OS == 'web' ? { height: '92%' }: {height: '100%'}}>
+                <View style={Platform.OS == 'web' ? { height: '92%' } : { height: '100%' }}>
                     <View style={{ flex: 1, flexDirection: 'row', position: 'absolute', top: 20 }}>
                         <Pressable style={{ margin: 20 }} onPress={() => setCommentsModalVisible(!commentsModalVisible)}>
                             <MaterialIcons name='arrow-back' size={30} color={Colors[colorScheme].text} />
@@ -186,24 +186,26 @@ export function Media(props: any) {
                         })}</ScrollView>
 
                 </View>
-                <View style={Platform.OS == 'web' ? { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' } :
-                    { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '80%' }}>
+                <KeyboardAvoidingView behavior='position'>
+                    <View style={Platform.OS == 'web' ? { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '100%' } :
+                        { flex: 1, flexDirection: 'row', position: 'absolute', bottom: 0, width: '80%' }}>
 
-                    <TextInput style={[styles.input,
-                    {
-                        alignItems: 'center',
-                        marginTop: 14,
-                        backgroundColor: Colors[colorScheme].textInput,
-                        color: Colors[colorScheme].text
-                    }]}
-                        value={commentInput}
-                        onChangeText={input => setCommentInput(input)}
-                        keyboardType='default'
-                    ></TextInput>
-                    <TouchableOpacity style={{ margin: 20 }} onPress={postComment}>
-                        <MaterialIcons name='send' size={32} color={Colors[colorScheme].tint} />
-                    </TouchableOpacity>
-                </View>
+                        <TextInput style={[styles.input,
+                        {
+                            alignItems: 'center',
+                            marginTop: 14,
+                            backgroundColor: Colors[colorScheme].textInput,
+                            color: Colors[colorScheme].text
+                        }]}
+                            value={commentInput}
+                            onChangeText={input => setCommentInput(input)}
+                            keyboardType='default'
+                        ></TextInput>
+                        <TouchableOpacity style={{ margin: 20 }} onPress={postComment}>
+                            <MaterialIcons name='send' size={32} color={Colors[colorScheme].tint} />
+                        </TouchableOpacity>
+                    </View>
+                </KeyboardAvoidingView>
             </Modal>
         </>
     )
