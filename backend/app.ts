@@ -164,7 +164,10 @@ app.post('/postMedia/:token', upload.single("video"), async (req: Request, res: 
     const description: string = req.body.description;
     console.log("body:", req.body);
     const bucket = new GridFSBucket(client.db("BeCrazy"), { bucketName: 'videos' });
-    const videoStream = Readable.from(fs.createReadStream((req as unknown as MulterRequest).file.path));
+    console.log("file:", (req as unknown as MulterRequest).file);
+    console.log("path:", (req as unknown as MulterRequest).file.path);
+    console.log("originalname:", (req as unknown as MulterRequest).file.originalname);
+    const videoStream = Readable.from(fs.createReadStream((req as unknown  as MulterRequest).file.path));
     const uploadStream = bucket.openUploadStream((req as unknown as MulterRequest).file.originalname);
 
     try {
