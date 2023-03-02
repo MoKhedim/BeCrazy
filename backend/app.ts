@@ -441,7 +441,30 @@ app.post("/forgotpassword", async (req: Request, res: Response) => {
     }
 });
 
+app.post("/follow/:username/:token", async (req: Request, res: Response) => {
+    const username: string = req.params.username;
+    const token: string = req.params.token;
+    const addFollow: any = { $inc: { nbFollowers: 1 } };
+    const addFollowing: any = { $inc: { nbFollowing: 1 } };
+    try {
+        const result = await collectionUsers.findOneAndUpdate({ username: username }, addFollow);
+        if (result.value) {
+            res.status(200).json({ message: "Succès!", result });
+        } else {
+            res.status(400).json({ message: "Erreur", result });
+        }
 
+        const result2 = await collectionUsers.findOneAndUpdate({ token: token }, addFollowing);
+        if (result2.value) {
+            res.status(200).json({ message: "Succès!", result2 });
+        }
+        else {
+            res.status(400).json({ message: "Erreur", result2 });
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
 
 //route pour vérifié si le code correspond au code envoyé VIA email.
 //http://localhost:4000/verifCode/bastiencambray975@gmail.com
@@ -468,6 +491,7 @@ app.post("/verifCode/:email", async (req: Request, res: Response) => {
     } else {
         res.status(400).json({ message: "Code incorrect." })
     }
+
 });
 
 //route pour obtenir le top 10 des médias ayant eu le plus de like dans la journée en cours.
@@ -618,4 +642,4 @@ app.get("/getuser/:token", async (req: Request, res: Response) => {
 //listen 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
-});
+})})
