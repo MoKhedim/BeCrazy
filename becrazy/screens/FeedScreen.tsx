@@ -31,7 +31,6 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<'Feed'>) {
             if (resultAllMedias.ok) {
                 const data = await resultAllMedias.json();
                 setAllMedias(data);
-                console.log(data)
             } else {
                 console.log("une erreur s'est produite");
             }

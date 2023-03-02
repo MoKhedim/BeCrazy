@@ -25,7 +25,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Leaderboa
       if (resultTop10.ok) {
         const data = await resultTop10.json();
         setLeaderboard(data);
-        console.log(data)
       } else {
         setLeaderboard([]);
         console.log("une erreur s'est produite");
@@ -41,7 +40,6 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<'Leaderboa
       });
       if (resultAiChallenge.ok) {
         const data = await resultAiChallenge.json();
-        console.log(data)
         setAiChallenge(data);
       } else {
         console.log("une erreur s'est produite");

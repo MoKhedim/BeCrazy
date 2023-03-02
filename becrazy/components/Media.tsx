@@ -44,7 +44,6 @@ export function Media(props: any) {
 			const resGetComments = await fetch(urlGetComments);
 			if (resGetComments.ok) {
 				const data = await resGetComments.json();
-				console.log(data);
 				setComments(data);
 			}
 		}
@@ -55,7 +54,6 @@ export function Media(props: any) {
 		const resGetProfilePic = await fetch(urlGetProfilePic);
 		if (resGetProfilePic.ok) {
 			const data = await resGetProfilePic.json();
-			console.log(data);
 			setProfilePic(data[0].profilePicture);
 		}
 	}
@@ -75,7 +73,6 @@ export function Media(props: any) {
 		});
 		if (resPostComment.ok) {
 			const data = await resPostComment.json();
-			console.log(data);
 			let newComment = {
 				idMedia: data.idMedia,
 				username: data.username,
@@ -89,7 +86,6 @@ export function Media(props: any) {
 
 	async function likeVideo() {
 		const urlLikes = `${server}/likeMedia/${token}`;
-		console.log(props.allMedia._id)
 
 		const resultLikes = await fetch(urlLikes, {
 			method: "POST",

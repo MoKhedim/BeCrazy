@@ -15,7 +15,6 @@ export function Comment(props: any) {
             const resGetProfilePic = await fetch(urlGetProfilePic);
             if (resGetProfilePic.ok) { 
                 const data = await resGetProfilePic.json();
-                console.log(data);
                 setProfilePic(data[0].profilePicture);
             }
         }
