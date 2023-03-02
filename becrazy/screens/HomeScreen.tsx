@@ -44,11 +44,11 @@ export default function HomeScreen({ navigation }: RootTabScreenProps<"Leaderboa
 				
 				setAiChallenge(data);
 			} else {
-				
+				// setAiChallenge("Voler un sans-abris");
 			}
 		}
-		getTop10();
-		getAiChallenge();
+		void getTop10();
+		void getAiChallenge();
 	}, []);
 
 	useEffect(() => {

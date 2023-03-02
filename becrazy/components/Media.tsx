@@ -1,5 +1,5 @@
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, View } from "./Themed";
 import { Video, ResizeMode } from "expo-av";
 import Colors from "../constants/Colors";
@@ -10,13 +10,18 @@ import useColorScheme from "../hooks/useColorScheme";
 import { server } from "../constants/Server";
 import { MyContext } from "../App";
 import { comments } from "../interfaces/media/comments";
+import { allMedia } from "../interfaces/media/allMedia";
 
 type IconName = "heart-o" | "heart";
+type MediaProps = {
+	key: string;
+	allMedia: allMedia;
+};
 
-export function Media(props: any) {
+export function Media(props: MediaProps) {
 	const colorScheme = useColorScheme();
 
-	const [isLiked, setIsLiked] = useState(props.allMedia.isLiked);
+	const [isLiked] = useState(props.allMedia.isLiked);
 	const [profilePic, setProfilePic] = useState("");
 	const [iconName, setIconName] = useState<IconName>("heart-o");
 	const [likes, setLikes] = useState(props.allMedia.nbLikes);
@@ -30,12 +35,11 @@ export function Media(props: any) {
 	const [commentInput, setCommentInput] = useState("");
 
 	// get comments lorsqu'on ouvre le modale des commentaires 
-	useEffect(() => { getComments(); }, [commentsModalVisible]);
 
-	function handlePressLike() {
+	const handlePressLike = () => {
 		iconName === "heart-o" ? setIconName("heart") : setIconName("heart-o");
-		likeVideo();
-	}
+		void likeVideo();
+	};
 
 	const getComments = async () => {
 		if (commentsModalVisible === true) {
@@ -119,13 +123,14 @@ export function Media(props: any) {
 				setIconName("heart-o");
 			}
 		}
-		checkLike();
-		getProlfilePic();
-	}, []);
-
+		void checkLike();
+		void getProlfilePic();
+		void getComments();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [commentsModalVisible]);
 
 	return (
-		<>
+		<View>
 			<View style={{ flexDirection: "row", flexWrap: "wrap", flex: 1, maxWidth: 350, minWidth: 350, marginBottom: 10 }}>
 				<Image source={{ uri: profilePic }} style={{
 					width: 50,
@@ -183,7 +188,7 @@ export function Media(props: any) {
 					</View>
 					<ScrollView style={{ marginTop: 100 }}>
 						{comments?.map((comment, index) => {
-							return <Comment key={comment.idMedia + index} comment={comment} />;
+							return <Comment key={comment.idMedia + String(index)} comment={comment} />;
 						})}</ScrollView>
 
 				</View>
@@ -191,22 +196,22 @@ export function Media(props: any) {
 					{ flex: 1, flexDirection: "row", position: "absolute", bottom: 0, width: "80%" }}>
 
 					<TextInput style={[styles.input,
-					{
-						alignItems: "center",
-						marginTop: 14,
-						backgroundColor: Colors[colorScheme].textInput,
-						color: Colors[colorScheme].text
-					}]}
-						value={commentInput}
-						onChangeText={input => setCommentInput(input)}
-						keyboardType='default'
-					></TextInput>
-					<TouchableOpacity style={{ margin: 20 }} onPress={postComment}>
+						{
+							alignItems: "center",
+							marginTop: 14,
+							backgroundColor: Colors[colorScheme].textInput,
+							color: Colors[colorScheme].text
+						}]}
+					value={commentInput}
+					onChangeText={input => setCommentInput(input)}
+					keyboardType='default'
+					/>
+					<TouchableOpacity style={{ margin: 20 }} onPress={() => postComment()}>
 						<MaterialIcons name='send' size={32} color={Colors[colorScheme].tint} />
 					</TouchableOpacity>
 				</View>
 			</Modal>
-		</>
+		</View>
 	);
 }
 

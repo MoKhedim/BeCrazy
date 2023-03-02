@@ -16,6 +16,9 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<"Disco
 	const [canEdit, setCanEdit] = useState(true);
 
 	async function fetchResults() {
+		// prevent spamming
+		if (!canEdit) return;
+		setCanEdit(false);
 		const res = await fetch(`${server}/searchUser/${searchString}`, {
 			method: "GET",
 			headers: {
@@ -24,33 +27,13 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<"Disco
 		});
 		const data = await res.json();
 		setSearchResults(data);
-
+		setCanEdit(true);
 	}
 
-	// when the search string changes, fetch the results
-	/*
-	const search = async () => {
-	  if (searchString.length > 0) {
-		setCanEdit(false)
-		const res = await fetch(`${server}/searchUser/${searchString}`, {
-		  method: "POST",
-		  headers: {
-			"Content-Type": "application/json"
-		  },
-		  body: JSON.stringify({
-			search: searchString
-		  })
-		});
-		const data = await res.json();
-		setSearchResults(data)
-		setCanEdit(true)
-	  }
-	}
-  */
 
 	const handleKeyPress = (e: any) => {
 		if (e.key === "Enter") {
-			fetchResults();
+			void fetchResults();
 		}
 	};
 
@@ -61,16 +44,13 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<"Disco
 					<TextInput
 						style={styles.input}
 						placeholder="Username"
-
 						value={searchString}
 						editable={canEdit}
 						selectTextOnFocus={canEdit}
 						onChangeText={(text) => setSearchString(text)}
 						onKeyPress={(e) => handleKeyPress(e)}
 					/>
-					<TouchableOpacity
-						style={styles.searchIcon}
-					>
+					<TouchableOpacity style={styles.searchIcon}>
 						<Entypo
 							style={styles.searchIcon}
 							name={canEdit ? "magnifying-glass" : "back-in-time"}
@@ -93,7 +73,7 @@ export default function DiscoverScreen({ navigation }: RootTabScreenProps<"Disco
 											source={{ uri: result.profilePicture }}
 										/>
 										<Text onPress={() => navigation.navigate("ProfileScreen", { username: result.username })} style={{ marginLeft: 10 }}>{result.username}</Text>
-										<Text style={{ marginLeft: 20 }}>{result.nbFollowers + " followers"}</Text>
+										<Text style={{ marginLeft: 20 }}>{String(result.nbFollowers) + " followers"}</Text>
 									</View>
 								</View>
 							);

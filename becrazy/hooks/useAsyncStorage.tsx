@@ -19,7 +19,7 @@ export const useAsyncStorage = () => {
 		try {
 			await AsyncStorage.setItem(key, value);
 		} catch (e) {
-			
+			console.log(e);
 		}
 	};
 

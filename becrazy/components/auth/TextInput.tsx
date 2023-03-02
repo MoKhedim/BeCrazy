@@ -1,3 +1,4 @@
+import React from "react";
 import { StyleSheet, TextInput as TextInputImport } from "react-native";
 import Colors from "../../constants/Colors";
 import useColorScheme from "../../hooks/useColorScheme";

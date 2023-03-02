@@ -31,11 +31,10 @@ export default function FeedScreen({ navigation }: RootTabScreenProps<"Feed">) {
 				const data = await resultAllMedias.json();
 				setAllMedias(data);
 				
-			} else {
-				
 			}
 		}
-		getAllMedias();
+		void getAllMedias();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

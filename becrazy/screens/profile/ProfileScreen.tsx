@@ -74,11 +74,12 @@ export default function ProfileScreen({ navigation, route }: RootStackScreenProp
 	useEffect(() => {
 		if (route.params.username === undefined) {
 			setIsMyProfile(true);
-			getUserInfo();
+			void getUserInfo();
 		} else {
 			setIsMyProfile(false);
-			getUserInfoNotMyProfile(route.params.username);
+			void getUserInfoNotMyProfile(route.params.username);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 
@@ -96,7 +97,7 @@ export default function ProfileScreen({ navigation, route }: RootStackScreenProp
 		});
 		if (res.status !== 200) return;
 		setModalVisible(false);
-		getUserInfo();
+		void getUserInfo();
 	};
 
 

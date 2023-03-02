@@ -83,7 +83,7 @@ export default function LoginScreen({ navigation }: RootStackScreenProps<"LoginS
                     Login
 				</Button>
 				<View style={styles.row}>
-					<Text>Don't have an account? </Text>
+					<Text>Don&apos;t have an account? </Text>
 					<TouchableOpacity
 						onPress={() => navigation.replace("RegisterScreen")}
 					>

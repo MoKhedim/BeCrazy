@@ -4,8 +4,16 @@ import useColorScheme from "../hooks/useColorScheme";
 import Colors from "../constants/Colors";
 import React, { useEffect, useState } from "react";
 import { server } from "../constants/Server";
+import { comments } from "../interfaces/media/comments";
+import UserInfoFull from "../interfaces/media/UserInfoFull";
 
-export function Comment(props: any) {
+interface CommentProps {
+	key: string;
+	comment: comments;
+}
+
+
+export function Comment(props: CommentProps) {
 	const colorScheme = useColorScheme();
 	const [profilePic, setProfilePic] = useState("");
 
@@ -13,13 +21,14 @@ export function Comment(props: any) {
 		const getProlfilePic = async () => {
 			const urlGetProfilePic = `${server}/searchUser/${props.comment.username}`;
 			const resGetProfilePic = await fetch(urlGetProfilePic);
-			if (resGetProfilePic.ok) { 
-				const data = await resGetProfilePic.json();
-				
+			if (resGetProfilePic.ok) {
+				const data: Array<UserInfoFull> = await resGetProfilePic.json();
+
 				setProfilePic(data[0].profilePicture);
 			}
 		};
-		getProlfilePic();
+		void getProlfilePic();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
@@ -27,7 +36,7 @@ export function Comment(props: any) {
 			<View style={{
 				flexDirection: "row", flexWrap: "wrap", flex: 1, width: "100%", height: 100, marginBottom: 10
 			}}>
-				<Image source={{uri: profilePic}} style={{
+				<Image source={{ uri: profilePic }} style={{
 					width: 50,
 					height: 50,
 					borderRadius: 50,
@@ -36,8 +45,8 @@ export function Comment(props: any) {
 					marginStart: 25,
 				}} />
 				<View style={Platform.OS !== "web" ?
-					{ flexDirection: "column", flexWrap: "wrap", maxWidth: "100%", width: "80%", flex: 1} :
-					{ flexDirection: "column", flexWrap: "wrap", maxWidth: "100%", width: "90%", flex: 1}
+					{ flexDirection: "column", flexWrap: "wrap", maxWidth: "100%", width: "80%", flex: 1 } :
+					{ flexDirection: "column", flexWrap: "wrap", maxWidth: "100%", width: "90%", flex: 1 }
 				}>
 					<Text style={[styles.name, { color: Colors[colorScheme].text, marginTop: 4 }]}>{props.comment.username}</Text>
 					<Text style={[styles.comment, { color: Colors[colorScheme].text, marginTop: 4 }]}>

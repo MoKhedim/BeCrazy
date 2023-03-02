@@ -6,4 +6,5 @@ export interface allMedia {
     created: string;
     nbComments: number;
     nbLikes: number;
+    isLiked: boolean;
 }

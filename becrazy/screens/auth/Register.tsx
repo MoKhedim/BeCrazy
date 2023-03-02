@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native";
 import { Text } from "../../components/Themed";
 import { Button } from "../../components/auth/Button";
@@ -7,7 +7,6 @@ import Logo from "../../components/Logo";
 import { emailValidator } from "../../helpers/emailValidator";
 import { passwordValidator } from "../../helpers/passwordValidator";
 import { passwordConfirmValidator } from "../../helpers/passwordConfirmValidator";
-import { MyContext } from "../../App";
 import { RootStackScreenProps } from "../../types";
 import styles from "../../components/auth/StyleSheetForm";
 import RegisterUser from "../../interfaces/auth/RegisterUser";

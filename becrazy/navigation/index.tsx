@@ -27,7 +27,6 @@ import FeedScreen from "../screens/FeedScreen";
 import { MyContext } from "../App";
 import CameraScreen from "../screens/camera/CameraScreen";
 import SavePostScreen from "../screens/camera/SavePostScreen";
-import { useContext } from "react";
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 	return (
@@ -47,7 +46,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
 	const colorScheme = useColorScheme();
-	const { token } = useContext(MyContext);
 
 	return (
 		<Stack.Navigator>

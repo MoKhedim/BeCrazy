@@ -21,14 +21,14 @@ export const useImagePicker = () => {
 		});
 
 		if (!result.canceled) {
-			uploadProfilePic(result.assets[0].uri);
+			void uploadProfilePic(result.assets[0].uri);
 		}
 	};
 
 	// this function will be called at the end of the pickImage function
 	// it will send the image to the server
 	const uploadProfilePic = async (image: string) => {
-		const res = await fetch(`${server}/updateUser/${token}`, {
+		await fetch(`${server}/updateUser/${token}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -37,8 +37,6 @@ export const useImagePicker = () => {
 				profilePicture: image
 			})
 		});
-		const data = await res.json();
-		
 	};
 
 	return { pickImage };
