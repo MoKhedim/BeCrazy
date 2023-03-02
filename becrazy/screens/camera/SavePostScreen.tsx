@@ -23,13 +23,16 @@ export default function SavePostScreen({ navigation, route }: RootStackScreenPro
 
         const formData = new FormData();
         formData.append('description', description);
-        formData.append('video', route.params.source);
+        formData.append('video', route.params.source, 'video.mov');
 
         const response = await fetch(`${server}/postMedia/${token}`, {
             method: 'POST',
             headers: {
                  'Content-Type': 'multipart/form-data',
+                 "Cotent-Length": "2",
+                 "Host": "https://evening-mesa-24846.herokuapp.com",
 				 'Access-Control-Allow-Origin': '*',
+
              },
             body: formData,
         });

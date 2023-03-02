@@ -10,6 +10,7 @@ import { MyContext } from "../../App";
 import { server } from "../../constants/Server";
 import Post from "../../interfaces/Post";
 import { PostsGrid } from "../../components/profile/PostsGrid";
+import { Button } from "../../components/auth/Button";
 
 
 export default function ProfileScreen({ navigation, route }: RootStackScreenProps<'ProfileScreen'>) {
@@ -26,6 +27,11 @@ export default function ProfileScreen({ navigation, route }: RootStackScreenProp
     // state for the bio modal
     const [bioInput, setBioInput] = useState<string>("");
     const [modalVisible, setModalVisible] = useState(false);
+    
+    const isDarkMode = useColorScheme() === 'dark';
+
+    const buttonBackgroundColor = isDarkMode ? 'white' : 'black';
+    const buttonTextColor = isDarkMode ? 'black' : 'white';
 
 
     // get the user info from the server with the token
@@ -68,6 +74,32 @@ export default function ProfileScreen({ navigation, route }: RootStackScreenProp
         const data = await res.json();
         setUserInfo(data.result[0]);
         setUserPosts(data.result2);
+    }
+
+    const followUser = async () => {
+        const res = await fetch(`${server}/follow/${userInfo?.username}/${token}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                username: userInfo?.username,
+            })
+        });
+        if (res.status !== 200) return
+    }
+
+    const unFollowUser = async () => {
+        const res = await fetch(`${server}/unfollow/${userInfo?.username}/${token}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                username: userInfo?.username,
+            })
+        });
+        if (res.status !== 200) return
     }
 
 
@@ -132,6 +164,24 @@ export default function ProfileScreen({ navigation, route }: RootStackScreenProp
                             <Text style={styles.stat}>{userInfo.nbFollowers} Followers</Text>
                             <Text style={styles.stat}>{userInfo.nbFollows} Following</Text>
                         </View>
+                        <View style={styles.container2}>
+                        <View style={styles.buttonContainer}>
+                        {!isMyProfile && (
+                            <TouchableOpacity
+                            style={[styles.Followbutton, { "backgroundColor": buttonBackgroundColor }]}
+                            onPress={() => followUser()}> 
+                                <Text style={[styles.text, { color: buttonTextColor }]}>Follow</Text>
+                            </TouchableOpacity>
+                        )}
+                         {!isMyProfile && (
+                            <TouchableOpacity
+                            style={[styles.unFollowbutton, { "backgroundColor": buttonBackgroundColor }]}
+                            onPress={() => unFollowUser()}> 
+                                <Text style={[styles.text, { color: buttonTextColor }]}>Unfollow</Text>
+                            </TouchableOpacity>
+                        )}
+                        </View>
+                    </View>
                     </View>
                 </View>
                 <View style={[styles.separator, { "backgroundColor": colorScheme === "light" ? "black" : "white" }]} />
@@ -147,8 +197,44 @@ export default function ProfileScreen({ navigation, route }: RootStackScreenProp
 
 
 const styles = StyleSheet.create({
+
+    Followbutton: {
+        marginTop: 10,
+        padding: 10,
+        paddingHorizontal: 68,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "black",
+        marginRight: 8,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+        marginBottom: 16,
+      },
+    unFollowbutton: {
+        marginTop: 10,
+        padding: 10,
+        paddingHorizontal: 60,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "black",
+        marginRight: 8,
+    },
+    text: {
+        fontWeight: 'bold',
+         fontSize: 16,
+    },
+
     container: {
         flex: 1,
+    },
+    container2:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     header: {
         flexDirection: "row",
