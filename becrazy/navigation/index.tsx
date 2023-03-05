@@ -28,6 +28,7 @@ import { MyContext } from '../App';
 import CameraScreen from '../screens/camera/CameraScreen';
 import SavePostScreen from '../screens/camera/SavePostScreen';
 import { useContext } from 'react';
+import { useAsyncStorage } from '../hooks/useAsyncStorage';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -47,17 +48,15 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   const colorScheme = useColorScheme();
+  const { token } = React.useContext(MyContext)
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-
+    <Stack.Navigator initialRouteName={token ? "Root" : "LoginScreen"}>
       <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'Login' }} />
+      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{ title: 'Register' }} />
       <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ title: 'Reset Password' }} />
-
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={({ navigation }) => ({
         title: "Profile",
         headerRight: () => (
@@ -95,7 +94,14 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
   const navigation = useNavigation();
-  const { token, setToken } = React.useContext(MyContext)
+  const { token, setToken } = React.useContext(MyContext);
+  const { getItem, addItem, removeItem } = useAsyncStorage();
+
+  const logout = () => {
+    setToken(null);
+    removeItem('token');
+    navigation.reset({ routes: [{ name: 'LoginScreen' }] });
+  }
 
   return (
     <BottomTab.Navigator
@@ -129,7 +135,7 @@ function BottomTabNavigator() {
             )}
             {token ? (
               <View>
-                <Pressable style={{ marginEnd: 20 }} onPress={() => { navigation.reset({ routes: [{ name: 'LoginScreen' }] }), setToken(null) }}>
+                <Pressable style={{ marginEnd: 20 }} onPress={logout}>
                   <MaterialIcons name='logout' size={28} color={Colors[colorScheme].text} />
                 </Pressable>
               </View>
